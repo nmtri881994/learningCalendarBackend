@@ -19,6 +19,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public List<Class> getAll() {
+        System.out.println("2");
         return classRepository.findAll();
     }
 }
