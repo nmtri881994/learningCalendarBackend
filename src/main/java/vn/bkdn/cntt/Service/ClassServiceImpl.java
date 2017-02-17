@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.Class;
+import vn.bkdn.cntt.entity.UniversityClass;
 import vn.bkdn.cntt.repository.ClassRepository;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class ClassServiceImpl implements ClassService {
     private ClassRepository classRepository;
 
     @Override
-    public List<Class> getAll() {
+    public List<UniversityClass> getAll() {
         System.out.println("2");
         return classRepository.findAll();
     }

@@ -2,7 +2,7 @@ package vn.bkdn.cntt.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import vn.bkdn.cntt.entity.Class;
+import vn.bkdn.cntt.entity.UniversityClass;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import java.util.List;
  */
 
 @Repository
-public interface ClassRepository extends JpaRepository<Class,Long>{
-    List<Class> findAll();
+public interface ClassRepository extends JpaRepository<UniversityClass,Long>{
+    List<UniversityClass> findAll();
 }

@@ -1,25 +1,25 @@
 package vn.bkdn.cntt.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by Tri on 2/8/2017.
  */
 
 @Entity
-public class Class {
+public class UniversityClass {
     private Long id;
     private String className;
+    private Set<Student> students;
 
-    public Class() {
+    public UniversityClass() {
     }
 
-    public Class(Long id, String className) {
+    public UniversityClass(Long id, String className, Set<Student> students) {
         this.id = id;
         this.className = className;
+        this.students = students;
     }
 
     @Id
@@ -38,5 +38,14 @@ public class Class {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    @OneToMany(mappedBy = "universityClass")
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 }

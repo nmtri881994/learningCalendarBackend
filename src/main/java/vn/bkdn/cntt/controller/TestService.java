@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.bkdn.cntt.Service.ClassService;
-import vn.bkdn.cntt.entity.Class;
+import vn.bkdn.cntt.entity.UniversityClass;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class TestService {
 
     @GetMapping
     @RequestMapping(value="/class")
-    public ResponseEntity<List<Class>> getAllClass(){
-        return new ResponseEntity<List<Class>> (classService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<UniversityClass>> getAllClass(){
+        return new ResponseEntity<List<UniversityClass>> (classService.getAll(), HttpStatus.OK);
     }
 }
