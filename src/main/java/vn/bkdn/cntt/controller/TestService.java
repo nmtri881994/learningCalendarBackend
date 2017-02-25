@@ -19,7 +19,6 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value="api")
-
 public class TestService {
 
     @Autowired
@@ -31,8 +30,7 @@ public class TestService {
     }
 
 
-    @GetMapping
-    @RequestMapping(value="/class")
+    @GetMapping(value="/class")
     public ResponseEntity<List<UniversityClass>> getAllClass(){
         return new ResponseEntity<List<UniversityClass>> (classService.getAll(), HttpStatus.OK);
     }
