@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -12,14 +14,16 @@ public class UniversityClass {
     private Long id;
     private String className;
     private Set<Student> students;
+    private Faculty faculty;
 
     public UniversityClass() {
     }
 
-    public UniversityClass(Long id, String className, Set<Student> students) {
+    public UniversityClass(Long id, String className, Set<Student> students, Faculty faculty) {
         this.id = id;
         this.className = className;
         this.students = students;
+        this.faculty = faculty;
     }
 
     @Id
@@ -47,5 +51,16 @@ public class UniversityClass {
 
     public void setStudents(Set<Student> students) {
         this.students = students;
+    }
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "faculty_id")
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 }
