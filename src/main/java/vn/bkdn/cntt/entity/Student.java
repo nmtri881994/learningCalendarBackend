@@ -42,7 +42,7 @@ public class Student {
     }
 
     @ManyToOne
-    @JoinColumn(name="universityClass_id")
+    @JoinColumn(name = "universityClass_id")
     @JsonIgnore
     public UniversityClass getUniversityClass() {
         return universityClass;
