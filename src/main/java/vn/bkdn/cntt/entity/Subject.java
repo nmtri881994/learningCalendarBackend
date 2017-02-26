@@ -17,6 +17,8 @@ public class Subject {
     private Teacher teacher;
     private RoomType roomType;
     private Set<TimeTable> timeTables;
+    private Semester semester;
+    private float capacity;
 
     public Subject() {
     }
@@ -68,5 +70,24 @@ public class Subject {
 
     public void setTimeTables(Set<TimeTable> timeTables) {
         this.timeTables = timeTables;
+    }
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "semester_id")
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public float getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(float capacity) {
+        this.capacity = capacity;
     }
 }

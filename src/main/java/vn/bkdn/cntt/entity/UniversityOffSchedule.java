@@ -1,9 +1,8 @@
 package vn.bkdn.cntt.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -15,14 +14,9 @@ public class UniversityOffSchedule {
     private Long id;
     private Date startDate;
     private Date endDate;
+    private Semester semester;
 
     public UniversityOffSchedule() {
-    }
-
-    public UniversityOffSchedule(Long id, Date startDate, Date endDate) {
-        this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
     }
 
     @Id
@@ -49,5 +43,16 @@ public class UniversityOffSchedule {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "semester_id")
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 }

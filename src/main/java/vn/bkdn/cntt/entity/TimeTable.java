@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -16,6 +18,7 @@ public class TimeTable {
     private Set<Lesson> lessons;
     private String note;
     private Date date;
+    private Semester semester;
 
     public TimeTable() {
     }
@@ -74,5 +77,16 @@ public class TimeTable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "semester_id")
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 }

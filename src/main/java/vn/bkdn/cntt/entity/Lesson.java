@@ -11,7 +11,8 @@ public class Lesson {
     private Long id;
     private WeekDay weekDay;
     private String name;
-    private String time;
+    private int startTime;
+    private int endTime;
 
     public Lesson() {
     }
@@ -44,11 +45,19 @@ public class Lesson {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
+    public int getStartTime() {
+        return startTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
     }
 }

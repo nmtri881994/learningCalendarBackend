@@ -15,15 +15,9 @@ public class TeacherOffSchedule {
     private Teacher teacher;
     private Date startDate;
     private Date endDate;
+    private Semester semester;
 
     public TeacherOffSchedule() {
-    }
-
-    public TeacherOffSchedule(Long id, Teacher teacher, Date startDate, Date endDate) {
-        this.id = id;
-        this.teacher = teacher;
-        this.startDate = startDate;
-        this.endDate = endDate;
     }
 
     @Id
@@ -61,5 +55,16 @@ public class TeacherOffSchedule {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "semester_id")
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 }
