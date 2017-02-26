@@ -63,7 +63,6 @@ public class Subject {
     }
 
     @OneToMany(mappedBy = "subject")
-    @JsonIgnore
     public Set<TimeTable> getTimeTables() {
         return timeTables;
     }

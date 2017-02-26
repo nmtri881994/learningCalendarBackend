@@ -17,8 +17,7 @@ public class Room {
     private RoomType roomType;
     private Set<TimeTable> timeTables;
 
-    public Room(Long id) {
-        this.id = id;
+    public Room() {
     }
 
     @Id

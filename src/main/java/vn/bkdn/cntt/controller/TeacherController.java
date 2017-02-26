@@ -29,4 +29,9 @@ public class TeacherController {
         System.out.println("11111");
         return new ResponseEntity<List<Teacher>>(teacherService.findAll(), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/autoTimeTable")
+    public void autoArrangeTimeTable(){
+        teacherService.autoArrangeTeacherTimeTableByTeacherId(1);
+    }
 }

@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface TeacherService {
     List<Teacher> findAll();
+
+    void autoArrangeTeacherTimeTableByTeacherId(int teacherId);
 }

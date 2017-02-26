@@ -34,6 +34,7 @@ public class TimeTable {
     }
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "subject_id")
     public Subject getSubject() {
         return subject;
