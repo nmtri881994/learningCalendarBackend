@@ -3,7 +3,7 @@ package vn.bkdn.cntt.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Created by XuanVinh on 2/25/2017.
