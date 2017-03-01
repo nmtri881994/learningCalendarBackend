@@ -6,16 +6,17 @@ import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 2/25/2017.
+ * Created by XuanVinh on 3/2/2017.
  */
 
 @Entity
-public class WeekDay {
+public class AccountType {
     private Long id;
     private String name;
-    private Set<WeekDayLesson> weekDayLessons;
 
-    public WeekDay() {
+    private Set<SystemAccount> systemAccounts;
+
+    public AccountType() {
     }
 
     @Id
@@ -36,13 +37,15 @@ public class WeekDay {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "weekDay")
+    @OneToMany(mappedBy = "accountType")
     @JsonIgnore
-    public Set<WeekDayLesson> getWeekDayLessons() {
-        return weekDayLessons;
+    public Set<SystemAccount> getSystemAccounts() {
+        return systemAccounts;
     }
 
-    public void setWeekDayLessons(Set<WeekDayLesson> weekDayLessons) {
-        this.weekDayLessons = weekDayLessons;
+    public void setSystemAccounts(Set<SystemAccount> systemAccounts) {
+        this.systemAccounts = systemAccounts;
     }
+
+
 }

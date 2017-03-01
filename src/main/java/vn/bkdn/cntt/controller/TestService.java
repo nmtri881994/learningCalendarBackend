@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.ClassService;
-import vn.bkdn.cntt.entity.UniversityClass;
 
 import java.util.List;
 
@@ -21,8 +19,6 @@ import java.util.List;
 @RequestMapping(value="api")
 public class TestService {
 
-    @Autowired
-    private ClassService classService;
 
     @GetMapping
     public String testGet(){
@@ -30,8 +26,4 @@ public class TestService {
     }
 
 
-    @GetMapping(value="/class")
-    public ResponseEntity<List<UniversityClass>> getAllClass(){
-        return new ResponseEntity<List<UniversityClass>> (classService.getAll(), HttpStatus.OK);
-    }
 }

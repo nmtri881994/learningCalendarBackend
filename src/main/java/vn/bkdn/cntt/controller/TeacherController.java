@@ -3,10 +3,7 @@ package vn.bkdn.cntt.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.TeacherService;
 import vn.bkdn.cntt.entity.Teacher;
 
@@ -30,8 +27,8 @@ public class TeacherController {
         return new ResponseEntity<List<Teacher>>(teacherService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/autoTimeTable")
-    public void autoArrangeTimeTable(){
-        teacherService.autoArrangeTeacherTimeTableByTeacherId(1);
+    @GetMapping(value = "/autoTimeTable/{teacherId}")
+    public void autoArrangeTimeTable(@PathVariable Long teacherId){
+        teacherService.autoArrangeTeacherTimeTableByTeacherId(teacherId);
     }
 }

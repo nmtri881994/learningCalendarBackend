@@ -15,10 +15,10 @@ public class TimeTable {
     private Long id;
     private Subject subject;
     private Room room;
-    private Set<Lesson> lessons;
     private String note;
     private Date date;
     private Semester semester;
+    private Set<TimeTableWeekDayLesson> timeTableWeekDayLessons;
 
     public TimeTable() {
     }
@@ -54,16 +54,6 @@ public class TimeTable {
         this.room = room;
     }
 
-    @ManyToMany
-    @JoinTable(name = "timetable_lesson", joinColumns = @JoinColumn(name = "timeTable_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "lesson_id", referencedColumnName = "id"))
-    public Set<Lesson> getLessons() {
-        return lessons;
-    }
-
-    public void setLessons(Set<Lesson> lessons) {
-        this.lessons = lessons;
-    }
-
     public String getNote() {
         return note;
     }
@@ -89,5 +79,14 @@ public class TimeTable {
 
     public void setSemester(Semester semester) {
         this.semester = semester;
+    }
+
+    @OneToMany(mappedBy = "timeTable")
+    public Set<TimeTableWeekDayLesson> getTimeTableWeekDayLessons() {
+        return timeTableWeekDayLessons;
+    }
+
+    public void setTimeTableWeekDayLessons(Set<TimeTableWeekDayLesson> timeTableWeekDayLessons) {
+        this.timeTableWeekDayLessons = timeTableWeekDayLessons;
     }
 }

@@ -13,21 +13,18 @@ import java.util.Set;
 @Entity
 public class Teacher {
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private Faculty faculty;
-    private Set<Subject> subjects;
+
     private Set<TeacherOffSchedule> teacherOffSchedules;
+    private Set<SubjectClass> subjectClasses;
+
+    private SystemAccount systemAccount;
 
     public Teacher() {
     }
 
-    public Teacher(Long id, String name, Faculty faculty, Set<Subject> subjects, Set<TeacherOffSchedule> teacherOffSchedules) {
-        this.id = id;
-        this.name = name;
-        this.faculty = faculty;
-        this.subjects = subjects;
-        this.teacherOffSchedules = teacherOffSchedules;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,12 +36,20 @@ public class Teacher {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @ManyToOne
@@ -59,20 +64,31 @@ public class Teacher {
     }
 
     @OneToMany(mappedBy = "teacher")
-    public Set<Subject> getSubjects() {
-        return subjects;
-    }
-
-    public void setSubjects(Set<Subject> subjects) {
-        this.subjects = subjects;
-    }
-
-    @OneToMany(mappedBy = "teacher")
     public Set<TeacherOffSchedule> getTeacherOffSchedules() {
         return teacherOffSchedules;
     }
 
     public void setTeacherOffSchedules(Set<TeacherOffSchedule> teacherOffSchedules) {
         this.teacherOffSchedules = teacherOffSchedules;
+    }
+
+    @OneToMany(mappedBy = "teacher")
+    @JsonIgnore
+    public Set<SubjectClass> getSubjectClasses() {
+        return subjectClasses;
+    }
+
+    public void setSubjectClasses(Set<SubjectClass> subjectClasses) {
+        this.subjectClasses = subjectClasses;
+    }
+
+    @OneToOne
+    @JoinColumn(name="systemAccount_id")
+    public SystemAccount getSystemAccount() {
+        return systemAccount;
+    }
+
+    public void setSystemAccount(SystemAccount systemAccount) {
+        this.systemAccount = systemAccount;
     }
 }

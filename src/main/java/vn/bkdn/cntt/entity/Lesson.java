@@ -1,6 +1,9 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by XuanVinh on 2/25/2017.
@@ -9,10 +12,10 @@ import javax.persistence.*;
 @Entity
 public class Lesson {
     private Long id;
-    private WeekDay weekDay;
     private String name;
     private int startTime;
     private int endTime;
+    private Set<WeekDayLesson> weekDayLessons;
 
     public Lesson() {
     }
@@ -25,16 +28,6 @@ public class Lesson {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "weekDay_id")
-    public WeekDay getWeekDay() {
-        return weekDay;
-    }
-
-    public void setWeekDay(WeekDay weekDay) {
-        this.weekDay = weekDay;
     }
 
     public String getName() {
@@ -59,5 +52,15 @@ public class Lesson {
 
     public void setEndTime(int endTime) {
         this.endTime = endTime;
+    }
+
+    @OneToMany(mappedBy = "lesson")
+    @JsonIgnore
+    public Set<WeekDayLesson> getWeekDayLessons() {
+        return weekDayLessons;
+    }
+
+    public void setWeekDayLessons(Set<WeekDayLesson> weekDayLessons) {
+        this.weekDayLessons = weekDayLessons;
     }
 }

@@ -16,6 +16,7 @@ public class Room {
     private String name;
     private RoomType roomType;
     private Set<TimeTable> timeTables;
+    private int capacity;
 
     public Room() {
     }
@@ -67,5 +68,13 @@ public class Room {
 
     public void setTimeTables(Set<TimeTable> timeTables) {
         this.timeTables = timeTables;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }

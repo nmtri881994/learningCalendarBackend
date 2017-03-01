@@ -6,22 +6,20 @@ import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 3/2/2017.
+ * Created by XuanVinh on 3/1/2017.
  */
-
 @Entity
-public class Student {
+public class SubjectClass {
     private Long id;
-    private String firstName;
-    private String lastName;
-    private CollegeClass collegeClass;
-
-    private SystemAccount systemAccount;
+    private Subject subject;
+    private Teacher teacher;
+    private Semester semester;
+    private int studentQuantity;
 
     private Set<SubjectClassStudentCanRegister> subjectClassStudentCanRegisters;
     private Set<SubjectClassStudentRegistered> subjectClassStudentRegistereds;
 
-    public Student() {
+    public SubjectClass() {
     }
 
     @Id
@@ -34,45 +32,46 @@ public class Student {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    @JsonIgnore
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     @ManyToOne
-    @JoinColumn(name = "collegeClass_id")
-    @JsonIgnore
-    public CollegeClass getCollegeClass() {
-        return collegeClass;
+    @JoinColumn(name = "teacher_id")
+    public Teacher getTeacher() {
+        return teacher;
     }
 
-    public void setCollegeClass(CollegeClass collegeClass) {
-        this.collegeClass = collegeClass;
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
-    @OneToOne
-    @JoinColumn(name = "systemAccount_id")
-    public SystemAccount getSystemAccount() {
-        return systemAccount;
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    public Semester getSemester() {
+        return semester;
     }
 
-    public void setSystemAccount(SystemAccount systemAccount) {
-        this.systemAccount = systemAccount;
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 
-    @OneToMany(mappedBy = "student")
-    @JsonIgnore
+    public int getStudentQuantity() {
+        return studentQuantity;
+    }
+
+    public void setStudentQuantity(int studentQuantity) {
+        this.studentQuantity = studentQuantity;
+    }
+
+    @OneToMany(mappedBy = "subjectClass")
     public Set<SubjectClassStudentCanRegister> getSubjectClassStudentCanRegisters() {
         return subjectClassStudentCanRegisters;
     }
@@ -81,7 +80,8 @@ public class Student {
         this.subjectClassStudentCanRegisters = subjectClassStudentCanRegisters;
     }
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "subjectClass")
+    @JsonIgnore
     public Set<SubjectClassStudentRegistered> getSubjectClassStudentRegistereds() {
         return subjectClassStudentRegistereds;
     }

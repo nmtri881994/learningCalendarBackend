@@ -1,21 +1,22 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 2/24/2017.
+ * Created by XuanVinh on 3/2/2017.
  */
 
 @Entity
-public class Faculty {
+public class Course {
     private Long id;
-    private String facultyName;
+    private Long name;
 
-    private Set<Teacher> teachers;
     private Set<FacultyCourse> facultyCourses;
 
-    public Faculty() {
+    public Course() {
     }
 
     @Id
@@ -28,24 +29,16 @@ public class Faculty {
         this.id = id;
     }
 
-    public String getFacultyName() {
-        return facultyName;
+    public Long getName() {
+        return name;
     }
 
-    public void setFacultyName(String facultyName) {
-        this.facultyName = facultyName;
+    public void setName(Long name) {
+        this.name = name;
     }
 
-    @OneToMany(mappedBy = "faculty")
-    public Set<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(Set<Teacher> teachers) {
-        this.teachers = teachers;
-    }
-
-    @OneToMany(mappedBy = "faculty")
+    @OneToMany(mappedBy = "course")
+    @JsonIgnore
     public Set<FacultyCourse> getFacultyCourses() {
         return facultyCourses;
     }

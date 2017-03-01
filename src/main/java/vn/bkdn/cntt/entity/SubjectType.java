@@ -6,16 +6,16 @@ import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 2/25/2017.
+ * Created by XuanVinh on 3/1/2017.
  */
 
 @Entity
-public class WeekDay {
+public class SubjectType {
     private Long id;
     private String name;
-    private Set<WeekDayLesson> weekDayLessons;
+    private Set<Subject> subjects;
 
-    public WeekDay() {
+    public SubjectType() {
     }
 
     @Id
@@ -36,13 +36,13 @@ public class WeekDay {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "weekDay")
+    @OneToMany(mappedBy = "subjectType")
     @JsonIgnore
-    public Set<WeekDayLesson> getWeekDayLessons() {
-        return weekDayLessons;
+    public Set<Subject> getSubjects() {
+        return subjects;
     }
 
-    public void setWeekDayLessons(Set<WeekDayLesson> weekDayLessons) {
-        this.weekDayLessons = weekDayLessons;
+    public void setSubjects(Set<Subject> subjects) {
+        this.subjects = subjects;
     }
 }

@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -14,10 +16,12 @@ public class Semester {
     private Date startTime;
     private Date endTime;
     private int number;
+
     private Set<UniversityOffSchedule> universityOffSchedules;
     private Set<TeacherOffSchedule> teacherOffSchedules;
-    private Set<Subject> subjects;
     private Set<TimeTable> timeTables;
+    private Set<SubjectClass> subjectClasses;
+    private Set<CollegeClassSemester> collegeClassSemesters;
 
     public Semester() {
     }
@@ -75,20 +79,31 @@ public class Semester {
     }
 
     @OneToMany(mappedBy = "semester")
-    public Set<Subject> getSubjects() {
-        return subjects;
-    }
-
-    public void setSubjects(Set<Subject> subjects) {
-        this.subjects = subjects;
-    }
-
-    @OneToMany(mappedBy = "semester")
     public Set<TimeTable> getTimeTables() {
         return timeTables;
     }
 
     public void setTimeTables(Set<TimeTable> timeTables) {
         this.timeTables = timeTables;
+    }
+
+    @OneToMany(mappedBy = "semester")
+    @JsonIgnore
+    public Set<SubjectClass> getSubjectClasses() {
+        return subjectClasses;
+    }
+
+    public void setSubjectClasses(Set<SubjectClass> subjectClasses) {
+        this.subjectClasses = subjectClasses;
+    }
+
+    @OneToMany(mappedBy = "semester")
+    @JsonIgnore
+    public Set<CollegeClassSemester> getCollegeClassSemesters() {
+        return collegeClassSemesters;
+    }
+
+    public void setCollegeClassSemesters(Set<CollegeClassSemester> collegeClassSemesters) {
+        this.collegeClassSemesters = collegeClassSemesters;
     }
 }

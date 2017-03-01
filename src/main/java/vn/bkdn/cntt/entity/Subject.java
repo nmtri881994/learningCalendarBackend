@@ -12,24 +12,27 @@ import java.util.Set;
 
 @Entity
 public class Subject {
-    private Long id;
+    private String id;
     private String name;
-    private Teacher teacher;
-    private RoomType roomType;
-    private Set<TimeTable> timeTables;
-    private Semester semester;
-    private float capacity;
+    private SubjectType subjectType;
+    private int theoryLessons;
+    private int theoryLessonsPerWeek;
+    private int practiceLessons;
+    private int practiceLessonsPerWeek;
+    private RoomType practiceRoomType;
+
+    private Set<SubjectClass> subjectClasses;
+    private Set<FacultyCourseSubjectRoadMap> facultyCourseSubjectRoadMaps;
 
     public Subject() {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,51 +45,73 @@ public class Subject {
     }
 
     @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "teacher_id")
-    public Teacher getTeacher() {
-        return teacher;
+    @JoinColumn(name = "subjectType_id")
+    public SubjectType getSubjectType() {
+        return subjectType;
     }
 
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+    public void setSubjectType(SubjectType subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public int getTheoryLessons() {
+        return theoryLessons;
+    }
+
+    public void setTheoryLessons(int theoryLessons) {
+        this.theoryLessons = theoryLessons;
+    }
+
+    public int getTheoryLessonsPerWeek() {
+        return theoryLessonsPerWeek;
+    }
+
+    public void setTheoryLessonsPerWeek(int theoryLessonsPerWeek) {
+        this.theoryLessonsPerWeek = theoryLessonsPerWeek;
+    }
+
+    public int getPracticeLessons() {
+        return practiceLessons;
+    }
+
+    public void setPracticeLessons(int practiceLessons) {
+        this.practiceLessons = practiceLessons;
+    }
+
+    public int getPracticeLessonsPerWeek() {
+        return practiceLessonsPerWeek;
+    }
+
+    public void setPracticeLessonsPerWeek(int practiceLessonsPerWeek) {
+        this.practiceLessonsPerWeek = practiceLessonsPerWeek;
     }
 
     @ManyToOne
-    @JoinColumn(name = "roomType_id")
-    public RoomType getRoomType() {
-        return roomType;
+    @JoinColumn(name = "practiceRoomType_id")
+    public RoomType getPracticeRoomType() {
+        return practiceRoomType;
     }
 
-    public void setRoomType(RoomType roomType) {
-        this.roomType = roomType;
+    public void setPracticeRoomType(RoomType practiceRoomType) {
+        this.practiceRoomType = practiceRoomType;
     }
 
     @OneToMany(mappedBy = "subject")
-    public Set<TimeTable> getTimeTables() {
-        return timeTables;
+    public Set<SubjectClass> getSubjectClasses() {
+        return subjectClasses;
     }
 
-    public void setTimeTables(Set<TimeTable> timeTables) {
-        this.timeTables = timeTables;
+    public void setSubjectClasses(Set<SubjectClass> subjectClasses) {
+        this.subjectClasses = subjectClasses;
     }
 
-    @ManyToOne
+    @OneToMany(mappedBy = "subject")
     @JsonIgnore
-    @JoinColumn(name = "semester_id")
-    public Semester getSemester() {
-        return semester;
+    public Set<FacultyCourseSubjectRoadMap> getFacultyCourseSubjectRoadMaps() {
+        return facultyCourseSubjectRoadMaps;
     }
 
-    public void setSemester(Semester semester) {
-        this.semester = semester;
-    }
-
-    public float getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(float capacity) {
-        this.capacity = capacity;
+    public void setFacultyCourseSubjectRoadMaps(Set<FacultyCourseSubjectRoadMap> facultyCourseSubjectRoadMaps) {
+        this.facultyCourseSubjectRoadMaps = facultyCourseSubjectRoadMaps;
     }
 }

@@ -44,7 +44,7 @@ public class RoomType {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "roomType")
+    @OneToMany(mappedBy = "practiceRoomType")
     @JsonIgnore
     public Set<Subject> getSubjects() {
         return subjects;
