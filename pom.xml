@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>vn.bkdn.cntt</groupId>
-	<artifactId>attendance_checkin</artifactId>
+	<artifactId>learning_calendar_backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>attendance_checkin</name>
+	<name>learning_calendar_backend</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
