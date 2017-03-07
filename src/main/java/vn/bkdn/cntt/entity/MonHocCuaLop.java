@@ -1,8 +1,11 @@
 package vn.bkdn.cntt.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.internal.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 /**
  * Created by XuanVinh on 3/6/2017.
@@ -11,17 +14,24 @@ import javax.persistence.*;
 @Entity
 public class MonHocCuaLop {
     private int ID;
+    @NotNull
     private Lop lop;
+    @NotNull
     private MonHocCuaNganh monHocCuaNganh;
     private int HocKi;
     private int TongSoTiet;
     private int TongSoBuoi;
     private int SoBuoiLyThuyet;
+
+    @Column(columnDefinition="INT NULLABLE")
     private int SoTietLyTuyet;
     private int SoBuoiThucHanh;
     private int SoTietThucHanh;
 
     private PhanCong phanCong;
+
+    private int abc;
+    private String aaaa;
 
     public MonHocCuaLop() {
     }
@@ -46,7 +56,7 @@ public class MonHocCuaLop {
     }
 
     @ManyToOne
-    @JoinColumn(name = "MonHocNganh_ID")
+    @JoinColumn(name = "MonHocNganhID")
     public MonHocCuaNganh getMonHocCuaNganh() {
         return monHocCuaNganh;
     }
@@ -119,5 +129,21 @@ public class MonHocCuaLop {
 
     public void setPhanCong(PhanCong phanCong) {
         this.phanCong = phanCong;
+    }
+
+    public int getAbc() {
+        return abc;
+    }
+
+    public void setAbc(int abc) {
+        this.abc = abc;
+    }
+
+    public String getAaaa() {
+        return aaaa;
+    }
+
+    public void setAaaa(String aaaa) {
+        this.aaaa = aaaa;
     }
 }
