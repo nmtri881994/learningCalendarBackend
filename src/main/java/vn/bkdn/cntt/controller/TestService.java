@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.bkdn.cntt.entity.Lop;
+import vn.bkdn.cntt.service.LopService;
 
+import java.nio.file.LinkOption;
 import java.util.List;
 
 /**
@@ -19,11 +22,17 @@ import java.util.List;
 @RequestMapping(value="api")
 public class TestService {
 
+    @Autowired
+    private LopService lopService;
 
     @GetMapping
     public String testGet(){
         return "abaadsa";
     }
 
+    @GetMapping(value = "/class")
+    public ResponseEntity<List<Lop>> getAllClass(){
+        return new ResponseEntity<List<Lop>>(lopService.findAll(), HttpStatus.OK);
+    }
 
 }

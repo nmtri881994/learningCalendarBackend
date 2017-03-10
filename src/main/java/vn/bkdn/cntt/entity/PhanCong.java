@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,6 +15,7 @@ import javax.persistence.OneToOne;
 public class PhanCong {
     private int ID;
     private MonHocCuaLop monHocCuaLop;
+
 
     public PhanCong() {
     }
@@ -28,6 +31,7 @@ public class PhanCong {
 
     @OneToOne
     @JoinColumn(name = "MonHocLopID")
+    @JsonIgnore
     public MonHocCuaLop getMonHocCuaLop() {
         return monHocCuaLop;
     }

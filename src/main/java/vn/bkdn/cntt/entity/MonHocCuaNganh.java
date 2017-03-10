@@ -2,9 +2,7 @@ package vn.bkdn.cntt.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 /**
@@ -14,6 +12,7 @@ import java.util.Set;
 @Entity
 public class MonHocCuaNganh {
     private int ID;
+    private Nganh nganh;
     private String MaMonMhoc;
     private String TenMonMhoc;
 
@@ -29,6 +28,17 @@ public class MonHocCuaNganh {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "NganhID")
+    @JsonIgnore
+    public Nganh getNganh() {
+        return nganh;
+    }
+
+    public void setNganh(Nganh nganh) {
+        this.nganh = nganh;
     }
 
     public String getMaMonMhoc() {

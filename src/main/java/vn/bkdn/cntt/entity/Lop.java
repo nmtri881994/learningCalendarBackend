@@ -19,6 +19,7 @@ public class Lop {
     private BigDecimal NamTuyenSinh;
 
     private Set<MonHocCuaLop> monHocCuaLops;
+    private Set<DTSinhVien> dtSinhViens;
 
     public Lop() {
     }
@@ -67,12 +68,21 @@ public class Lop {
     }
 
     @OneToMany(mappedBy = "lop")
-    @JsonIgnore
     public Set<MonHocCuaLop> getMonHocCuaLops() {
         return monHocCuaLops;
     }
 
     public void setMonHocCuaLops(Set<MonHocCuaLop> monHocCuaLops) {
         this.monHocCuaLops = monHocCuaLops;
+    }
+
+    @OneToMany(mappedBy = "lop")
+    @JsonIgnore
+    public Set<DTSinhVien> getDtSinhViens() {
+        return dtSinhViens;
+    }
+
+    public void setDtSinhViens(Set<DTSinhVien> dtSinhViens) {
+        this.dtSinhViens = dtSinhViens;
     }
 }
