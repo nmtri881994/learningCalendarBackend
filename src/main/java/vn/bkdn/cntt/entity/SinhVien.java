@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * Created by XuanVinh on 3/13/2017.
@@ -16,6 +17,8 @@ public class SinhVien {
     private String hoDem;
     private String ten;
     private LopHoc lopHoc;
+
+    private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
 
     public SinhVien() {
     }
@@ -67,5 +70,14 @@ public class SinhVien {
 
     public void setLopHoc(LopHoc lopHoc) {
         this.lopHoc = lopHoc;
+    }
+
+    @OneToMany(mappedBy = "sinhVien")
+    public Set<LopMonHoc_SinhVien> getLopMonHoc_sinhViens() {
+        return lopMonHoc_sinhViens;
+    }
+
+    public void setLopMonHoc_sinhViens(Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens) {
+        this.lopMonHoc_sinhViens = lopMonHoc_sinhViens;
     }
 }
