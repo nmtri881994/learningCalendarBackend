@@ -3,74 +3,90 @@ package vn.bkdn.cntt.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 3/9/2017.
+ * Created by XuanVinh on 3/13/2017.
  */
 
 @Entity
 public class GiangDuong {
-    private int ID;
-    private String MaGiangDuong;
-    private String TenGiangDuong;
-    private int SoLuongToiDa;
-    private String DiaChi;
+    private int id;
+    private String maGiangDuong;
+    private String ten;
+    private DayNha dayNha;
+    private int tang;
 
-    private Set<MonHocTinChi_GiangDuong> monHocTinChi_giangDuongs;
+    private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
+    private Set<MonHoc_GiangDuong> monHoc_giangDuongs;
 
     public GiangDuong() {
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
+    @Column(columnDefinition = "VARCHAR(10) NOT NULL")
     public String getMaGiangDuong() {
-        return MaGiangDuong;
+        return maGiangDuong;
     }
 
     public void setMaGiangDuong(String maGiangDuong) {
-        MaGiangDuong = maGiangDuong;
+        this.maGiangDuong = maGiangDuong;
     }
 
-    public String getTenGiangDuong() {
-        return TenGiangDuong;
+    @Column(columnDefinition = "NVARCHAR(50) NOT NULL")
+    public String getTen() {
+        return ten;
     }
 
-    public void setTenGiangDuong(String tenGiangDuong) {
-        TenGiangDuong = tenGiangDuong;
+    public void setTen(String ten) {
+        this.ten = ten;
     }
 
-    public int getSoLuongToiDa() {
-        return SoLuongToiDa;
+    @ManyToOne
+    @JoinColumn(name = "dayNhaId")
+    @JsonIgnore
+    @NotNull
+    public DayNha getDayNha() {
+        return dayNha;
     }
 
-    public void setSoLuongToiDa(int soLuongToiDa) {
-        SoLuongToiDa = soLuongToiDa;
+    public void setDayNha(DayNha dayNha) {
+        this.dayNha = dayNha;
     }
 
-    public String getDiaChi() {
-        return DiaChi;
+    public int getTang() {
+        return tang;
     }
 
-    public void setDiaChi(String diaChi) {
-        DiaChi = diaChi;
+    public void setTang(int tang) {
+        this.tang = tang;
     }
 
     @OneToMany(mappedBy = "giangDuong")
-    @JsonIgnore
-    public Set<MonHocTinChi_GiangDuong> getMonHocTinChi_giangDuongs() {
-        return monHocTinChi_giangDuongs;
+    public Set<TKB_LichHocTheoNgay> getTkb_lichHocTheoNgays() {
+        return tkb_lichHocTheoNgays;
     }
 
-    public void setMonHocTinChi_giangDuongs(Set<MonHocTinChi_GiangDuong> monHocTinChi_giangDuongs) {
-        this.monHocTinChi_giangDuongs = monHocTinChi_giangDuongs;
+    public void setTkb_lichHocTheoNgays(Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays) {
+        this.tkb_lichHocTheoNgays = tkb_lichHocTheoNgays;
+    }
+
+    @OneToMany(mappedBy = "giangDuong")
+    public Set<MonHoc_GiangDuong> getMonHoc_giangDuongs() {
+        return monHoc_giangDuongs;
+    }
+
+    public void setMonHoc_giangDuongs(Set<MonHoc_GiangDuong> monHoc_giangDuongs) {
+        this.monHoc_giangDuongs = monHoc_giangDuongs;
     }
 }

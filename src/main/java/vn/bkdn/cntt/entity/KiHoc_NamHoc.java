@@ -3,48 +3,53 @@ package vn.bkdn.cntt.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Set;
 
 /**
- * Created by XuanVinh on 3/9/2017.
+ * Created by XuanVinh on 3/13/2017.
  */
 
 @Entity
-public class KyHoc_NamHoc {
-    private int ID;
-    private KyHoc kyHoc;
+public class KiHoc_NamHoc {
+    private int id;
+    private KiHoc kiHoc;
     private NamHoc namHoc;
     private Date ngayBatDau;
     private Date ngayKetThuc;
 
-    private Set<LopMonHocTinChi> lopMonHocTinChis;
+    private Set<LopMonHoc> lopMonHocs;
 
-    public KyHoc_NamHoc() {
+    public KiHoc_NamHoc() {
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "KyHocID")
-    public KyHoc getKyHoc() {
-        return kyHoc;
-    }
-
-    public void setKyHoc(KyHoc kyHoc) {
-        this.kyHoc = kyHoc;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @ManyToOne
-    @JoinColumn(name = "NamHocID")
+    @JoinColumn(name = "kiHocId")
+    @NotNull
+    @JsonIgnore
+    public KiHoc getKiHoc() {
+        return kiHoc;
+    }
+
+    public void setKiHoc(KiHoc kiHoc) {
+        this.kiHoc = kiHoc;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "namHocId")
+    @NotNull
+    @JsonIgnore
     public NamHoc getNamHoc() {
         return namHoc;
     }
@@ -69,13 +74,12 @@ public class KyHoc_NamHoc {
         this.ngayKetThuc = ngayKetThuc;
     }
 
-    @OneToMany(mappedBy = "kyHoc_namHoc")
-    @JsonIgnore
-    public Set<LopMonHocTinChi> getLopMonHocTinChis() {
-        return lopMonHocTinChis;
+    @OneToMany(mappedBy = "kiHoc_namHoc")
+    public Set<LopMonHoc> getLopMonHocs() {
+        return lopMonHocs;
     }
 
-    public void setLopMonHocTinChis(Set<LopMonHocTinChi> lopMonHocTinChis) {
-        this.lopMonHocTinChis = lopMonHocTinChis;
+    public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
+        this.lopMonHocs = lopMonHocs;
     }
 }
