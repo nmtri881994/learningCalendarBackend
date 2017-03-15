@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 public class NamHoc {
     private int id;
-    private int name;
+    private String name;
     private Date ngayBatDau;
     private Date ngayKetThuc;
 
@@ -30,11 +30,12 @@ public class NamHoc {
         this.id = id;
     }
 
-    public int getName() {
+    @Column(columnDefinition = "VARCHAR(10) NOT NULL")
+    public String getName() {
         return name;
     }
 
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
 

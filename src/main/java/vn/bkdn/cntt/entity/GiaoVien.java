@@ -14,7 +14,7 @@ import java.util.Set;
 public class GiaoVien {
     private int id;
     private String maGiaVien;
-    private String hoDot;
+    private String hoDem;
     private String ten;
 
     private Set<LopMonHoc> lopMonHocs;
@@ -42,12 +42,12 @@ public class GiaoVien {
     }
 
     @Column(columnDefinition = "NVARCHAR(50) NOT NULL")
-    public String getHoDot() {
-        return hoDot;
+    public String getHoDem() {
+        return hoDem;
     }
 
-    public void setHoDot(String hoDot) {
-        this.hoDot = hoDot;
+    public void setHoDem(String hoDem) {
+        this.hoDem = hoDem;
     }
 
     @Column(columnDefinition = "NVARCHAR(20) NOT NULL")
