@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -29,6 +31,7 @@ public class MonHoc {
         this.id = id;
     }
 
+    @Column(columnDefinition = "VARCHAR(10) NOT NULL")
     public String getMaMonHoc() {
         return maMonHoc;
     }
@@ -37,6 +40,7 @@ public class MonHoc {
         this.maMonHoc = maMonHoc;
     }
 
+    @Column(columnDefinition = "NVARCHAR(30) NOT NULL")
     public String getTen() {
         return ten;
     }
@@ -46,6 +50,7 @@ public class MonHoc {
     }
 
     @OneToMany(mappedBy = "monHoc")
+    @JsonIgnore
     public Set<LopMonHoc> getLopMonHocs() {
         return lopMonHocs;
     }

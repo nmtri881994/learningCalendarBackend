@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -37,6 +39,7 @@ public class TKB_Tiet {
     }
 
     @OneToMany(mappedBy = "tkb_tiet")
+    @JsonIgnore
     public Set<TKB_Tiet_Thu> getTkb_tiet_thus() {
         return tkb_tiet_thus;
     }

@@ -31,7 +31,6 @@ public class LopMonHoc_SinhVien {
     @ManyToOne
     @JoinColumn(name = "lopMonHocId")
     @NotNull
-    @JsonIgnore
     public LopMonHoc getLopMonHoc() {
         return lopMonHoc;
     }

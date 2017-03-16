@@ -54,7 +54,6 @@ public class GiangDuong {
 
     @ManyToOne
     @JoinColumn(name = "dayNhaId")
-    @JsonIgnore
     @NotNull
     public DayNha getDayNha() {
         return dayNha;
@@ -73,6 +72,7 @@ public class GiangDuong {
     }
 
     @OneToMany(mappedBy = "giangDuong")
+    @JsonIgnore
     public Set<TKB_LichHocTheoNgay> getTkb_lichHocTheoNgays() {
         return tkb_lichHocTheoNgays;
     }
@@ -82,6 +82,7 @@ public class GiangDuong {
     }
 
     @OneToMany(mappedBy = "giangDuong")
+    @JsonIgnore
     public Set<MonHoc_GiangDuong> getMonHoc_giangDuongs() {
         return monHoc_giangDuongs;
     }

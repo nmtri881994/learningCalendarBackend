@@ -50,6 +50,7 @@ public class LopHoc {
     }
 
     @OneToMany(mappedBy = "lopHoc")
+    @JsonIgnore
     public Set<SinhVien> getSinhViens() {
         return sinhViens;
     }

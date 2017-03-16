@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -37,6 +39,7 @@ public class DayNha {
     }
 
     @OneToMany(mappedBy = "dayNha")
+    @JsonIgnore
     public Set<GiangDuong> getGiangDuongs() {
         return giangDuongs;
     }

@@ -58,6 +58,7 @@ public class KiHoc_NamHoc {
         this.namHoc = namHoc;
     }
 
+    @NotNull
     public Date getNgayBatDau() {
         return ngayBatDau;
     }
@@ -66,6 +67,7 @@ public class KiHoc_NamHoc {
         this.ngayBatDau = ngayBatDau;
     }
 
+    @NotNull
     public Date getNgayKetThuc() {
         return ngayKetThuc;
     }

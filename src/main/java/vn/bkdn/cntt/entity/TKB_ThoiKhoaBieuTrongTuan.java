@@ -43,7 +43,6 @@ public class TKB_ThoiKhoaBieuTrongTuan {
     @ManyToOne
     @JoinColumn(name = "TKB_Tiet_ThuId")
     @NotNull
-    @JsonIgnore
     public TKB_Tiet_Thu getTkb_tiet_thu() {
         return tkb_tiet_thu;
     }

@@ -16,6 +16,8 @@ public class LopMonHoc {
     private MonHoc monHoc;
     private GiaoVien giaoVien;
     private KiHoc_NamHoc kiHoc_namHoc;
+    private int soTietLyThuyet;
+    private int soTietThucHanh;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
@@ -36,7 +38,6 @@ public class LopMonHoc {
     @ManyToOne
     @JoinColumn(name = "monHocId")
     @NotNull
-    @JsonIgnore
     public MonHoc getMonHoc() {
         return monHoc;
     }
@@ -69,6 +70,21 @@ public class LopMonHoc {
         this.kiHoc_namHoc = kiHoc_namHoc;
     }
 
+    public int getSoTietLyThuyet() {
+        return soTietLyThuyet;
+    }
+
+    public void setSoTietLyThuyet(int soTietLyThuyet) {
+        this.soTietLyThuyet = soTietLyThuyet;
+    }
+
+    public int getSoTietThucHanh() {
+        return soTietThucHanh;
+    }
+
+    public void setSoTietThucHanh(int soTietThucHanh) {
+        this.soTietThucHanh = soTietThucHanh;
+    }
 
     @OneToMany(mappedBy = "lopMonHoc")
     public Set<TKB_LichHocTheoNgay> getTkb_lichHocTheoNgays() {
@@ -80,6 +96,7 @@ public class LopMonHoc {
     }
 
     @OneToMany(mappedBy = "lopMonHoc")
+    @JsonIgnore
     public Set<LopMonHoc_SinhVien> getLopMonHoc_sinhViens() {
         return lopMonHoc_sinhViens;
     }

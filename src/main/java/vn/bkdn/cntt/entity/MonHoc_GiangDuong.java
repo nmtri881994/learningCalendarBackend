@@ -42,7 +42,6 @@ public class MonHoc_GiangDuong {
 
     @ManyToOne
     @JoinColumn(name = "giangDuongId")
-    @JsonIgnore
     @NotNull
     public GiangDuong getGiangDuong() {
         return giangDuong;

@@ -34,7 +34,6 @@ public class TKB_Tiet_Thu {
     @ManyToOne
     @JoinColumn(name = "TKB_TietId")
     @NotNull
-    @JsonIgnore
     public TKB_Tiet getTkb_tiet() {
         return tkb_tiet;
     }
@@ -46,7 +45,6 @@ public class TKB_Tiet_Thu {
     @ManyToOne
     @JoinColumn(name = "TKB_ThuId")
     @NotNull
-    @JsonIgnore
     public TKB_Thu getTkb_thu() {
         return tkb_thu;
     }
@@ -56,6 +54,7 @@ public class TKB_Tiet_Thu {
     }
 
     @OneToMany(mappedBy = "tkb_tiet_thu")
+    @JsonIgnore
     public Set<TKB_ThoiKhoaBieuTrongTuan> getTkb_thoiKhoaBieuTrongTuans() {
         return tkb_thoiKhoaBieuTrongTuans;
     }

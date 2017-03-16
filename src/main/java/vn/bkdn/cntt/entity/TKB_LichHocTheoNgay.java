@@ -53,17 +53,7 @@ public class TKB_LichHocTheoNgay {
         this.lopMonHoc = lopMonHoc;
     }
 
-    @OneToMany(mappedBy = "tkb_lichHocTheoNgay")
-    public Set<TKB_ThoiKhoaBieuTrongTuan> getTkb_thoiKhoaBieuTrongTuans() {
-        return tkb_thoiKhoaBieuTrongTuans;
-    }
-
-    public void setTkb_thoiKhoaBieuTrongTuans(Set<TKB_ThoiKhoaBieuTrongTuan> tkb_thoiKhoaBieuTrongTuans) {
-        this.tkb_thoiKhoaBieuTrongTuans = tkb_thoiKhoaBieuTrongTuans;
-    }
-
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "giangDuongId")
     @NotNull
     public GiangDuong getGiangDuong() {
@@ -73,4 +63,14 @@ public class TKB_LichHocTheoNgay {
     public void setGiangDuong(GiangDuong giangDuong) {
         this.giangDuong = giangDuong;
     }
+
+    @OneToMany(mappedBy = "tkb_lichHocTheoNgay")
+    public Set<TKB_ThoiKhoaBieuTrongTuan> getTkb_thoiKhoaBieuTrongTuans() {
+        return tkb_thoiKhoaBieuTrongTuans;
+    }
+
+    public void setTkb_thoiKhoaBieuTrongTuans(Set<TKB_ThoiKhoaBieuTrongTuan> tkb_thoiKhoaBieuTrongTuans) {
+        this.tkb_thoiKhoaBieuTrongTuans = tkb_thoiKhoaBieuTrongTuans;
+    }
+
 }
