@@ -1,4 +1,4 @@
-package vn.bkdn.cntt.Security;
+package vn.bkdn.cntt.security;
 
 import java.io.Serializable;
 

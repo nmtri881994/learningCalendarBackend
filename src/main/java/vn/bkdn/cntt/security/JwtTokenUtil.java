@@ -1,4 +1,4 @@
-package vn.bkdn.cntt.Security;
+package vn.bkdn.cntt.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

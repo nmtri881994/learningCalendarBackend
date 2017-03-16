@@ -1,4 +1,4 @@
-package vn.bkdn.cntt.Security;
+package vn.bkdn.cntt.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,13 +11,13 @@ import java.util.Collection;
  */
 public class JwtUser implements UserDetails {
 
-    private final Long id;
+    private final int id;
     private final String username;
     private String password;
     private final String fullname;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUser(Long id,
+    public JwtUser(int id,
           String username,
           String fullname,
           Collection<? extends GrantedAuthority> authorities
@@ -28,7 +28,7 @@ public class JwtUser implements UserDetails {
         this.authorities = authorities;
     }
     
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
