@@ -6,13 +6,9 @@ public class JwtAuthenticationRequest implements Serializable {
 
     private static final long serialVersionUID = -8445943548965154778L;
 
-
     private String tenDangNhap;
     private String matKhau;
-
-
-
-    private String urlPath;
+    private String role;
 
     public JwtAuthenticationRequest() {
     }
@@ -20,14 +16,6 @@ public class JwtAuthenticationRequest implements Serializable {
     public JwtAuthenticationRequest(String tenDangNhap, String matKhau) {
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
-    }
-
-    public String getUrlPath() {
-        return urlPath;
-    }
-
-    public void setUrlPath(String urlPath) {
-        this.urlPath = urlPath;
     }
 
     public String getTenDangNhap() {
@@ -44,5 +32,13 @@ public class JwtAuthenticationRequest implements Serializable {
 
     public void setMatKhau(String matKhau) {
         this.matKhau = matKhau;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
