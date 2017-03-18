@@ -37,14 +37,15 @@ public class LoginController {
     private TaiKhoanHeThongService taiKhoanHeThongService;
 
     @PostMapping
-    private ResponseEntity<?> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){
+    private ResponseEntity<JwtAuthenticationResponse> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){
         TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhapAndMatKhau(authenticationRequest.getTenDangNhap(), authenticationRequest.getMatKhau());
         if(taiKhoanHeThong == null){
-            throw new AuthenticationCredentialsNotFoundException("Not Found Account");
+            return new ResponseEntity<JwtAuthenticationResponse>(new JwtAuthenticationResponse(null), HttpStatus.NOT_FOUND);
         }else{
             final UserDetails userDetails = userDetailsService.loadUserByUsername(taiKhoanHeThong.getTenDangNhap());
             final String token = jwtTokenUtil.generateToken(userDetails);
-            return new ResponseEntity<Object>(new JwtAuthenticationResponse(token), HttpStatus.OK);
+            System.out.println("token: "+token);
+            return new ResponseEntity<JwtAuthenticationResponse>(new JwtAuthenticationResponse(token), HttpStatus.OK);
         }
     }
 }
