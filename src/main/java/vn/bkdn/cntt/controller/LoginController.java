@@ -14,6 +14,7 @@ import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
 import vn.bkdn.cntt.Service.VaiTroService;
 import vn.bkdn.cntt.entity.TaiKhoanHeThong;
 import vn.bkdn.cntt.entity.VaiTro;
+import vn.bkdn.cntt.jsonEntity.CheckLogin;
 import vn.bkdn.cntt.security.JwtAuthenticationRequest;
 import vn.bkdn.cntt.security.JwtAuthenticationResponse;
 import vn.bkdn.cntt.security.JwtTokenUtil;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "api/login")
+@RequestMapping(value = "api")
 public class LoginController {
 
     @Autowired
@@ -41,7 +42,7 @@ public class LoginController {
     @Autowired
     private VaiTroService vaiTroService;
 
-    @PostMapping
+    @PostMapping(value = "/login")
     private ResponseEntity<?> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){
         System.out.println(authenticationRequest.getTenDangNhap()+"-"+authenticationRequest.getMatKhau());
         TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhapAndMatKhau(authenticationRequest.getTenDangNhap(), authenticationRequest.getMatKhau());
@@ -70,11 +71,12 @@ public class LoginController {
         }
     }
 
-//    @PreAuthorize("isAuthenticated()")
-//    @PostMapping(value = "/check-login")
-//    public void checkLogin(@RequestPart("role") String role){
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/check-login")
+    public void checkLogin(@RequestBody CheckLogin checkLogin){
+        System.out.println("check login");
 //        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
 //        System.out.println("Ten dang nhap: "+tenDangNhap);
-//        System.out.print("Role: "+role);
-//    }
+//        System.out.print("Role: "+checkLogin.getRole());
+    }
 }
