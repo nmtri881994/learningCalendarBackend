@@ -27,56 +27,24 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "api")
+@RequestMapping(value = "/api")
 public class LoginController {
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
-
-    @Autowired
-    private VaiTroService vaiTroService;
-
-    @PostMapping(value = "/login")
-    private ResponseEntity<?> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){
-        System.out.println(authenticationRequest.getTenDangNhap()+"-"+authenticationRequest.getMatKhau());
-        TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhapAndMatKhau(authenticationRequest.getTenDangNhap(), authenticationRequest.getMatKhau());
-        if(taiKhoanHeThong == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }else{
-            List<VaiTro> vaiTros = taiKhoanHeThongService.getAllVaiTroByTaiKhoanId(taiKhoanHeThong.getId());
-            VaiTro inputVaiTro = null;
-            if("sinh_vien".equals(authenticationRequest.getRole())){
-                inputVaiTro = vaiTroService.getVaiTroByName("sinh_vien");
-            }else if("giang_vien".equals(authenticationRequest.getRole())){
-                inputVaiTro = vaiTroService.getVaiTroByName("giang_vien");
-            }else if("giao_vu".equals(authenticationRequest.getRole())){
-                inputVaiTro = vaiTroService.getVaiTroByName("giao_vu");
-            }
-
-            if(vaiTros.contains(inputVaiTro)){
-                final UserDetails userDetails = userDetailsService.loadUserByUsername(taiKhoanHeThong.getTenDangNhap());
-                final String token = jwtTokenUtil.generateToken(userDetails);
-                System.out.println("token: "+token);
-                return new ResponseEntity<JwtAuthenticationResponse>(new JwtAuthenticationResponse(token), HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-
-        }
+    @PreAuthorize("hasRole('SINHVIEN')")
+    @GetMapping(value = "/sinhvien-authen")
+    public ResponseEntity<?> checkSinhVienLogin(){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/check-login")
-    public void checkLogin(@RequestBody CheckLogin checkLogin){
-        System.out.println("check login");
-//        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-//        System.out.println("Ten dang nhap: "+tenDangNhap);
-//        System.out.print("Role: "+checkLogin.getRole());
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/giangvien-authen")
+    public ResponseEntity<?> checkGiangVienLogin(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/giaovu-authen")
+    public ResponseEntity<?> checkGiaoVuLogin(){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

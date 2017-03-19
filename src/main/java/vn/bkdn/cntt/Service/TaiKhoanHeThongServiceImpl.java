@@ -2,11 +2,14 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.entity.VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 import vn.bkdn.cntt.entity.TaiKhoanHeThong;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +21,9 @@ public class TaiKhoanHeThongServiceImpl implements TaiKhoanHeThongService{
 
     @Autowired
     private TaiKhoanHeThongRepository taiKhoanHeThongRepository;
+
+    @Autowired
+    private TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
 
     @Override
     public TaiKhoanHeThong findByTenDangNhapAndMatKhau(String tenDangNhap, String matKhau) {
@@ -31,8 +37,14 @@ public class TaiKhoanHeThongServiceImpl implements TaiKhoanHeThongService{
 
     @Override
     public List<VaiTro> getAllVaiTroByTaiKhoanId(int taiKhoanHeThongId) {
-        List<VaiTro> list = this.taiKhoanHeThongRepository.findOne(taiKhoanHeThongId).getTaiKhoanHeThong_vaiTros().stream().map(x -> x.getVaiTro()).collect(Collectors.toList());
-        return list;
+        TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongRepository.findOne(taiKhoanHeThongId);
+        List<TaiKhoanHeThong_VaiTro> taiKhoanHeThong_vaiTros = taiKhoanHeThong_vaiTroService.getTaiKhoanHeThongVaiTrosByTaiKhoan(taiKhoanHeThong);
+        List<VaiTro> vaiTros = new ArrayList<VaiTro>();
+        for (TaiKhoanHeThong_VaiTro taiKhoanHeThong_vaiTro:
+             taiKhoanHeThong_vaiTros) {
+            vaiTros.add(taiKhoanHeThong_vaiTro.getVaiTro());
+        }
+        return vaiTros;
     }
 
 }
