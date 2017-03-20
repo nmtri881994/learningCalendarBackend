@@ -6,16 +6,16 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by XuanVinh on 3/13/2017.
+ * Created by XuanVinh on 3/20/2017.
  */
 
 @Entity
-public class TKB_ThoiKhoaBieuTrongTuan {
+public class TKB_LichHocTheoNgay_Tiet {
     private int id;
     private TKB_LichHocTheoNgay tkb_lichHocTheoNgay;
-    private TKB_Tiet_Thu tkb_tiet_thu;
+    private TKB_Tiet tkb_tiet;
 
-    public TKB_ThoiKhoaBieuTrongTuan() {
+    public TKB_LichHocTheoNgay_Tiet() {
     }
 
     @Id
@@ -29,9 +29,9 @@ public class TKB_ThoiKhoaBieuTrongTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkb_LichHocTheoNgayId")
-    @NotNull
+    @JoinColumn(name = "tkbLichHocTheoNgayId")
     @JsonIgnore
+    @NotNull
     public TKB_LichHocTheoNgay getTkb_lichHocTheoNgay() {
         return tkb_lichHocTheoNgay;
     }
@@ -41,13 +41,13 @@ public class TKB_ThoiKhoaBieuTrongTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "TKB_Tiet_ThuId")
+    @JoinColumn(name = "tkbTietId")
     @NotNull
-    public TKB_Tiet_Thu getTkb_tiet_thu() {
-        return tkb_tiet_thu;
+    public TKB_Tiet getTkb_tiet() {
+        return tkb_tiet;
     }
 
-    public void setTkb_tiet_thu(TKB_Tiet_Thu tkb_tiet_thu) {
-        this.tkb_tiet_thu = tkb_tiet_thu;
+    public void setTkb_tiet(TKB_Tiet tkb_tiet) {
+        this.tkb_tiet = tkb_tiet;
     }
 }
