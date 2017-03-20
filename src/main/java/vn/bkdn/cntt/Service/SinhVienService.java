@@ -11,5 +11,5 @@ public interface SinhVienService {
     List<SinhVien> findAll();
 
     SinhVien findOne(int sinhVienId);
-    SinhVien findOneByMaSinhVien(String maSinhVien);
+    SinhVien findByMaSinhVien(String maSinhVien);
 }

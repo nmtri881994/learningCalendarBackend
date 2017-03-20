@@ -42,7 +42,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login")
     private ResponseEntity<?> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){
-        System.out.println(authenticationRequest.getTenDangNhap()+"-"+authenticationRequest.getMatKhau());
+//        System.out.println(authenticationRequest.getTenDangNhap()+"-"+authenticationRequest.getMatKhau());
         TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhapAndMatKhau(authenticationRequest.getTenDangNhap(), authenticationRequest.getMatKhau());
         if(taiKhoanHeThong == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -60,7 +60,7 @@ public class AuthenticationController {
             if(vaiTros.contains(inputVaiTro)){
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(taiKhoanHeThong.getTenDangNhap());
                 final String token = jwtTokenUtil.generateToken(userDetails);
-                System.out.println("token: "+token);
+//                System.out.println("token: "+token);
                 return new ResponseEntity<JwtAuthenticationResponse>(new JwtAuthenticationResponse(token), HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);

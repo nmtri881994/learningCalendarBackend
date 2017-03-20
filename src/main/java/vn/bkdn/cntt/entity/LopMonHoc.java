@@ -1,5 +1,6 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Set;
  */
 
 @Entity
+@JsonFilter("filter.LopMonHoc")
 public class LopMonHoc {
     private int id;
     private MonHoc monHoc;

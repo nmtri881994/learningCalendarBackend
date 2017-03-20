@@ -29,7 +29,7 @@ public class SinhVienServiceImpl implements SinhVienService{
     }
 
     @Override
-    public SinhVien findOneByMaSinhVien(String maSinhVien) {
+    public SinhVien findByMaSinhVien(String maSinhVien) {
         return sinhVienRepository.findByMaSinhVien(maSinhVien);
     }
 }

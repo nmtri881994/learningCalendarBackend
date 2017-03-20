@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThong_VaiTroService;
+import vn.bkdn.cntt.common.CalendarCommonUtils;
 import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 
@@ -38,9 +39,7 @@ public class test {
         Calendar c = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date date = dateFormat.parse("11-03-2017");
-
         c.setTime(date);
-        System.out.println("La thu: "+c.get(Calendar.DAY_OF_WEEK));
     }
 
     @GetMapping(value="/taikhoan/{taiKhoanId}")

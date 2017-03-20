@@ -20,6 +20,7 @@ import vn.bkdn.cntt.security.JwtAuthenticationResponse;
 import vn.bkdn.cntt.security.JwtTokenUtil;
 
 import javax.validation.Valid;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -29,6 +30,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api")
 public class LoginController {
+
+    @Autowired
+    private TaiKhoanHeThongService taiKhoanHeThongService;
 
     @PreAuthorize("hasRole('SINHVIEN')")
     @GetMapping(value = "/sinhvien-authen")
@@ -47,4 +51,19 @@ public class LoginController {
     public ResponseEntity<?> checkGiaoVuLogin(){
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/user-name")
+    public String getTaiKhoanHeThongInfo(){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        return taiKhoanHeThongService.findByTenDangNhap(tenDangNhap).getHoVaTen();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/user-name1")
+    public String getTaiKhoanHeThongInfo1(){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        return taiKhoanHeThongService.findByTenDangNhap(tenDangNhap).getHoVaTen();
+    }
+
 }
