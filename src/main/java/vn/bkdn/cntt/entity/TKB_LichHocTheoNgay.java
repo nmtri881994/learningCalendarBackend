@@ -18,8 +18,8 @@ public class TKB_LichHocTheoNgay {
     private TKB_Thu tkb_thu;
     private LopMonHoc lopMonHoc;
     private GiangDuong giangDuong;
-
-    private Set<TKB_LichHocTheoNgay_Tiet> tkb_lichHocTheoNgay_tiets;
+    private TKB_Tiet tkb_tietDauTien;
+    private TKB_Tiet tkb_tietCuoiCung;
 
     public TKB_LichHocTheoNgay() {
     }
@@ -76,12 +76,25 @@ public class TKB_LichHocTheoNgay {
         this.tkb_thu = tkb_thu;
     }
 
-    @OneToMany(mappedBy = "tkb_lichHocTheoNgay")
-    public Set<TKB_LichHocTheoNgay_Tiet> getTkb_lichHocTheoNgay_tiets() {
-        return tkb_lichHocTheoNgay_tiets;
+    @ManyToOne
+    @JoinColumn(name = "tkbTietDauTienId")
+    @NotNull
+    public TKB_Tiet getTkb_tietDauTien() {
+        return tkb_tietDauTien;
     }
 
-    public void setTkb_lichHocTheoNgay_tiets(Set<TKB_LichHocTheoNgay_Tiet> tkb_lichHocTheoNgay_tiets) {
-        this.tkb_lichHocTheoNgay_tiets = tkb_lichHocTheoNgay_tiets;
+    public void setTkb_tietDauTien(TKB_Tiet tkb_tietDauTien) {
+        this.tkb_tietDauTien = tkb_tietDauTien;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tkbTietCuoiCungId")
+    @NotNull
+    public TKB_Tiet getTkb_tietCuoiCung() {
+        return tkb_tietCuoiCung;
+    }
+
+    public void setTkb_tietCuoiCung(TKB_Tiet tkb_tietCuoiCung) {
+        this.tkb_tietCuoiCung = tkb_tietCuoiCung;
     }
 }

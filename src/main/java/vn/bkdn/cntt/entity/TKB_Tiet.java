@@ -14,7 +14,8 @@ public class TKB_Tiet {
     private int id;
     private String ten;
 
-    private Set<TKB_LichHocTheoNgay_Tiet> tkb_lichHocTheoNgay_tiets;
+    private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietDauTiens;
+    private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietCuoiCungs;
 
     public TKB_Tiet() {
     }
@@ -38,13 +39,23 @@ public class TKB_Tiet {
         this.ten = ten;
     }
 
-    @OneToMany(mappedBy = "tkb_tiet")
+    @OneToMany(mappedBy = "tkb_tietDauTien")
     @JsonIgnore
-    public Set<TKB_LichHocTheoNgay_Tiet> getTkb_lichHocTheoNgay_tiets() {
-        return tkb_lichHocTheoNgay_tiets;
+    public Set<TKB_LichHocTheoNgay> getTkb_lichHocTheoNgay_tietDauTiens() {
+        return tkb_lichHocTheoNgay_tietDauTiens;
     }
 
-    public void setTkb_lichHocTheoNgay_tiets(Set<TKB_LichHocTheoNgay_Tiet> tkb_lichHocTheoNgay_tiets) {
-        this.tkb_lichHocTheoNgay_tiets = tkb_lichHocTheoNgay_tiets;
+    public void setTkb_lichHocTheoNgay_tietDauTiens(Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietDauTiens) {
+        this.tkb_lichHocTheoNgay_tietDauTiens = tkb_lichHocTheoNgay_tietDauTiens;
+    }
+
+    @OneToMany(mappedBy = "tkb_tietCuoiCung")
+    @JsonIgnore
+    public Set<TKB_LichHocTheoNgay> getTkb_lichHocTheoNgay_tietCuoiCungs() {
+        return tkb_lichHocTheoNgay_tietCuoiCungs;
+    }
+
+    public void setTkb_lichHocTheoNgay_tietCuoiCungs(Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietCuoiCungs) {
+        this.tkb_lichHocTheoNgay_tietCuoiCungs = tkb_lichHocTheoNgay_tietCuoiCungs;
     }
 }

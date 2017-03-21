@@ -77,6 +77,7 @@ public class KiHoc_NamHoc {
     }
 
     @OneToMany(mappedBy = "kiHoc_namHoc")
+    @JsonIgnore
     public Set<LopMonHoc> getLopMonHocs() {
         return lopMonHocs;
     }
