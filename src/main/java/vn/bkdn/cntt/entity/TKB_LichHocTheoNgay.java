@@ -20,6 +20,8 @@ public class TKB_LichHocTheoNgay {
     private GiangDuong giangDuong;
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
+    private boolean thiGiuaKy;
+    private boolean thiCuoiKy;
 
     public TKB_LichHocTheoNgay() {
     }
@@ -96,5 +98,25 @@ public class TKB_LichHocTheoNgay {
 
     public void setTkb_tietCuoiCung(TKB_Tiet tkb_tietCuoiCung) {
         this.tkb_tietCuoiCung = tkb_tietCuoiCung;
+    }
+
+    @NotNull
+    @Column(columnDefinition = "bit default 0")
+    public boolean isThiGiuaKy() {
+        return thiGiuaKy;
+    }
+
+    public void setThiGiuaKy(boolean thiGiuaKy) {
+        this.thiGiuaKy = thiGiuaKy;
+    }
+
+    @NotNull
+    @Column(columnDefinition = "bit default 0")
+    public boolean isThiCuoiKy() {
+        return thiCuoiKy;
+    }
+
+    public void setThiCuoiKy(boolean thiCuoiKy) {
+        this.thiCuoiKy = thiCuoiKy;
     }
 }
