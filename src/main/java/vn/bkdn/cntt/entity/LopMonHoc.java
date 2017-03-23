@@ -51,7 +51,6 @@ public class LopMonHoc {
     @ManyToOne
     @JoinColumn(name = "giaoVienId")
     @NotNull
-    @JsonIgnore
     public GiaoVien getGiaoVien() {
         return giaoVien;
     }
