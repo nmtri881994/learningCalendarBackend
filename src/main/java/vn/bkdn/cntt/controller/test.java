@@ -3,10 +3,8 @@ package vn.bkdn.cntt.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import vn.bkdn.cntt.Service.GiaoVienService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThong_VaiTroService;
@@ -15,12 +13,14 @@ import vn.bkdn.cntt.entity.GiaoVien;
 import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by XuanVinh on 3/13/2017.
@@ -28,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/test")
+@CrossOrigin(value = "*")
 public class test {
 
     @Autowired
@@ -57,4 +58,23 @@ public class test {
         return new ResponseEntity<GiaoVien>(giaoVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
     }
 
+    private List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+
+    @GetMapping("/chats")
+    public SseEmitter chats(){
+        SseEmitter sseEmitter = new SseEmitter();
+        emitters.add(sseEmitter);
+
+        sseEmitter.onCompletion(() -> emitters.remove(sseEmitter));
+        return sseEmitter;
+    }
+
+    @PostMapping(value = "/chat")
+    public void postChatMess(@RequestBody String chatMess) throws IOException {
+        System.out.println("Received message: "+chatMess);
+        for (SseEmitter sseEmitter:
+             emitters) {
+            sseEmitter.send(SseEmitter.event().name("response").data(chatMess));
+        }
+    }
 }
