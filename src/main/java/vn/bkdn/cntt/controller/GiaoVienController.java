@@ -3,8 +3,6 @@ package vn.bkdn.cntt.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.NamHocService;
+import vn.bkdn.cntt.Service.GiaoVienService;
+import vn.bkdn.cntt.Service.LopMonHocService;
 import vn.bkdn.cntt.Service.SinhVienService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
-import vn.bkdn.cntt.entity.*;
+import vn.bkdn.cntt.entity.GiaoVien;
+import vn.bkdn.cntt.entity.LopMonHoc;
+import vn.bkdn.cntt.entity.LopMonHoc_SinhVien;
+import vn.bkdn.cntt.entity.SinhVien;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,14 +33,14 @@ import java.util.*;
  */
 
 @RestController
-@RequestMapping(value = "/api/sinhvien")
-public class SinhVienController {
+@RequestMapping(value = "/api/giaovien")
+public class GiaoVienController {
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private GiaoVienService giaoVienService;
 
     @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
+    private LopMonHocService lopMonHocService;
 
 
 
@@ -53,24 +55,16 @@ public class SinhVienController {
         int currentYear = utilDate.getYear();
         int currentWeek = c.get(Calendar.WEEK_OF_YEAR);
 
-        //Get all student classes' calendar
+        //Get teacher who requests
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
-        Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens = sinhVien.getLopMonHoc_sinhViens();
-        List<LopMonHoc> lopMonHocs = new ArrayList<>();
-        for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-             lopMonHoc_sinhViens) {
-            lopMonHocs.add(lopMonHoc_sinhVien.getLopMonHoc());
-        }
-
-        //Filter student classes' calendar by input date
-        CalendarCommonUtils calendarCommonUtils = new CalendarCommonUtils();
-        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, currentYear, currentWeek);
+        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(tenDangNhap);
+//
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "giaoVien", "tkb_lichHocTheoNgays", "monHoc"));
+                        .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "monHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
 

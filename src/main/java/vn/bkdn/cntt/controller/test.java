@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.bkdn.cntt.Service.GiaoVienService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThong_VaiTroService;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
+import vn.bkdn.cntt.entity.GiaoVien;
 import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 
@@ -34,6 +36,9 @@ public class test {
     @Autowired
     private TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
+    @Autowired
+    private GiaoVienService giaoVienService;
+
     @GetMapping(value = "/1")
     public void getCalendaer() throws ParseException {
         Calendar c = Calendar.getInstance();
@@ -45,6 +50,11 @@ public class test {
     @GetMapping(value="/taikhoan/{taiKhoanId}")
     public ResponseEntity<List<TaiKhoanHeThong_VaiTro>> getTaiKhoanVaiTro(@PathVariable int taiKhoanId){
         return new ResponseEntity<List<TaiKhoanHeThong_VaiTro>>(taiKhoanHeThong_vaiTroService.getTaiKhoanHeThongVaiTrosByTaiKhoan(taiKhoanHeThongRepository.findOne(taiKhoanId)), HttpStatus.OK);
+    }
+
+    @GetMapping(value="/giaovien/{maGiaoVien}")
+    public ResponseEntity<GiaoVien> getGiaoVien(@PathVariable String maGiaoVien){
+        return new ResponseEntity<GiaoVien>(giaoVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
     }
 
 }

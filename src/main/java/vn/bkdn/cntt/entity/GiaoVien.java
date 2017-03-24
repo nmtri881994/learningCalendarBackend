@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 public class GiaoVien {
     private int id;
-    private String maGiaVien;
+    private String maGiaoVien;
     private String hoDem;
     private String ten;
 
@@ -32,13 +32,14 @@ public class GiaoVien {
         this.id = id;
     }
 
-    @Column(columnDefinition = "VARCHAR(20) NOT NULL")
-    public String getMaGiaVien() {
-        return maGiaVien;
+    @NotNull
+    @Column(columnDefinition = "VARCHAR(20)")
+    public String getMaGiaoVien() {
+        return maGiaoVien;
     }
 
-    public void setMaGiaVien(String maGiaVien) {
-        this.maGiaVien = maGiaVien;
+    public void setMaGiaoVien(String maGiaoVien) {
+        this.maGiaoVien = maGiaoVien;
     }
 
     @Column(columnDefinition = "NVARCHAR(50) NOT NULL")
