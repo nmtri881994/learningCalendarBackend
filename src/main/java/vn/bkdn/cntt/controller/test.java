@@ -58,23 +58,4 @@ public class test {
         return new ResponseEntity<GiaoVien>(giaoVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
     }
 
-    private List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-
-    @GetMapping("/chats")
-    public SseEmitter chats(){
-        SseEmitter sseEmitter = new SseEmitter();
-        emitters.add(sseEmitter);
-
-        sseEmitter.onCompletion(() -> emitters.remove(sseEmitter));
-        return sseEmitter;
-    }
-
-    @PostMapping(value = "/chat")
-    public void postChatMess(@RequestBody String chatMess) throws IOException {
-        System.out.println("Received message: "+chatMess);
-        for (SseEmitter sseEmitter:
-             emitters) {
-            sseEmitter.send(SseEmitter.event().name("response").data(chatMess));
-        }
-    }
 }
