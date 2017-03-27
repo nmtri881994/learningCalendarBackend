@@ -61,12 +61,17 @@ public class GiaoVienController {
 //
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
+        //Filter student classes' calendar by input date
+        CalendarCommonUtils calendarCommonUtils = new CalendarCommonUtils();
+        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, currentYear, currentWeek);
+
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
                         .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "monHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
+
 
         return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
     }
