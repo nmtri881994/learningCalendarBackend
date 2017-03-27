@@ -22,6 +22,7 @@ public class TKB_LichHocTheoNgay {
     private TKB_Tiet tkb_tietCuoiCung;
     private boolean thiGiuaKy;
     private boolean thiCuoiKy;
+    private String giaoVienNhan;
 
     public TKB_LichHocTheoNgay() {
     }
@@ -118,5 +119,14 @@ public class TKB_LichHocTheoNgay {
 
     public void setThiCuoiKy(boolean thiCuoiKy) {
         this.thiCuoiKy = thiCuoiKy;
+    }
+
+    @Column(columnDefinition = "nvarchar(500)")
+    public String getGiaoVienNhan() {
+        return giaoVienNhan;
+    }
+
+    public void setGiaoVienNhan(String giaoVienNhan) {
+        this.giaoVienNhan = giaoVienNhan;
     }
 }

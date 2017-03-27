@@ -13,15 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.GiaoVienService;
-import vn.bkdn.cntt.Service.LopMonHocService;
-import vn.bkdn.cntt.Service.SinhVienService;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
+import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
-import vn.bkdn.cntt.entity.GiaoVien;
-import vn.bkdn.cntt.entity.LopMonHoc;
-import vn.bkdn.cntt.entity.LopMonHoc_SinhVien;
-import vn.bkdn.cntt.entity.SinhVien;
+import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -42,7 +36,8 @@ public class GiaoVienController {
     @Autowired
     private LopMonHocService lopMonHocService;
 
-
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -74,5 +69,11 @@ public class GiaoVienController {
 
 
         return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/lesson/{lessonId}")
+    public ResponseEntity<TKB_LichHocTheoNgay> getLessonDetail(@PathVariable int lessonId){
+        return new ResponseEntity<TKB_LichHocTheoNgay>(tkb_lichHocTheoNgayService.findOne(lessonId), HttpStatus.OK);
     }
 }
