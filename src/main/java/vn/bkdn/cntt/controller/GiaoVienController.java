@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
 import vn.bkdn.cntt.entity.*;
@@ -73,7 +70,14 @@ public class GiaoVienController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/lesson/{lessonId}")
-    public ResponseEntity<TKB_LichHocTheoNgay> getLessonDetail(@PathVariable int lessonId){
-        return new ResponseEntity<TKB_LichHocTheoNgay>(tkb_lichHocTheoNgayService.findOne(lessonId), HttpStatus.OK);
+    public ResponseEntity<TKB_LichHocTheoNgay> getLessonDetail(@PathVariable int lessonId) {
+        return new ResponseEntity<TKB_LichHocTheoNgay>(this.tkb_lichHocTheoNgayService.findOne(lessonId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @PostMapping(value = "/edit/lesson")
+    public ResponseEntity<?> editLesson(@RequestBody TKB_LichHocTheoNgay tkb_lichHocTheoNgay){
+        return new ResponseEntity<Object>(this.tkb_lichHocTheoNgayService.updateBuoiHoc(tkb_lichHocTheoNgay),HttpStatus.OK);
+
     }
 }
