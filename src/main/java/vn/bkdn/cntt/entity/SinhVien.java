@@ -19,6 +19,7 @@ public class SinhVien {
     private LopHoc lopHoc;
 
     private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
+    private Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus;
 
     public SinhVien() {
     }
@@ -78,5 +79,15 @@ public class SinhVien {
 
     public void setLopMonHoc_sinhViens(Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens) {
         this.lopMonHoc_sinhViens = lopMonHoc_sinhViens;
+    }
+
+    @OneToMany(mappedBy = "sinhVien")
+
+    public Set<TKB_LichHocTheoNgay_SinhVienGhiChu> getTkb_lichHocTheoNgay_sinhVienGhiChus() {
+        return tkb_lichHocTheoNgay_sinhVienGhiChus;
+    }
+
+    public void setTkb_lichHocTheoNgay_sinhVienGhiChus(Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus) {
+        this.tkb_lichHocTheoNgay_sinhVienGhiChus = tkb_lichHocTheoNgay_sinhVienGhiChus;
     }
 }

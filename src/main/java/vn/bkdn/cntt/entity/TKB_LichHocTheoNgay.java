@@ -23,6 +23,9 @@ public class TKB_LichHocTheoNgay {
     private boolean thiGiuaKy;
     private boolean thiCuoiKy;
     private String giaoVienNhan;
+    private String giaoVienGhiChu;
+
+    private Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus;
 
     public TKB_LichHocTheoNgay() {
     }
@@ -128,5 +131,23 @@ public class TKB_LichHocTheoNgay {
 
     public void setGiaoVienNhan(String giaoVienNhan) {
         this.giaoVienNhan = giaoVienNhan;
+    }
+
+    @Column(columnDefinition = "nvarchar(500)")
+    public String getGiaoVienGhiChu() {
+        return giaoVienGhiChu;
+    }
+
+    public void setGiaoVienGhiChu(String giaoVienGhiChu) {
+        this.giaoVienGhiChu = giaoVienGhiChu;
+    }
+
+    @OneToMany(mappedBy = "tkbLichHocTheoNgay")
+    public Set<TKB_LichHocTheoNgay_SinhVienGhiChu> getTkb_lichHocTheoNgay_sinhVienGhiChus() {
+        return tkb_lichHocTheoNgay_sinhVienGhiChus;
+    }
+
+    public void setTkb_lichHocTheoNgay_sinhVienGhiChus(Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus) {
+        this.tkb_lichHocTheoNgay_sinhVienGhiChus = tkb_lichHocTheoNgay_sinhVienGhiChus;
     }
 }

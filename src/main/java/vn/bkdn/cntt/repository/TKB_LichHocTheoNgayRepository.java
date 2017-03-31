@@ -24,7 +24,4 @@ public interface TKB_LichHocTheoNgayRepository extends JpaRepository<TKB_LichHoc
             "giao_vien_nhan = ?8 where id = ?9", nativeQuery = true)
     void updateBuoiHoc(Date ngay, int tkb_thuId, int giangDuongId, int tkb_tietDauTienId, int tkb_tietCuoiCungId,
                                       boolean thiGiuaKy, boolean thiCuoiKy, String giaoVienNhan, int tkb_lichHocTheoNgayId);
-
-    @Query(value = "update tkb_lich_hoc_theo_ngay set ngay = '2017-03-27', tkb_thu_id = 2 where id = 11", nativeQuery = true)
-    void updateBuoiHoc2();
 }

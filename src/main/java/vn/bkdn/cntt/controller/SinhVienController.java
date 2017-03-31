@@ -11,14 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.NamHocService;
-import vn.bkdn.cntt.Service.SinhVienService;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
+import org.springframework.web.bind.annotation.*;
+import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
+import vn.bkdn.cntt.controller.APIEntity.EditStudentNote;
 import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
@@ -40,7 +36,11 @@ public class SinhVienController {
     @Autowired
     private TaiKhoanHeThongService taiKhoanHeThongService;
 
+    @Autowired
+    private TKB_LichHocTheoNgay_SinhVienGhiChuService tkb_lichHocTheoNgay_sinhVienGhiChuService;
 
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -75,5 +75,23 @@ public class SinhVienController {
         mappingJacksonValue.setFilters(filterProvider);
 
         return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/calendar/note/{lichHocTheoNgayId}")
+    public String getNoteByCalendarId(@PathVariable int lichHocTheoNgayId){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+
+        TKB_LichHocTheoNgay_SinhVienGhiChu tkb_lichHocTheoNgay_sinhVienGhiChu = tkb_lichHocTheoNgay_sinhVienGhiChuService.findByTkbLichHocTheoNgayAndSinhVien(lichHocTheoNgayId, sinhVien.getId());
+        return tkb_lichHocTheoNgay_sinhVienGhiChu.getSinhVienGhiChu();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/calendar/note/edit")
+    public void editCalendarNote(@RequestBody EditStudentNote editStudentNote){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), sinhVien.getId());
     }
 }
