@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.bkdn.cntt.Service.NamHocService;
+import vn.bkdn.cntt.Service.TKB_LichHocTheoNgayService;
+import vn.bkdn.cntt.Service.TKB_TietService;
 import vn.bkdn.cntt.entity.NamHoc;
+import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
+import vn.bkdn.cntt.entity.TKB_Tiet;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -40,13 +44,13 @@ public class CalendarController {
         //GetLearningYear of input date
         List<NamHoc> namHocs = namHocService.findAll();
         NamHoc namHocOfDate = new NamHoc();
-        for (NamHoc namHoc:
+        for (NamHoc namHoc :
                 namHocs) {
             DateTime inputDateTime = new DateTime(utilDate);
             DateTime startLearningYearDateTime = new DateTime(dateFormat.parse(namHoc.getNgayBatDau().toString()));
             DateTime endLearningYearDateTime = new DateTime(dateFormat.parse(namHoc.getNgayKetThuc().toString()));
 
-            if(Days.daysBetween(startLearningYearDateTime, inputDateTime).getDays() >= 0 && Days.daysBetween(inputDateTime, endLearningYearDateTime).getDays() >= 0){
+            if (Days.daysBetween(startLearningYearDateTime, inputDateTime).getDays() >= 0 && Days.daysBetween(inputDateTime, endLearningYearDateTime).getDays() >= 0) {
                 namHocOfDate = namHoc;
                 break;
             }
@@ -63,19 +67,39 @@ public class CalendarController {
 
         //GetLearningYear of input date
         List<NamHoc> namHocs = namHocService.findAll();
-        int days=0;
-        for (NamHoc namHoc:
+        int days = 0;
+        for (NamHoc namHoc :
                 namHocs) {
             DateTime inputDateTime = new DateTime(utilDate);
             DateTime startLearningYearDateTime = new DateTime(dateFormat.parse(namHoc.getNgayBatDau().toString()));
             DateTime endLearningYearDateTime = new DateTime(dateFormat.parse(namHoc.getNgayKetThuc().toString()));
 
-            if(Days.daysBetween(startLearningYearDateTime, inputDateTime).getDays() >= 0 && Days.daysBetween(inputDateTime, endLearningYearDateTime).getDays() >= 0){
+            if (Days.daysBetween(startLearningYearDateTime, inputDateTime).getDays() >= 0 && Days.daysBetween(inputDateTime, endLearningYearDateTime).getDays() >= 0) {
                 days = Days.daysBetween(startLearningYearDateTime, inputDateTime).getDays();
                 break;
             }
         }
 
-        return ((days/7)+1);
+        return ((days / 7) + 1);
+    }
+
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
+    @Autowired
+    private TKB_TietService tkb_tietService;
+
+    @GetMapping(value = "/available-lessons/{roomId}/{date}")
+    public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int roomId, @PathVariable String date) {
+        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+
+        List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaPhongs = tkb_lichHocTheoNgayService.getLichHocOfRoomByDate(roomId, date);
+        for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay:
+                tkb_lichHocTheoNgayCuaPhongs) {
+            List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoNgay.getTkb_tietDauTien().getId()-1, tkb_lichHocTheoNgay.getTkb_tietCuoiCung().getId()+1);
+            tkb_availableLessons.removeAll(tkb_tietNotFrees);
+        }
+
+        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
     }
 }

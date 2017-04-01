@@ -12,6 +12,7 @@ import java.util.Set;
 @Entity
 public class TKB_Tiet {
     private int id;
+    private int thuTu;
     private String ten;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietDauTiens;
@@ -28,6 +29,14 @@ public class TKB_Tiet {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getThuTu() {
+        return thuTu;
+    }
+
+    public void setThuTu(int thuTu) {
+        this.thuTu = thuTu;
     }
 
     @Column(columnDefinition = "NVARCHAR(20) NOT NULL")

@@ -28,6 +28,7 @@ public class TKB_Thu {
         this.id = id;
     }
 
+
     @Column(columnDefinition = "NVARCHAR(20) NOT NULL")
     public String getTen() {
         return ten;

@@ -82,7 +82,6 @@ public class SinhVien {
     }
 
     @OneToMany(mappedBy = "sinhVien")
-
     public Set<TKB_LichHocTheoNgay_SinhVienGhiChu> getTkb_lichHocTheoNgay_sinhVienGhiChus() {
         return tkb_lichHocTheoNgay_sinhVienGhiChus;
     }

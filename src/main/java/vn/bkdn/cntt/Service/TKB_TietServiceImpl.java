@@ -19,6 +19,11 @@ public class TKB_TietServiceImpl implements  TKB_TietService{
 
     @Override
     public List<TKB_Tiet> findAll() {
-        return tkb_tietRepository.findAll();
+        return tkb_tietRepository.findAllByOrderByThuTuAsc();
+    }
+
+    @Override
+    public List<TKB_Tiet> findByIdGreaterThanAndIdLessThan(int startLessonId, int endLessonId) {
+        return tkb_tietRepository.findByIdGreaterThanAndIdLessThan(startLessonId, endLessonId);
     }
 }
