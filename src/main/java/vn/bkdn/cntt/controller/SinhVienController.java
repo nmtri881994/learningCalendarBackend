@@ -92,6 +92,7 @@ public class SinhVienController {
     public void editCalendarNote(@RequestBody EditStudentNote editStudentNote){
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        System.out.println(editStudentNote.getEditedNote()+"-"+ editStudentNote.getLessonId()+"-"+  sinhVien.getId());
         tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), sinhVien.getId());
     }
 }

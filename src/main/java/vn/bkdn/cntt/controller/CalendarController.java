@@ -10,18 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.NamHocService;
-import vn.bkdn.cntt.Service.TKB_LichHocTheoNgayService;
-import vn.bkdn.cntt.Service.TKB_TietService;
-import vn.bkdn.cntt.entity.NamHoc;
-import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
-import vn.bkdn.cntt.entity.TKB_Tiet;
+import vn.bkdn.cntt.Service.*;
+import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Tri on 3/24/2017.
@@ -33,6 +31,18 @@ public class CalendarController {
 
     @Autowired
     private NamHocService namHocService;
+
+    @Autowired
+    private GiaoVienService giaoVienService;
+
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
+    @Autowired
+    private TKB_TietService tkb_tietService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/learning-year/{date}")
@@ -83,12 +93,6 @@ public class CalendarController {
         return ((days / 7) + 1);
     }
 
-    @Autowired
-    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
-
-    @Autowired
-    private TKB_TietService tkb_tietService;
-
     @GetMapping(value = "/available-lessons/{roomId}/{date}")
     public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int roomId, @PathVariable String date) {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
@@ -102,4 +106,6 @@ public class CalendarController {
 
         return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
     }
+
+
 }
