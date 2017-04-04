@@ -2,6 +2,7 @@ package vn.bkdn.cntt.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import vn.bkdn.cntt.entity.GiaoVien;
 import vn.bkdn.cntt.entity.TKB_LichNghiCuaGiaoVien;
 
 import java.sql.Date;
@@ -13,5 +14,5 @@ import java.util.List;
 
 @Repository
 public interface TKB_LichNghiCuaGiaoVienRepository extends JpaRepository<TKB_LichNghiCuaGiaoVien, Integer>{
-    TKB_LichNghiCuaGiaoVien findByNgay(Date ngay);
+    TKB_LichNghiCuaGiaoVien findByGiaoVienAndNgay(GiaoVien giaoVien,Date ngay);
 }

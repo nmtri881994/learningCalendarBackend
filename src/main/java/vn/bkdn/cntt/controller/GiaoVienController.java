@@ -41,6 +41,11 @@ public class GiaoVienController {
     @Autowired
     private TKB_TietService tkb_tietService;
 
+    @Autowired
+    private TKB_LichNghiCuaGiaoVienService tkb_lichNghiCuaGiaoVienService;
+
+    @Autowired
+    private TKB_LichNghiCuaTruongService tkb_lichNghiCuaTruongService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -89,37 +94,56 @@ public class GiaoVienController {
 
     @PreAuthorize("hasRole('GIANGVIEN')")
     @GetMapping(value = "/available-lessons/{lessonId}/{roomId}/{date}")
-    public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int lessonId, @PathVariable int roomId, @PathVariable String date) throws ParseException {
+    public ResponseEntity<?> getAvailableLessonForRoomAtDate(@PathVariable int lessonId, @PathVariable int roomId, @PathVariable String date) throws ParseException {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date utilDate = dateFormat.parse(date);
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        //Loc lich cua phong theo ngay
-        List<TKB_Tiet> notFreeLessonsOfRoomByDate = this.getCalendarOfRoomByDate(roomId, date);
-        tkb_availableLessons.removeAll(notFreeLessonsOfRoomByDate);
 
-        //Loc lich cua giao vien theo ngay
+        //Lay lich nghi cua truong va lich nghi cua giao vien
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<TKB_Tiet> notFreeLessonsOfTeacherByDate = this.getCalendarOfTeacherByDate(tenDangNhap, sqlDate);
-        tkb_availableLessons.removeAll(notFreeLessonsOfTeacherByDate);
+        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(tenDangNhap);
+        TKB_LichNghiCuaGiaoVien tkb_lichNghiCuaGiaoVien = tkb_lichNghiCuaGiaoVienService.findByGiaoVienAndFindNgay(giaoVien, sqlDate);
 
-        //Loc lich cua sinh vien cua tiet hoc dang chinh sua theo ngay
-        List<TKB_Tiet> notFreeLessonsOfStudentsOfLessonByDate = this.getCalendarOfStudentsOfLessonByDate(lessonId, sqlDate);
-        tkb_availableLessons.removeAll(notFreeLessonsOfStudentsOfLessonByDate);
 
-        TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
-        if(date.equals(tkbLichHocTheoNgay.getNgay().toString())){
-            List<TKB_Tiet> tkb_tietHienTaiCuaLessons = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
-            for (TKB_Tiet tkb_tiet:
-                    tkb_tietHienTaiCuaLessons) {
-                if(!tkb_availableLessons.contains(tkb_tiet)){
-                    tkb_availableLessons.add(tkb_tiet);
+        if(tkb_lichNghiCuaGiaoVien==null){
+
+            TKB_LichNghiCuaTruong tkb_lichNghiCuaTruong = tkb_lichNghiCuaTruongService.findByNgay(sqlDate);
+            if(tkb_lichNghiCuaTruong==null){
+                //Loc lich cua phong theo ngay
+                List<TKB_Tiet> notFreeLessonsOfRoomByDate = this.getCalendarOfRoomByDate(roomId, date);
+                tkb_availableLessons.removeAll(notFreeLessonsOfRoomByDate);
+
+                //Loc lich cua giao vien theo ngay
+                List<TKB_Tiet> notFreeLessonsOfTeacherByDate = this.getCalendarOfTeacherByDate(tenDangNhap, sqlDate);
+                tkb_availableLessons.removeAll(notFreeLessonsOfTeacherByDate);
+
+                //Loc lich cua sinh vien cua tiet hoc dang chinh sua theo ngay
+                List<TKB_Tiet> notFreeLessonsOfStudentsOfLessonByDate = this.getCalendarOfStudentsOfLessonByDate(lessonId, sqlDate);
+                tkb_availableLessons.removeAll(notFreeLessonsOfStudentsOfLessonByDate);
+
+                TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
+                if(date.equals(tkbLichHocTheoNgay.getNgay().toString())){
+                    List<TKB_Tiet> tkb_tietHienTaiCuaLessons = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
+                    for (TKB_Tiet tkb_tiet:
+                            tkb_tietHienTaiCuaLessons) {
+                        if(!tkb_availableLessons.contains(tkb_tiet)){
+                            tkb_availableLessons.add(tkb_tiet);
+                        }
+                    }
                 }
+
+                tkb_availableLessons.sort(Comparator.comparing(TKB_Tiet::getThuTu));
+                return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>("Cấn lịch nghỉ của trường", HttpStatus.OK);
             }
+
+        }else{
+            return new ResponseEntity<>("Cấn lịch nghỉ của giáo viên", HttpStatus.OK);
         }
 
-        tkb_availableLessons.sort(Comparator.comparing(TKB_Tiet::getThuTu));
-        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+
     }
 
     public List<TKB_Tiet> getCalendarOfRoomByDate(int roomId, String date){
