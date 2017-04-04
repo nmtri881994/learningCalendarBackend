@@ -91,31 +91,69 @@ public class GiaoVienController {
     @GetMapping(value = "/available-lessons/{lessonId}/{roomId}/{date}")
     public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int lessonId, @PathVariable int roomId, @PathVariable String date) throws ParseException {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
-
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date utilDate = dateFormat.parse(date);
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         //Loc lich cua phong theo ngay
+        List<TKB_Tiet> notFreeLessonsOfRoomByDate = this.getCalendarOfRoomByDate(roomId, date);
+        tkb_availableLessons.removeAll(notFreeLessonsOfRoomByDate);
+
+        //Loc lich cua giao vien theo ngay
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<TKB_Tiet> notFreeLessonsOfTeacherByDate = this.getCalendarOfTeacherByDate(tenDangNhap, sqlDate);
+        tkb_availableLessons.removeAll(notFreeLessonsOfTeacherByDate);
+
+        //Loc lich cua sinh vien cua tiet hoc dang chinh sua theo ngay
+        List<TKB_Tiet> notFreeLessonsOfStudentsOfLessonByDate = this.getCalendarOfStudentsOfLessonByDate(lessonId, sqlDate);
+        tkb_availableLessons.removeAll(notFreeLessonsOfStudentsOfLessonByDate);
+
+        TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
+        if(date.equals(tkbLichHocTheoNgay.getNgay().toString())){
+            List<TKB_Tiet> tkb_tietHienTaiCuaLessons = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
+            for (TKB_Tiet tkb_tiet:
+                    tkb_tietHienTaiCuaLessons) {
+                if(!tkb_availableLessons.contains(tkb_tiet)){
+                    tkb_availableLessons.add(tkb_tiet);
+                }
+            }
+        }
+
+        tkb_availableLessons.sort(Comparator.comparing(TKB_Tiet::getThuTu));
+        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+    }
+
+    public List<TKB_Tiet> getCalendarOfRoomByDate(int roomId, String date){
+        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+        List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
+
         List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaPhongs = tkb_lichHocTheoNgayService.getLichHocOfRoomByDate(roomId, date);
         for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay :
                 tkb_lichHocTheoNgayCuaPhongs) {
             List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
             tkb_availableLessons.removeAll(tkb_tietNotFrees);
         }
+        tkb_availableLessonsClone.removeAll(tkb_availableLessons);
 
-        //Loc lich cua giao vien theo ngay
-        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(tenDangNhap);
+        for (TKB_Tiet tkb_tiet:
+             tkb_availableLessonsClone) {
+            System.out.println(tkb_tiet.getTen());
+        }
+        return tkb_availableLessonsClone;
+    }
 
+    public List<TKB_Tiet> getCalendarOfTeacherByDate(String maGiaoVien, java.sql.Date date){
+        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+        List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
+
+        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(maGiaoVien);
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
-        //TODO
-        //Can optimize the after code by using a method of TKB_LichHocTheoNgayRepository: findByLopMonHocAndNgay
         List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaGiaoVien = new ArrayList<>();
         for (LopMonHoc lopMonHoc :
                 lopMonHocs) {
-            Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = lopMonHoc.getTkb_lichHocTheoNgays();
-            tkb_lichHocTheoNgayCuaGiaoVien.addAll(tkb_lichHocTheoNgays);
+            tkb_lichHocTheoNgayCuaGiaoVien.addAll(tkb_lichHocTheoNgayService.findByLopMonHocAndNgay(lopMonHoc, date));
         }
-        tkb_lichHocTheoNgayCuaGiaoVien.removeIf(tkb_lichHocTheoNgay -> !date.equals(tkb_lichHocTheoNgay.getNgay().toString()));
-
+//        tkb_lichHocTheoNgayCuaGiaoVien.removeIf(tkb_lichHocTheoNgay -> !date.equals(tkb_lichHocTheoNgay.getNgay().toString()));
 
         for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay :
                 tkb_lichHocTheoNgayCuaGiaoVien) {
@@ -123,28 +161,36 @@ public class GiaoVienController {
             tkb_availableLessons.removeAll(tkb_tietNotFrees);
         }
 
-        //Loc lich cua sinh vien cua tiet hoc dang chinh sua theo ngay
+        tkb_availableLessonsClone.removeAll(tkb_availableLessons);
+        return tkb_availableLessonsClone;
+    }
+
+    public List<TKB_Tiet> getCalendarOfStudentsOfLessonByDate(int lessonId, java.sql.Date date){
+        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+        List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
+//        System.out.println("------"+lessonId);
         TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
+
         LopMonHoc lopMonHoc = tkbLichHocTheoNgay.getLopMonHoc();
         List<SinhVien> sinhVienCuaTietHocs = new ArrayList<>();
         for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-             lopMonHoc.getLopMonHoc_sinhViens()) {
+                lopMonHoc.getLopMonHoc_sinhViens()) {
             sinhVienCuaTietHocs.add(lopMonHoc_sinhVien.getSinhVien());
         }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date utilDate = dateFormat.parse(date);
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+
         for (SinhVien sinhVien:
-             sinhVienCuaTietHocs) {
+                sinhVienCuaTietHocs) {
             Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens = sinhVien.getLopMonHoc_sinhViens();
             List<LopMonHoc> lopMonHocCuaSinhViens = new ArrayList<>();
             for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-                 lopMonHoc_sinhViens) {
+                    lopMonHoc_sinhViens) {
                 lopMonHocCuaSinhViens.add(lopMonHoc_sinhVien.getLopMonHoc());
             }
+
             for (LopMonHoc lopMonHocCuaSinhVien:
-                 lopMonHocCuaSinhViens) {
-                List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = tkb_lichHocTheoNgayService.findByLopMonHocAndNgay(lopMonHoc, sqlDate);
+                    lopMonHocCuaSinhViens) {
+                List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = tkb_lichHocTheoNgayService.findByLopMonHocAndNgay(lopMonHocCuaSinhVien, date);
                 for (TKB_LichHocTheoNgay tkbLichHocTheoNgay1:
                         tkb_lichHocTheoNgays) {
                     List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay1.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay1.getTkb_tietCuoiCung().getId() + 1);
@@ -155,10 +201,8 @@ public class GiaoVienController {
                 }
             }
         }
-        System.out.println("aa"+tkb_availableLessons.size());
-        List<TKB_Tiet> tkb_tietHienTaiCuaLessons = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
-        tkb_availableLessons.addAll(tkb_tietHienTaiCuaLessons);
-        System.out.println("aa"+tkb_availableLessons.size());
-        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+
+        tkb_availableLessonsClone.removeAll(tkb_availableLessons);
+        return tkb_availableLessonsClone;
     }
 }

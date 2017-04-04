@@ -1,24 +1,34 @@
 package vn.bkdn.cntt.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import vn.bkdn.cntt.entity.LopMonHoc;
-import vn.bkdn.cntt.entity.NamHoc;
-import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
+import vn.bkdn.cntt.Service.*;
+import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by XuanVinh on 3/20/2017.
  */
 public class CalendarCommonUtils {
+
+    @Autowired
+    private GiaoVienService giaoVienService;
+
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
+    @Autowired
+    private TKB_TietService tkb_tietService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
+
     public List<LopMonHoc> getClassCalendarByWeek(List<LopMonHoc> lopMonHocs, int year, int week) throws ParseException {
         java.util.Calendar c = java.util.Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
