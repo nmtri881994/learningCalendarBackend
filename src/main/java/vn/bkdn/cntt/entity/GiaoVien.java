@@ -18,6 +18,7 @@ public class GiaoVien {
     private String ten;
 
     private Set<LopMonHoc> lopMonHocs;
+    private Set<TKB_LichNghiCuaGiaoVien> tkb_lichNghiCuaGiaoViens;
 
     public GiaoVien() {
     }
@@ -68,5 +69,14 @@ public class GiaoVien {
 
     public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
         this.lopMonHocs = lopMonHocs;
+    }
+
+    @OneToMany(mappedBy = "giaoVien")
+    public Set<TKB_LichNghiCuaGiaoVien> getTkb_lichNghiCuaGiaoViens() {
+        return tkb_lichNghiCuaGiaoViens;
+    }
+
+    public void setTkb_lichNghiCuaGiaoViens(Set<TKB_LichNghiCuaGiaoVien> tkb_lichNghiCuaGiaoViens) {
+        this.tkb_lichNghiCuaGiaoViens = tkb_lichNghiCuaGiaoViens;
     }
 }
