@@ -16,10 +16,7 @@ import vn.bkdn.cntt.entity.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Tri on 3/24/2017.
@@ -33,16 +30,10 @@ public class CalendarController {
     private NamHocService namHocService;
 
     @Autowired
-    private GiaoVienService giaoVienService;
+    private KhoaService khoaService;
 
     @Autowired
-    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
-
-    @Autowired
-    private TKB_TietService tkb_tietService;
-
-    @Autowired
-    private LopMonHocService lopMonHocService;
+    private KiHoc_NamHocService kiHoc_namHocService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/learning-year/{date}")
@@ -93,19 +84,45 @@ public class CalendarController {
         return ((days / 7) + 1);
     }
 
-    @GetMapping(value = "/available-lessons/{roomId}/{date}")
-    public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int roomId, @PathVariable String date) {
-        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+//    @GetMapping(value = "/available-lessons/{roomId}/{date}")
+//    public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int roomId, @PathVariable String date) {
+//        List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
+//
+//        List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaPhongs = tkb_lichHocTheoNgayService.getLichHocOfRoomByDate(roomId, date);
+//        for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay:
+//                tkb_lichHocTheoNgayCuaPhongs) {
+//            List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoNgay.getTkb_tietDauTien().getId()-1, tkb_lichHocTheoNgay.getTkb_tietCuoiCung().getId()+1);
+//            tkb_availableLessons.removeAll(tkb_tietNotFrees);
+//        }
+//
+//        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+//    }
 
-        List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaPhongs = tkb_lichHocTheoNgayService.getLichHocOfRoomByDate(roomId, date);
-        for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay:
-                tkb_lichHocTheoNgayCuaPhongs) {
-            List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoNgay.getTkb_tietDauTien().getId()-1, tkb_lichHocTheoNgay.getTkb_tietCuoiCung().getId()+1);
-            tkb_availableLessons.removeAll(tkb_tietNotFrees);
-        }
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/khoas")
+    public ResponseEntity<List<Khoa>> getAllKhoas() {
+        List<Khoa> khoas = khoaService.findAll();
+        khoas.sort(Comparator.comparing(Khoa::getTen));
 
-        return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
+        return new ResponseEntity<List<Khoa>>(khoas, HttpStatus.OK);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/{khoaId}/khoa-hoc-not-end/{namHocId}/{kiHocId}")
+    public ResponseEntity<List<KhoaHoc>> getKhoaHocsNotEndOfKhoa(@PathVariable int khoaId, @PathVariable int namHocId, @PathVariable int kiHocId) {
+        Khoa khoa = khoaService.findOne(khoaId);
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
 
+        Set<Khoa_KhoaHoc> khoa_khoaHocs = khoa.getKhoa_khoaHocs();
+        khoa_khoaHocs.removeIf(khoa_khoaHoc -> khoa_khoaHoc.getKiKetThuc().getNgayBatDau().compareTo(kiHoc_namHoc.getNgayBatDau()) < 0);
+
+        List<KhoaHoc> khoaHocs = new ArrayList<>();
+        for (Khoa_KhoaHoc khoa_khoaHoc :
+                khoa_khoaHocs) {
+            khoaHocs.add(khoa_khoaHoc.getKhoaHoc());
+        }
+
+        khoaHocs.sort(Comparator.comparing(KhoaHoc::getNam));
+        return new ResponseEntity<List<KhoaHoc>>(khoaHocs, HttpStatus.OK);
+    }
 }

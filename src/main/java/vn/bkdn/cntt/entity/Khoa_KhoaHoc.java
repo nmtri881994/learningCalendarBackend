@@ -15,6 +15,8 @@ public class Khoa_KhoaHoc {
     private Khoa khoa;
     private KhoaHoc khoaHoc;
     private KiHoc_NamHoc kiPhanNganh;
+    private KiHoc_NamHoc kiBatDau;
+    private KiHoc_NamHoc kiKetThuc;
 
     private Set<Khoa_KhoaHoc_Nganh> khoa_khoaHoc_nganhs;
 
@@ -60,6 +62,26 @@ public class Khoa_KhoaHoc {
 
     public void setKiPhanNganh(KiHoc_NamHoc kiPhanNganh) {
         this.kiPhanNganh = kiPhanNganh;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "kiBatDauId")
+    public KiHoc_NamHoc getKiBatDau() {
+        return kiBatDau;
+    }
+
+    public void setKiBatDau(KiHoc_NamHoc kiBatDau) {
+        this.kiBatDau = kiBatDau;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "kiKetThucId")
+    public KiHoc_NamHoc getKiKetThuc() {
+        return kiKetThuc;
+    }
+
+    public void setKiKetThuc(KiHoc_NamHoc kiKetThuc) {
+        this.kiKetThuc = kiKetThuc;
     }
 
     @OneToMany(mappedBy = "khoa_khoaHoc")

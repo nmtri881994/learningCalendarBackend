@@ -10,4 +10,5 @@ import java.util.List;
 public interface NamHocService {
     List<NamHoc> findAll();
     List<NamHoc> getYearsNotEnd();
+    NamHoc findOne(int namHocId);
 }

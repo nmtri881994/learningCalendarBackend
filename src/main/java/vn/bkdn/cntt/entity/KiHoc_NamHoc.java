@@ -21,6 +21,8 @@ public class KiHoc_NamHoc {
 
     private Set<LopMonHoc> lopMonHocs;
     private Set<Khoa_KhoaHoc> khoaKhoaHocPhanNganhs;
+    private Set<Khoa_KhoaHoc> khoaBatDauHocs;
+    private Set<Khoa_KhoaHoc> khoaKetThucHocs;
 
     public KiHoc_NamHoc() {
     }
@@ -95,5 +97,25 @@ public class KiHoc_NamHoc {
 
     public void setKhoaKhoaHocPhanNganhs(Set<Khoa_KhoaHoc> khoaKhoaHocPhanNganhs) {
         this.khoaKhoaHocPhanNganhs = khoaKhoaHocPhanNganhs;
+    }
+
+    @OneToMany(mappedBy = "kiBatDau")
+    @JsonIgnore
+    public Set<Khoa_KhoaHoc> getKhoaBatDauHocs() {
+        return khoaBatDauHocs;
+    }
+
+    public void setKhoaBatDauHocs(Set<Khoa_KhoaHoc> khoaBatDauHocs) {
+        this.khoaBatDauHocs = khoaBatDauHocs;
+    }
+
+    @OneToMany(mappedBy = "kiKetThuc")
+    @JsonIgnore
+    public Set<Khoa_KhoaHoc> getKhoaKetThucHocs() {
+        return khoaKetThucHocs;
+    }
+
+    public void setKhoaKetThucHocs(Set<Khoa_KhoaHoc> khoaKetThucHocs) {
+        this.khoaKetThucHocs = khoaKetThucHocs;
     }
 }
