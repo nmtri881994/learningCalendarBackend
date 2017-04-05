@@ -21,4 +21,9 @@ public class NamHocServiceImpl implements NamHocService {
     public List<NamHoc> findAll() {
         return namHocRepository.findAll();
     }
+
+    @Override
+    public List<NamHoc> getYearsNotEnd() {
+        return namHocRepository.getYearsNotEnd();
+    }
 }

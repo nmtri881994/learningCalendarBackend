@@ -17,6 +17,7 @@ public class GiangDuong {
     private String ten;
     private DayNha dayNha;
     private int tang;
+    private int soLuong;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<MonHoc_GiangDuong> monHoc_giangDuongs;
@@ -69,6 +70,15 @@ public class GiangDuong {
 
     public void setTang(int tang) {
         this.tang = tang;
+    }
+
+    @Column(columnDefinition = "int(4) default 50")
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
     @OneToMany(mappedBy = "giangDuong")

@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface NamHocService {
     List<NamHoc> findAll();
+    List<NamHoc> getYearsNotEnd();
 }

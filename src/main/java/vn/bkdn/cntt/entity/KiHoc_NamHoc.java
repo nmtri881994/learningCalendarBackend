@@ -20,6 +20,7 @@ public class KiHoc_NamHoc {
     private Date ngayKetThuc;
 
     private Set<LopMonHoc> lopMonHocs;
+    private Set<Khoa_KhoaHoc> khoaKhoaHocPhanNganhs;
 
     public KiHoc_NamHoc() {
     }
@@ -84,5 +85,15 @@ public class KiHoc_NamHoc {
 
     public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
         this.lopMonHocs = lopMonHocs;
+    }
+
+    @OneToMany(mappedBy = "kiPhanNganh")
+    @JsonIgnore
+    public Set<Khoa_KhoaHoc> getKhoaKhoaHocPhanNganhs() {
+        return khoaKhoaHocPhanNganhs;
+    }
+
+    public void setKhoaKhoaHocPhanNganhs(Set<Khoa_KhoaHoc> khoaKhoaHocPhanNganhs) {
+        this.khoaKhoaHocPhanNganhs = khoaKhoaHocPhanNganhs;
     }
 }
