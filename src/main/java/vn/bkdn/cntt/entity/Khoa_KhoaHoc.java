@@ -19,6 +19,7 @@ public class Khoa_KhoaHoc {
     private KiHoc_NamHoc kiKetThuc;
 
     private Set<Khoa_KhoaHoc_Nganh> khoa_khoaHoc_nganhs;
+    private Set<LopMonHoc> lopMonHocs;
 
     public Khoa_KhoaHoc() {
     }
@@ -91,5 +92,15 @@ public class Khoa_KhoaHoc {
 
     public void setKhoa_khoaHoc_nganhs(Set<Khoa_KhoaHoc_Nganh> khoa_khoaHoc_nganhs) {
         this.khoa_khoaHoc_nganhs = khoa_khoaHoc_nganhs;
+    }
+
+    @OneToMany(mappedBy = "khoa_khoaHoc")
+    @JsonIgnore
+    public Set<LopMonHoc> getLopMonHocs() {
+        return lopMonHocs;
+    }
+
+    public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
+        this.lopMonHocs = lopMonHocs;
     }
 }

@@ -18,13 +18,18 @@ public class LopMonHoc {
     private MonHoc monHoc;
     private GiaoVien giaoVien;
     private KiHoc_NamHoc kiHoc_namHoc;
+    private Khoa_KhoaHoc khoa_khoaHoc;
+    private Nganh nganh;
     private int soTietLyThuyet;
     private int soTietThucHanh;
     private int soLuongToiDa;
+    private int soBuoiMotTuan;
+    private int soTietMotTuan;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
     private Set<LopMonHoc_SinhVien_CoTheDangKy> lopMonHoc_sinhVien_coTheDangKies;
+    private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans;
 
     public LopMonHoc() {
     }
@@ -72,6 +77,26 @@ public class LopMonHoc {
         this.kiHoc_namHoc = kiHoc_namHoc;
     }
 
+    @ManyToOne
+    @JoinColumn(name="khoa_khoaHocId")
+    public Khoa_KhoaHoc getKhoa_khoaHoc() {
+        return khoa_khoaHoc;
+    }
+
+    public void setKhoa_khoaHoc(Khoa_KhoaHoc khoa_khoaHoc) {
+        this.khoa_khoaHoc = khoa_khoaHoc;
+    }
+
+    @ManyToOne
+    @JoinColumn(name="nganhId")
+    public Nganh getNganh() {
+        return nganh;
+    }
+
+    public void setNganh(Nganh nganh) {
+        this.nganh = nganh;
+    }
+
     public int getSoTietLyThuyet() {
         return soTietLyThuyet;
     }
@@ -95,6 +120,22 @@ public class LopMonHoc {
 
     public void setSoLuongToiDa(int soLuongToiDa) {
         this.soLuongToiDa = soLuongToiDa;
+    }
+
+    public int getSoBuoiMotTuan() {
+        return soBuoiMotTuan;
+    }
+
+    public void setSoBuoiMotTuan(int soBuoiMotTuan) {
+        this.soBuoiMotTuan = soBuoiMotTuan;
+    }
+
+    public int getSoTietMotTuan() {
+        return soTietMotTuan;
+    }
+
+    public void setSoTietMotTuan(int soTietMotTuan) {
+        this.soTietMotTuan = soTietMotTuan;
     }
 
     @OneToMany(mappedBy = "lopMonHoc")
@@ -124,5 +165,14 @@ public class LopMonHoc {
 
     public void setLopMonHoc_sinhVien_coTheDangKies(Set<LopMonHoc_SinhVien_CoTheDangKy> lopMonHoc_sinhVien_coTheDangKies) {
         this.lopMonHoc_sinhVien_coTheDangKies = lopMonHoc_sinhVien_coTheDangKies;
+    }
+
+    @OneToMany(mappedBy = "lopMonHoc")
+    public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuans() {
+        return tkb_lichHocTheoTuans;
+    }
+
+    public void setTkb_lichHocTheoTuans(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
+        this.tkb_lichHocTheoTuans = tkb_lichHocTheoTuans;
     }
 }

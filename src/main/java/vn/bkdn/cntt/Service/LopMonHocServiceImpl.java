@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Service
-public class LopMonHocServiceImpl implements LopMonHocService{
+public class LopMonHocServiceImpl implements LopMonHocService {
 
     @Autowired
     private LopMonHocRepository lopMonHocRepository;
@@ -21,5 +21,15 @@ public class LopMonHocServiceImpl implements LopMonHocService{
     @Override
     public List<LopMonHoc> findByGiaoVien(GiaoVien giaoVien) {
         return lopMonHocRepository.findByGiaoVien(giaoVien);
+    }
+
+    @Override
+    public List<LopMonHoc> findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(int ki_namHocId, int khoa_khoaHocId, int nganhId) {
+        return lopMonHocRepository.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(ki_namHocId, khoa_khoaHocId, nganhId);
+    }
+
+    @Override
+    public List<LopMonHoc> findByKiHoc_NamHocIdAndKhoa_KhoaHocId(int ki_namHocId, int khoa_khoaHocId) {
+        return lopMonHocRepository.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(ki_namHocId, khoa_khoaHocId);
     }
 }

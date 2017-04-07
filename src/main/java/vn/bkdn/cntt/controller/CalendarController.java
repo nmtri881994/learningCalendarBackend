@@ -1,10 +1,14 @@
 package vn.bkdn.cntt.controller;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,12 @@ public class CalendarController {
 
     @Autowired
     private KiHoc_NamHocService kiHoc_namHocService;
+
+    @Autowired
+    private Khoa_KhoaHocService khoa_khoaHocService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/learning-year/{date}")
@@ -124,5 +134,47 @@ public class CalendarController {
 
         khoaHocs.sort(Comparator.comparing(KhoaHoc::getNam));
         return new ResponseEntity<List<KhoaHoc>>(khoaHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/nganhs/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}")
+    public ResponseEntity<List<Nganh>> getNganhs(@PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId) {
+        Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
+
+        List<Nganh> nganhs = new ArrayList<>();
+        if (khoa_khoaHoc.getKiPhanNganh().getNgayBatDau().compareTo(kiHoc_namHoc.getNgayBatDau()) <= 0) {
+            for (Khoa_KhoaHoc_Nganh khoa_khoaHoc_nganh :
+                    khoa_khoaHoc.getKhoa_khoaHoc_nganhs()) {
+                nganhs.add(khoa_khoaHoc_nganh.getNganh());
+            }
+
+            nganhs.sort(Comparator.comparing(Nganh::getTen));
+            return new ResponseEntity<List<Nganh>>(nganhs, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<List<Nganh>>(nganhs, HttpStatus.OK);
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/lopMonHocs/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}/{nganhId}")
+    public ResponseEntity<MappingJacksonValue> getLopMonHocs(@PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId) {
+        Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
+        List<LopMonHoc> lopMonHocs;
+        if(nganhId != 0 ){
+            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), nganhId);
+        }else{
+            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
+        }
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id","monHoc", "giaoVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
+
+        mappingJacksonValue.setFilters(filterProvider);
+
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
     }
 }

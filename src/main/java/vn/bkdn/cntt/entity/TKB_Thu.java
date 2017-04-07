@@ -15,6 +15,8 @@ public class TKB_Thu {
     private String ten;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
+    private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans;
+
     public TKB_Thu() {
     }
 
@@ -46,5 +48,15 @@ public class TKB_Thu {
 
     public void setTkb_lichHocTheoNgays(Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays) {
         this.tkb_lichHocTheoNgays = tkb_lichHocTheoNgays;
+    }
+
+    @OneToMany(mappedBy = "tkb_thu")
+    @JsonIgnore
+    public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuans() {
+        return tkb_lichHocTheoTuans;
+    }
+
+    public void setTkb_lichHocTheoTuans(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
+        this.tkb_lichHocTheoTuans = tkb_lichHocTheoTuans;
     }
 }

@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface LopMonHocService {
     List<LopMonHoc> findByGiaoVien(GiaoVien giaoVien);
+    List<LopMonHoc> findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(int ki_namHocId, int khoa_khoaHocId, int nganhId);
+    List<LopMonHoc> findByKiHoc_NamHocIdAndKhoa_KhoaHocId(int ki_namHocId, int khoa_khoaHocId);
 }
