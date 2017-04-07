@@ -3,6 +3,7 @@ package vn.bkdn.cntt.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by XuanVinh on 4/6/2017.
@@ -13,6 +14,8 @@ public class TKB_LichHocTheoTuan {
     private int id;
     private LopMonHoc lopMonHoc;
     private TKB_Thu tkb_thu;
+    private TKB_Tiet tkb_tietDauTien;
+    private TKB_Tiet tkb_tietCuoiCung;
     private int soTiet;
 
     public TKB_LichHocTheoTuan() {
@@ -40,13 +43,35 @@ public class TKB_LichHocTheoTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkb_thucId")
+    @JoinColumn(name = "tkb_thuId")
     public TKB_Thu getTkb_thu() {
         return tkb_thu;
     }
 
     public void setTkb_thu(TKB_Thu tkb_thu) {
         this.tkb_thu = tkb_thu;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tkbTietDauTienId")
+    @NotNull
+    public TKB_Tiet getTkb_tietDauTien() {
+        return tkb_tietDauTien;
+    }
+
+    public void setTkb_tietDauTien(TKB_Tiet tkb_tietDauTien) {
+        this.tkb_tietDauTien = tkb_tietDauTien;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tkbTietCuoiCungId")
+    @NotNull
+    public TKB_Tiet getTkb_tietCuoiCung() {
+        return tkb_tietCuoiCung;
+    }
+
+    public void setTkb_tietCuoiCung(TKB_Tiet tkb_tietCuoiCung) {
+        this.tkb_tietCuoiCung = tkb_tietCuoiCung;
     }
 
     public int getSoTiet() {

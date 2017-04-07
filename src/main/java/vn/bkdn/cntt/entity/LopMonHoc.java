@@ -23,8 +23,10 @@ public class LopMonHoc {
     private int soTietLyThuyet;
     private int soTietThucHanh;
     private int soLuongToiDa;
-    private int soBuoiMotTuan;
-    private int soTietMotTuan;
+    private int soBuoiLyThuyetMotTuan;
+    private int soTietLyThuyetMotTuan;
+    private int soBuoiThucHanhMotTuan;
+    private int soTietThucHanhMotTuan;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
@@ -122,20 +124,36 @@ public class LopMonHoc {
         this.soLuongToiDa = soLuongToiDa;
     }
 
-    public int getSoBuoiMotTuan() {
-        return soBuoiMotTuan;
+    public int getSoBuoiLyThuyetMotTuan() {
+        return soBuoiLyThuyetMotTuan;
     }
 
-    public void setSoBuoiMotTuan(int soBuoiMotTuan) {
-        this.soBuoiMotTuan = soBuoiMotTuan;
+    public void setSoBuoiLyThuyetMotTuan(int soBuoiLyThuyetMotTuan) {
+        this.soBuoiLyThuyetMotTuan = soBuoiLyThuyetMotTuan;
     }
 
-    public int getSoTietMotTuan() {
-        return soTietMotTuan;
+    public int getSoTietLyThuyetMotTuan() {
+        return soTietLyThuyetMotTuan;
     }
 
-    public void setSoTietMotTuan(int soTietMotTuan) {
-        this.soTietMotTuan = soTietMotTuan;
+    public void setSoTietLyThuyetMotTuan(int soTietLyThuyetMotTuan) {
+        this.soTietLyThuyetMotTuan = soTietLyThuyetMotTuan;
+    }
+
+    public int getSoBuoiThucHanhMotTuan() {
+        return soBuoiThucHanhMotTuan;
+    }
+
+    public void setSoBuoiThucHanhMotTuan(int soBuoiThucHanhMotTuan) {
+        this.soBuoiThucHanhMotTuan = soBuoiThucHanhMotTuan;
+    }
+
+    public int getSoTietThucHanhMotTuan() {
+        return soTietThucHanhMotTuan;
+    }
+
+    public void setSoTietThucHanhMotTuan(int soTietThucHanhMotTuan) {
+        this.soTietThucHanhMotTuan = soTietThucHanhMotTuan;
     }
 
     @OneToMany(mappedBy = "lopMonHoc")

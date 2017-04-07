@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.TKB_Thu;
 import vn.bkdn.cntt.repository.TKB_ThuRepository;
 
+import java.util.List;
+
 /**
  * Created by Tri on 3/28/2017.
  */
@@ -18,5 +20,10 @@ public class TKB_ThuServiceImpl implements TKB_ThuService {
     @Override
     public TKB_Thu findByTen(String ten) {
         return tkb_thuRepository.findByTen(ten);
+    }
+
+    @Override
+    public List<TKB_Thu> findAll() {
+        return tkb_thuRepository.findAll();
     }
 }

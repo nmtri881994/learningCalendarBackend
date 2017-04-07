@@ -17,6 +17,8 @@ public class TKB_Tiet {
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietDauTiens;
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietCuoiCungs;
+    private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuan_tietDauTiens;
+    private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuan_tietCuoiCungs;
 
     public TKB_Tiet() {
     }
@@ -66,5 +68,25 @@ public class TKB_Tiet {
 
     public void setTkb_lichHocTheoNgay_tietCuoiCungs(Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgay_tietCuoiCungs) {
         this.tkb_lichHocTheoNgay_tietCuoiCungs = tkb_lichHocTheoNgay_tietCuoiCungs;
+    }
+
+    @OneToMany(mappedBy = "tkb_tietDauTien")
+    @JsonIgnore
+    public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuan_tietDauTiens() {
+        return tkb_lichHocTheoTuan_tietDauTiens;
+    }
+
+    public void setTkb_lichHocTheoTuan_tietDauTiens(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuan_tietDauTiens) {
+        this.tkb_lichHocTheoTuan_tietDauTiens = tkb_lichHocTheoTuan_tietDauTiens;
+    }
+
+    @OneToMany(mappedBy = "tkb_tietCuoiCung")
+    @JsonIgnore
+    public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuan_tietCuoiCungs() {
+        return tkb_lichHocTheoTuan_tietCuoiCungs;
+    }
+
+    public void setTkb_lichHocTheoTuan_tietCuoiCungs(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuan_tietCuoiCungs) {
+        this.tkb_lichHocTheoTuan_tietCuoiCungs = tkb_lichHocTheoTuan_tietCuoiCungs;
     }
 }

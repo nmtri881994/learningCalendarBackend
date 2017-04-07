@@ -45,6 +45,9 @@ public class CalendarController {
     @Autowired
     private LopMonHocService lopMonHocService;
 
+    @Autowired
+    private TKB_ThuService tkb_thuService;
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/learning-year/{date}")
     public ResponseEntity<NamHoc> getNamHocByDate(@PathVariable String date) throws ParseException {
@@ -162,19 +165,41 @@ public class CalendarController {
         Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
         KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
         List<LopMonHoc> lopMonHocs;
-        if(nganhId != 0 ){
+        if (nganhId != 0) {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), nganhId);
-        }else{
+        } else {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
         }
 
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id","monHoc", "giaoVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
+                        .filterOutAllExcept("id", "monHoc", "giaoVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "soBuoiLyThuyetMotTuan", "soTietLyThuyetMotTuan", "soBuoiThucHanhMotTuan", "soTietThucHanhMotTuan", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
         return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/thus")
+    public ResponseEntity<List<TKB_Thu>> getAllThus(){
+        List<TKB_Thu> tkb_thus = tkb_thuService.findAll();
+        tkb_thus.sort(Comparator.comparing(TKB_Thu::getId));
+
+        return new ResponseEntity<List<TKB_Thu>>(tkb_thus, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/lich-hoc-theo-tuan/{lopMonHodId}")
+    public ResponseEntity<List<TKB_LichHocTheoTuan>> getLichHocTheoTuanOfLopMonHoc(@PathVariable int lopMonHodId){
+        LopMonHoc lopMonHoc = lopMonHocService.findOne(lopMonHodId);
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuansArrayList = new ArrayList<>();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+             lopMonHoc.getTkb_lichHocTheoTuans()) {
+            tkb_lichHocTheoTuansArrayList.add(tkb_lichHocTheoTuan);
+        }
+        tkb_lichHocTheoTuansArrayList.sort(Comparator.comparing(TKB_LichHocTheoTuan::getId));
+        return new ResponseEntity<List<TKB_LichHocTheoTuan>>(tkb_lichHocTheoTuansArrayList, HttpStatus.OK);
     }
 }
