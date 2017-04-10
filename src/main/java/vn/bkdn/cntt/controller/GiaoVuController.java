@@ -5,8 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.bkdn.cntt.Service.NamHocService;
-import vn.bkdn.cntt.Service.TKB_LichHocTheoTuanService;
+import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.entity.*;
 
 import java.util.*;
@@ -24,6 +23,18 @@ public class GiaoVuController {
 
     @Autowired
     private TKB_LichHocTheoTuanService tkb_lichHocTheoTuanService;
+
+    @Autowired
+    private GiangDuongService giangDuongService;
+
+    @Autowired
+    private TKB_ThuService tkb_thuService;
+
+    @Autowired
+    private TKB_TietService tkb_tietService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/calendar/year-not-end")
@@ -79,5 +90,23 @@ public class GiaoVuController {
         tkb_lichHocTheoTuanService.updateWeekCalendar(tkb_lichHocTheoTuan);
 
         return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuanService.findOne(tkb_lichHocTheoTuan.getId()), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/add-calendar/{lopMonHocId}")
+    public void addCalendar(@RequestBody TKB_LichHocTheoTuan tkb_lichHocTheoTuan, @PathVariable int lopMonHocId){
+        tkb_lichHocTheoTuan.setGiangDuong(giangDuongService.findOne(tkb_lichHocTheoTuan.getGiangDuong().getId()));
+        tkb_lichHocTheoTuan.setTkb_thu(tkb_thuService.findOne(tkb_lichHocTheoTuan.getTkb_thu().getId()));
+        tkb_lichHocTheoTuan.setTkb_tietDauTien(tkb_tietService.findOne(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId()));
+        tkb_lichHocTheoTuan.setTkb_tietCuoiCung(tkb_tietService.findOne(tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId()));
+        tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHocId));
+
+        tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @DeleteMapping(value = "/delete-calendar/{calendarId}")
+    public void deleteCalendar(@PathVariable int calendarId){
+        tkb_lichHocTheoTuanService.deleteCalendar(calendarId);
     }
 }

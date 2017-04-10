@@ -280,11 +280,4 @@ public class CalendarController {
         return new ResponseEntity<List<TKB_Tiet>>(tkb_tiets, HttpStatus.OK);
     }
 
-//    @PreAuthorize("isAuthenticated()")
-//    @GetMapping(value = "/class-name/{lopMonHocID}")
-//    public String getClassName(@PathVariable int lopMonHocID){
-//        LopMonHoc lopMonHoc = lopMonHocService.findOne(lopMonHocID);
-//        return lopMonHoc.getMonHoc().getTen();
-//    }
-
 }

@@ -24,4 +24,5 @@ public interface TKB_LichHocTheoTuanRepository extends JpaRepository<TKB_LichHoc
     @Query(value = "update tkb_lich_hoc_theo_tuan set giang_duong_id = ?1, tkb_thu_id =?2, tkb_tiet_dau_tien_id= ?3, " +
             "tkb_tiet_cuoi_cung_id =?4 where id = ?5 ", nativeQuery = true)
     void updateWeekCalendar(int giangDuongId, int thuId, int tietDauTienId, int tietCuoiCungId, int weekCalendarId);
+
 }

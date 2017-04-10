@@ -26,4 +26,9 @@ public class TKB_ThuServiceImpl implements TKB_ThuService {
     public List<TKB_Thu> findAll() {
         return tkb_thuRepository.findAll();
     }
+
+    @Override
+    public TKB_Thu findOne(int tkbThuId) {
+        return tkb_thuRepository.findOne(tkbThuId);
+    }
 }

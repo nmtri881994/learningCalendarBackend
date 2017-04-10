@@ -10,4 +10,5 @@ import java.util.List;
 public interface TKB_TietService {
     List<TKB_Tiet> findAll();
     List<TKB_Tiet> findByIdGreaterThanAndIdLessThan(int startLessonId, int endLessonId);
+    TKB_Tiet findOne(int tkbTietId);
 }

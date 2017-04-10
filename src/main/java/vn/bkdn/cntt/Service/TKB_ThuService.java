@@ -10,4 +10,5 @@ import java.util.List;
 public interface TKB_ThuService {
     TKB_Thu findByTen(String ten);
     List<TKB_Thu> findAll();
+    TKB_Thu findOne(int tkbThuId);
 }

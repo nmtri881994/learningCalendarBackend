@@ -33,4 +33,14 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
                 tkb_lichHocTheoTuan.getTkb_thu().getId(), tkb_lichHocTheoTuan.getTkb_tietDauTien().getId(),
                 tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId(), tkb_lichHocTheoTuan.getId());
     }
+
+    @Override
+    public void addWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
+        tkb_lichHocTheoTuanRepository.save(tkb_lichHocTheoTuan);
+    }
+
+    @Override
+    public void deleteCalendar(int calendarId) {
+        tkb_lichHocTheoTuanRepository.delete(calendarId);
+    }
 }

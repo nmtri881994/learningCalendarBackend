@@ -26,4 +26,10 @@ public class TKB_TietServiceImpl implements  TKB_TietService{
     public List<TKB_Tiet> findByIdGreaterThanAndIdLessThan(int startLessonId, int endLessonId) {
         return tkb_tietRepository.findByIdGreaterThanAndIdLessThan(startLessonId, endLessonId);
     }
+
+    @Override
+    public TKB_Tiet findOne(int tkbTietId) {
+        return tkb_tietRepository.findOne(tkbTietId);
+    }
+
 }

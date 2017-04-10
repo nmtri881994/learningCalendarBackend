@@ -15,9 +15,9 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class WebsocketBrokerConfig extends AbstractWebSocketMessageBrokerConfigurer{
     @Override
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
-        stompEndpointRegistry.addEndpoint("/questions").setAllowedOrigins("*").withSockJS();
         stompEndpointRegistry.addEndpoint("/calendar").setAllowedOrigins("*").withSockJS();
-        stompEndpointRegistry.addEndpoint("/week-calendar").setAllowedOrigins("*").withSockJS();
+        stompEndpointRegistry.addEndpoint("/week-calendar/edit").setAllowedOrigins("*").withSockJS();
+        stompEndpointRegistry.addEndpoint("/week-calendar/add-or-delete").setAllowedOrigins("*").withSockJS();
     }
 
     @Override
