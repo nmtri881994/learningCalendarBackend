@@ -21,6 +21,7 @@ public class GiangDuong {
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<MonHoc_GiangDuong> monHoc_giangDuongs;
+    private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans;
 
     public GiangDuong() {
     }
@@ -99,5 +100,15 @@ public class GiangDuong {
 
     public void setMonHoc_giangDuongs(Set<MonHoc_GiangDuong> monHoc_giangDuongs) {
         this.monHoc_giangDuongs = monHoc_giangDuongs;
+    }
+
+    @OneToMany(mappedBy = "giangDuong")
+    @JsonIgnore
+    public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuans() {
+        return tkb_lichHocTheoTuans;
+    }
+
+    public void setTkb_lichHocTheoTuans(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
+        this.tkb_lichHocTheoTuans = tkb_lichHocTheoTuans;
     }
 }

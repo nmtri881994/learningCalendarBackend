@@ -16,7 +16,7 @@ public class TKB_LichHocTheoTuan {
     private TKB_Thu tkb_thu;
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
-    private int soTiet;
+    private GiangDuong giangDuong;
 
     public TKB_LichHocTheoTuan() {
     }
@@ -74,11 +74,13 @@ public class TKB_LichHocTheoTuan {
         this.tkb_tietCuoiCung = tkb_tietCuoiCung;
     }
 
-    public int getSoTiet() {
-        return soTiet;
+    @ManyToOne
+    @JoinColumn(name = "giangDuongId")
+    public GiangDuong getGiangDuong() {
+        return giangDuong;
     }
 
-    public void setSoTiet(int soTiet) {
-        this.soTiet = soTiet;
+    public void setGiangDuong(GiangDuong giangDuong) {
+        this.giangDuong = giangDuong;
     }
 }
