@@ -15,6 +15,9 @@ public class TKB_LichHocTheoNgay_SinhVienGhiChu {
     private SinhVien sinhVien;
     private String sinhVienGhiChu;
 
+    public TKB_LichHocTheoNgay_SinhVienGhiChu() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

@@ -58,8 +58,8 @@ public class SinhVienController {
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
         Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens = sinhVien.getLopMonHoc_sinhViens();
         List<LopMonHoc> lopMonHocs = new ArrayList<>();
-        for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-             lopMonHoc_sinhViens) {
+        for (LopMonHoc_SinhVien lopMonHoc_sinhVien :
+                lopMonHoc_sinhViens) {
             lopMonHocs.add(lopMonHoc_sinhVien.getLopMonHoc());
         }
 
@@ -79,20 +79,24 @@ public class SinhVienController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/calendar/note/{lichHocTheoNgayId}")
-    public String getNoteByCalendarId(@PathVariable int lichHocTheoNgayId){
+    public String getNoteByCalendarId(@PathVariable int lichHocTheoNgayId) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
 
         TKB_LichHocTheoNgay_SinhVienGhiChu tkb_lichHocTheoNgay_sinhVienGhiChu = tkb_lichHocTheoNgay_sinhVienGhiChuService.findByTkbLichHocTheoNgayAndSinhVien(lichHocTheoNgayId, sinhVien.getId());
-        return tkb_lichHocTheoNgay_sinhVienGhiChu.getSinhVienGhiChu();
+        if (tkb_lichHocTheoNgay_sinhVienGhiChu != null) {
+            return tkb_lichHocTheoNgay_sinhVienGhiChu.getSinhVienGhiChu();
+        } else {
+            return "";
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/calendar/note/edit")
-    public void editCalendarNote(@RequestBody EditStudentNote editStudentNote){
+    public void editCalendarNote(@RequestBody EditStudentNote editStudentNote) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
-        System.out.println(editStudentNote.getEditedNote()+"-"+ editStudentNote.getLessonId()+"-"+  sinhVien.getId());
+        System.out.println(editStudentNote.getEditedNote() + "-" + editStudentNote.getLessonId() + "-" + sinhVien.getId());
         tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), sinhVien.getId());
     }
 }

@@ -23,4 +23,7 @@ public interface TKB_LichHocTheoNgay_SinhVienGhiChuRepository extends JpaReposit
     @Transactional
     @Query(value = "update tkb_lich_hoc_theo_ngay_sinh_vien_ghi_chu tkb set tkb.sinh_vien_ghi_chu = ?1 where tkb.tkb_lich_hoc_theo_ngay_id = ?2 and tkb.sinh_vien_id = ?3", nativeQuery = true)
     void editCalendarStudentNote(String editedNote, int tkbLichHocTheoNgay, int sinhVien);
+
+    @Query(value = "select * from tkb_lich_hoc_theo_ngay_sinh_vien_ghi_chu tkb where tkb.tkb_lich_hoc_theo_ngay_id = ?1 and tkb.sinh_vien_id = ?2", nativeQuery = true)
+    TKB_LichHocTheoNgay_SinhVienGhiChu findByTKB_LichHocTheoNgayIdAndSinhVienId(int tkb_lichHocTheoNgayId, int sinhVienId);
 }

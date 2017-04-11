@@ -17,6 +17,12 @@ class TKB_LichHocTheoNgay_SinhVienGhiChuServiceImpl implements TKB_LichHocTheoNg
     @Autowired
     private TKB_LichHocTheoNgay_SinhVienGhiChuRepository tkb_lichHocTheoNgay_sinhVienGhiChuRepository;
 
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
+    @Autowired
+    private SinhVienService sinhVienService;
+
     @Override
     public TKB_LichHocTheoNgay_SinhVienGhiChu findByTkbLichHocTheoNgayAndSinhVien(int tkbLichHocTheoNgayId, int sinhVienId) {
         return tkb_lichHocTheoNgay_sinhVienGhiChuRepository.findByTkbLichHocTheoNgayAndSinhVien(tkbLichHocTheoNgayId, sinhVienId);
@@ -24,6 +30,16 @@ class TKB_LichHocTheoNgay_SinhVienGhiChuServiceImpl implements TKB_LichHocTheoNg
 
     @Override
     public void editCalendarStudentNote(String editedNote, int tkbLichHocTheoNgayId, int sinhVienId) {
-        tkb_lichHocTheoNgay_sinhVienGhiChuRepository.editCalendarStudentNote(editedNote, tkbLichHocTheoNgayId, sinhVienId);
+        TKB_LichHocTheoNgay_SinhVienGhiChu tkb_lichHocTheoNgay_sinhVienGhiChu = tkb_lichHocTheoNgay_sinhVienGhiChuRepository.findByTKB_LichHocTheoNgayIdAndSinhVienId(tkbLichHocTheoNgayId, sinhVienId);
+        if(tkb_lichHocTheoNgay_sinhVienGhiChu != null){
+            tkb_lichHocTheoNgay_sinhVienGhiChuRepository.editCalendarStudentNote(editedNote, tkbLichHocTheoNgayId, sinhVienId);
+        }else{
+            tkb_lichHocTheoNgay_sinhVienGhiChu = new TKB_LichHocTheoNgay_SinhVienGhiChu();
+            tkb_lichHocTheoNgay_sinhVienGhiChu.setTkbLichHocTheoNgay(tkb_lichHocTheoNgayService.findOne(tkbLichHocTheoNgayId));
+            tkb_lichHocTheoNgay_sinhVienGhiChu.setSinhVien(sinhVienService.findOne(sinhVienId));
+            tkb_lichHocTheoNgay_sinhVienGhiChu.setSinhVienGhiChu(editedNote);
+
+            tkb_lichHocTheoNgay_sinhVienGhiChuRepository.save(tkb_lichHocTheoNgay_sinhVienGhiChu);
+        }
     }
 }
