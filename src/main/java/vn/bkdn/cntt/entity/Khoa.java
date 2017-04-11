@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 public class Khoa {
     private int id;
+    private String maKhoa;
     private String ten;
 
     private Set<Khoa_KhoaHoc> khoa_khoaHocs;
@@ -25,6 +26,14 @@ public class Khoa {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getMaKhoa() {
+        return maKhoa;
+    }
+
+    public void setMaKhoa(String maKhoa) {
+        this.maKhoa = maKhoa;
     }
 
     public String getTen() {
