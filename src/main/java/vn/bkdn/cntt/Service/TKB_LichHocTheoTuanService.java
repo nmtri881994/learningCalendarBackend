@@ -13,4 +13,5 @@ public interface TKB_LichHocTheoTuanService {
     void updateWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan);
     void addWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan);
     void deleteCalendar(int calendarId);
+    int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId);
 }

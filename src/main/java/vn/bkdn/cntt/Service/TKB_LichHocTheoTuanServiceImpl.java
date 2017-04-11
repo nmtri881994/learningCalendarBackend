@@ -43,4 +43,9 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
     public void deleteCalendar(int calendarId) {
         tkb_lichHocTheoTuanRepository.delete(calendarId);
     }
+
+    @Override
+    public int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId) {
+        return tkb_lichHocTheoTuanRepository.getLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuanId);
+    }
 }

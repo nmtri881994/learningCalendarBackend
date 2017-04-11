@@ -253,8 +253,8 @@ public class CalendarController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping(value = "/tkb-tuan/tiets-free/{tkbTuanId}/{thuId}/{giangDuongId}")
-    public ResponseEntity<List<TKB_Tiet>> getAvailableLessons(@PathVariable int tkbTuanId, @PathVariable int thuId, @PathVariable int giangDuongId) {
+    @GetMapping(value = "/tkb-tuan/tiets-free/{lopMonHocId}/{tkbTuanId}/{thuId}/{giangDuongId}")
+    public ResponseEntity<List<TKB_Tiet>> getAvailableLessons(@PathVariable int lopMonHocId, @PathVariable int tkbTuanId, @PathVariable int thuId, @PathVariable int giangDuongId) {
         List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
 
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = tkb_lichHocTheoTuanService.findLichHocTheoTuanByThuIdAndGiangDuongId(thuId, giangDuongId);
@@ -262,6 +262,15 @@ public class CalendarController {
                 tkb_lichHocTheoTuans) {
             List<TKB_Tiet> tietsNotFree = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId() + 1);
             tkb_tiets.removeAll(tietsNotFree);
+        }
+
+        LopMonHoc lopMonHoc = lopMonHocService.findOne(lopMonHocId);
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+             lopMonHoc.getTkb_lichHocTheoTuans()) {
+            if(tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId){
+                List<TKB_Tiet> tietsNotFree = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId() + 1);
+                tkb_tiets.removeAll(tietsNotFree);
+            }
         }
 
         if (tkbTuanId != 0) {

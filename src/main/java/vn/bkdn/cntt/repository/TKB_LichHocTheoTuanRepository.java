@@ -25,4 +25,6 @@ public interface TKB_LichHocTheoTuanRepository extends JpaRepository<TKB_LichHoc
             "tkb_tiet_cuoi_cung_id =?4 where id = ?5 ", nativeQuery = true)
     void updateWeekCalendar(int giangDuongId, int thuId, int tietDauTienId, int tietCuoiCungId, int weekCalendarId);
 
+    @Query(value = "select lop_mon_hoc_id from tkb_lich_hoc_theo_tuan where id = ?1 ", nativeQuery = true)
+    int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId);
 }
