@@ -17,6 +17,8 @@ public class TKB_LichHocTheoTuan {
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
     private GiangDuong giangDuong;
+    private int tuanBatDau;
+    private int tuanKetThuc;
 
     public TKB_LichHocTheoTuan() {
     }
@@ -82,5 +84,21 @@ public class TKB_LichHocTheoTuan {
 
     public void setGiangDuong(GiangDuong giangDuong) {
         this.giangDuong = giangDuong;
+    }
+
+    public int getTuanBatDau() {
+        return tuanBatDau;
+    }
+
+    public void setTuanBatDau(int tuanBatDau) {
+        this.tuanBatDau = tuanBatDau;
+    }
+
+    public int getTuanKetThuc() {
+        return tuanKetThuc;
+    }
+
+    public void setTuanKetThuc(int tuanKetThuc) {
+        this.tuanKetThuc = tuanKetThuc;
     }
 }
