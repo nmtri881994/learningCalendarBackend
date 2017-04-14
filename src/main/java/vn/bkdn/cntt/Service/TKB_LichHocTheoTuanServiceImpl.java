@@ -2,9 +2,11 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.bkdn.cntt.entity.LopMonHoc;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoTuan;
 import vn.bkdn.cntt.repository.TKB_LichHocTheoTuanRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,8 +53,14 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
     }
 
     @Override
-    public boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
-        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = tkb_lichHocTheoTuanRepository.findLichHocTheoTuanByThuId(tkb_lichHocTheoTuan.getTkb_thu().getId());
+    public boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<LopMonHoc> lopMonHocs) {
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
+        for (LopMonHoc lopMonHoc:
+             lopMonHocs) {
+            tkb_lichHocTheoTuans.addAll(lopMonHoc.getTkb_lichHocTheoTuans());
+        }
+        tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId()!=tkb_lichHocTheoTuan.getTkb_thu().getId());
+
         tkb_lichHocTheoTuans.remove(tkb_lichHocTheoTuan);
         int weekCalendarSameTime = 0;
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan1:
