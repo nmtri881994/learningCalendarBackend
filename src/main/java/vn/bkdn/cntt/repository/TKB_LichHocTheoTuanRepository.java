@@ -22,9 +22,12 @@ public interface TKB_LichHocTheoTuanRepository extends JpaRepository<TKB_LichHoc
     @Modifying
     @Transactional
     @Query(value = "update tkb_lich_hoc_theo_tuan set giang_duong_id = ?1, tkb_thu_id =?2, tkb_tiet_dau_tien_id= ?3, " +
-            "tkb_tiet_cuoi_cung_id =?4 where id = ?5 ", nativeQuery = true)
-    void updateWeekCalendar(int giangDuongId, int thuId, int tietDauTienId, int tietCuoiCungId, int weekCalendarId);
+            "tkb_tiet_cuoi_cung_id =?4, tuan_bat_dau = ?5, tuan_ket_thuc=?6 where id = ?7 ", nativeQuery = true)
+    void updateWeekCalendar(int giangDuongId, int thuId, int tietDauTienId, int tietCuoiCungId, int tuanBatDau, int tuanKetThuc, int weekCalendarId);
 
     @Query(value = "select lop_mon_hoc_id from tkb_lich_hoc_theo_tuan where id = ?1 ", nativeQuery = true)
     int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId);
+
+    @Query(value = "select * from tkb_lich_hoc_theo_tuan tkb where tkb.tkb_thu_id = ?1", nativeQuery = true)
+    List<TKB_LichHocTheoTuan> findLichHocTheoTuanByThuId(int thuId);
 }

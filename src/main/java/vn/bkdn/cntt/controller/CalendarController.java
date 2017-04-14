@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.spring.web.json.Json;
 import vn.bkdn.cntt.Service.*;
+import vn.bkdn.cntt.controller.APIEntity.TermWeekTime;
 import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
@@ -85,6 +87,10 @@ public class CalendarController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/week-number/{date}")
     public int getNumberOfWeek(@PathVariable String date) throws ParseException {
+        return this.getWeekNumberOfYearByDate(date);
+    }
+
+    public int getWeekNumberOfYearByDate(String date) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date utilDate = dateFormat.parse(date);
 
@@ -105,6 +111,17 @@ public class CalendarController {
 
         return ((days / 7) + 1);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/term/week-time/{termId}/{yearId}")
+    public ResponseEntity<TermWeekTime> getTermWeekTime(@PathVariable int termId,@PathVariable int yearId) throws ParseException {
+        KiHoc_NamHoc kiHoc_namHoc =  kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(termId, yearId);
+        int startWeek = this.getWeekNumberOfYearByDate(kiHoc_namHoc.getNgayBatDau().toString());
+        int endWeek = this.getWeekNumberOfYearByDate(kiHoc_namHoc.getNgayKetThuc().toString());
+
+        return new ResponseEntity<TermWeekTime>(new TermWeekTime(startWeek, endWeek), HttpStatus.OK);
+    }
+
 
 //    @GetMapping(value = "/available-lessons/{roomId}/{date}")
 //    public ResponseEntity<List<TKB_Tiet>> getAvailableLessonForRoomAtDate(@PathVariable int roomId, @PathVariable String date) {
