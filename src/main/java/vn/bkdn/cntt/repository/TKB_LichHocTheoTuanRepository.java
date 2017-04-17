@@ -30,4 +30,7 @@ public interface TKB_LichHocTheoTuanRepository extends JpaRepository<TKB_LichHoc
 
     @Query(value = "select * from tkb_lich_hoc_theo_tuan tkb where tkb.tkb_thu_id = ?1", nativeQuery = true)
     List<TKB_LichHocTheoTuan> findLichHocTheoTuanByThuId(int thuId);
+
+    @Query(value = "select lop_mon_hoc_id from tkb_lich_hoc_theo_tuan where id = ?1 ", nativeQuery = true)
+    int findLopMonHocIdOfLichHocTheoTuan(int tkb_lichHocTheoTuanId);
 }

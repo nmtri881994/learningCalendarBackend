@@ -95,6 +95,8 @@ public class GiaoVuController {
     public ResponseEntity<TKB_LichHocTheoTuan> updateWeekCalendar(@RequestBody TKB_LichHocTheoTuan tkb_lichHocTheoTuan, @PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId) {
         Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
         KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
+        LopMonHoc currentLopMonHoc = lopMonHocService.findOne(tkb_lichHocTheoTuanService.getLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuan.getId()));
+
         List<LopMonHoc> lopMonHocs;
         if (nganhId != 0) {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), nganhId);
@@ -102,22 +104,34 @@ public class GiaoVuController {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
         }
 
+        lopMonHocs.remove(currentLopMonHoc);
+
         tkb_lichHocTheoTuan.setTkb_tietDauTien(tkb_tietService.findOne(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId()));
         tkb_lichHocTheoTuan.setTkb_tietCuoiCung(tkb_tietService.findOne(tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId()));
 
         boolean canUpdate = tkb_lichHocTheoTuanService.canAddOrEditWeekCalendar(tkb_lichHocTheoTuan, lopMonHocs);
-        if(canUpdate){
+
+        GiaoVien giaoVien = currentLopMonHoc.getGiaoVien();
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(giaoVien.getId(), kiHoc_namHoc.getId());
+        lopMonHocsCuaGiaoVien.remove(currentLopMonHoc);
+
+        boolean canUpdate2 = tkb_lichHocTheoTuanService.canAddOrEditWeekCalendar(tkb_lichHocTheoTuan, lopMonHocsCuaGiaoVien);
+
+        if (canUpdate && canUpdate2) {
             tkb_lichHocTheoTuanService.updateWeekCalendar(tkb_lichHocTheoTuan);
             return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuanService.findOne(tkb_lichHocTheoTuan.getId()), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuan, HttpStatus.FORBIDDEN);
+        } else {
+            if (!canUpdate) {
+                return new ResponseEntity<TKB_LichHocTheoTuan>(HttpStatus.FORBIDDEN);
+            } else {
+                return new ResponseEntity<TKB_LichHocTheoTuan>(HttpStatus.CONFLICT);
+            }
         }
-
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/add-calendar/{lopMonHocId}/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}/{nganhId}")
-    public ResponseEntity<TKB_LichHocTheoTuan> addCalendar(@RequestBody TKB_LichHocTheoTuan tkb_lichHocTheoTuan, @PathVariable int lopMonHocId, @PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId){
+    public ResponseEntity<TKB_LichHocTheoTuan> addCalendar(@RequestBody TKB_LichHocTheoTuan tkb_lichHocTheoTuan, @PathVariable int lopMonHocId, @PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId) {
 
         Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
         KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
@@ -132,14 +146,23 @@ public class GiaoVuController {
         tkb_lichHocTheoTuan.setTkb_tietCuoiCung(tkb_tietService.findOne(tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId()));
 
         boolean canAdd = tkb_lichHocTheoTuanService.canAddOrEditWeekCalendar(tkb_lichHocTheoTuan, lopMonHocs);
-        if(canAdd){
+
+        GiaoVien giaoVien = lopMonHocService.findOne(lopMonHocId).getGiaoVien();
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(giaoVien.getId(), kiHoc_namHoc.getId());
+        boolean canAdd2 = tkb_lichHocTheoTuanService.canAddOrEditWeekCalendar(tkb_lichHocTheoTuan, lopMonHocsCuaGiaoVien);
+
+        if (canAdd && canAdd2) {
             tkb_lichHocTheoTuan.setGiangDuong(giangDuongService.findOne(tkb_lichHocTheoTuan.getGiangDuong().getId()));
             tkb_lichHocTheoTuan.setTkb_thu(tkb_thuService.findOne(tkb_lichHocTheoTuan.getTkb_thu().getId()));
             tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHocId));
             tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
             return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuanService.findOne(tkb_lichHocTheoTuan.getId()), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuan, HttpStatus.FORBIDDEN);
+        } else {
+            if (!canAdd) {
+                return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuan, HttpStatus.FORBIDDEN);
+            } else {
+                return new ResponseEntity<TKB_LichHocTheoTuan>(HttpStatus.CONFLICT);
+            }
         }
 
 
@@ -147,7 +170,7 @@ public class GiaoVuController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @DeleteMapping(value = "/delete-calendar/{calendarId}")
-    public void deleteCalendar(@PathVariable int calendarId){
+    public void deleteCalendar(@PathVariable int calendarId) {
         tkb_lichHocTheoTuanService.deleteCalendar(calendarId);
     }
 }
