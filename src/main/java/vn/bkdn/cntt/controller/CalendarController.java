@@ -197,6 +197,18 @@ public class CalendarController {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
         }
 
+        for (LopMonHoc lopMonHoc:
+             lopMonHocs) {
+            List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>(lopMonHoc.getTkb_lichHocTheoTuans());
+            tkb_lichHocTheoTuans.sort(Comparator.comparing(TKB_LichHocTheoTuan::getTuanBatDau));
+            Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuansSet = new HashSet<>();
+            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+                 tkb_lichHocTheoTuans) {
+                tkb_lichHocTheoTuansSet.add(tkb_lichHocTheoTuan);
+            }
+            lopMonHoc.setTkb_lichHocTheoTuans(tkb_lichHocTheoTuansSet);
+        }
+
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
