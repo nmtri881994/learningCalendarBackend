@@ -114,8 +114,8 @@ public class CalendarController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/term/week-time/{termId}/{yearId}")
-    public ResponseEntity<TermWeekTime> getTermWeekTime(@PathVariable int termId,@PathVariable int yearId) throws ParseException {
-        KiHoc_NamHoc kiHoc_namHoc =  kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(termId, yearId);
+    public ResponseEntity<TermWeekTime> getTermWeekTime(@PathVariable int termId, @PathVariable int yearId) throws ParseException {
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(termId, yearId);
         int startWeek = this.getWeekNumberOfYearByDate(kiHoc_namHoc.getNgayBatDau().toString());
         int endWeek = this.getWeekNumberOfYearByDate(kiHoc_namHoc.getNgayKetThuc().toString());
 
@@ -197,13 +197,13 @@ public class CalendarController {
             lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
         }
 
-        for (LopMonHoc lopMonHoc:
-             lopMonHocs) {
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
             List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>(lopMonHoc.getTkb_lichHocTheoTuans());
             tkb_lichHocTheoTuans.sort(Comparator.comparing(TKB_LichHocTheoTuan::getTuanBatDau));
-            Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuansSet = new HashSet<>();
-            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
-                 tkb_lichHocTheoTuans) {
+            Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuansSet = new LinkedHashSet<>();
+            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                    tkb_lichHocTheoTuans) {
                 tkb_lichHocTheoTuansSet.add(tkb_lichHocTheoTuan);
             }
             lopMonHoc.setTkb_lichHocTheoTuans(tkb_lichHocTheoTuansSet);
@@ -288,9 +288,9 @@ public class CalendarController {
 
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = tkb_lichHocTheoTuanService.findLichHocTheoTuanByThuIdAndGiangDuongId(thuId, giangDuongId);
         LopMonHoc lopMonHoc = lopMonHocService.findOne(lopMonHocId);
-        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 lopMonHoc.getTkb_lichHocTheoTuans()) {
-            if(tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId){
+            if (tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId) {
                 tkb_lichHocTheoTuans.add(tkb_lichHocTheoTuan);
             }
         }
@@ -298,13 +298,13 @@ public class CalendarController {
         GiaoVien giaoVien = lopMonHoc.getGiaoVien();
         Set<LopMonHoc> lopMonHocs = giaoVien.getLopMonHocs();
         List<TKB_LichHocTheoTuan> lichHocTheoTuansCuaGiaoVien = new ArrayList<>();
-        for (LopMonHoc lopMonHoc1:
+        for (LopMonHoc lopMonHoc1 :
                 lopMonHocs) {
             lichHocTheoTuansCuaGiaoVien.addAll(lopMonHoc1.getTkb_lichHocTheoTuans());
         }
-        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 lichHocTheoTuansCuaGiaoVien) {
-            if(tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId){
+            if (tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId) {
                 tkb_lichHocTheoTuans.add(tkb_lichHocTheoTuan);
             }
         }
@@ -320,11 +320,15 @@ public class CalendarController {
 
         if (tkbTuanId != 0) {
             TKB_LichHocTheoTuan tkb_lichHocTheoTuan = tkb_lichHocTheoTuanService.findOne(tkbTuanId);
-            List<TKB_Tiet> tietsCuaTKBHienTai = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId() + 1);
-            for (TKB_Tiet tkb_tiet :
-                    tietsCuaTKBHienTai) {
-                if (!tkb_tiets.contains(tkb_tiet)) {
-                    tkb_tiets.add(tkb_tiet);
+            System.out.println(tuanBatDau + "-" + tkb_lichHocTheoTuan.getTuanBatDau() + "-" + tkb_lichHocTheoTuan.getTuanKetThuc());
+            if (tuanBatDau >= tkb_lichHocTheoTuan.getTuanBatDau() && tuanBatDau <= tkb_lichHocTheoTuan.getTuanKetThuc() && thuId == tkb_lichHocTheoTuan.getTkb_thu().getId()) {
+                System.out.println("11111111");
+                List<TKB_Tiet> tietsCuaTKBHienTai = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId() + 1);
+                for (TKB_Tiet tkb_tiet :
+                        tietsCuaTKBHienTai) {
+                    if (!tkb_tiets.contains(tkb_tiet)) {
+                        tkb_tiets.add(tkb_tiet);
+                    }
                 }
             }
         }
@@ -334,14 +338,21 @@ public class CalendarController {
         return new ResponseEntity<List<TKB_Tiet>>(tkb_tiets, HttpStatus.OK);
     }
 
-    boolean checkInvalidTuan(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, int tuanBatDau, int tuanKetThuc){
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/tkb-tuan/find-one/{tkbTuanId}")
+    public ResponseEntity<TKB_LichHocTheoTuan> findOne(@PathVariable int tkbTuanId) {
+        return new ResponseEntity<TKB_LichHocTheoTuan>(tkb_lichHocTheoTuanService.findOne(tkbTuanId), HttpStatus.OK);
+    }
+
+    boolean checkInvalidTuan(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, int tuanBatDau, int tuanKetThuc) {
         boolean condition1 = tkb_lichHocTheoTuan.getTuanKetThuc() < tuanBatDau;
         boolean condition2 = tkb_lichHocTheoTuan.getTuanBatDau() > tuanKetThuc;
-        if(condition1 || condition2){
+        if (condition1 || condition2) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
+
 
 }
