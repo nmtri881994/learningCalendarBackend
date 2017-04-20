@@ -3,6 +3,7 @@ package vn.bkdn.cntt.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.GiaoVien;
+import vn.bkdn.cntt.entity.Khoa_KhoaHoc;
 import vn.bkdn.cntt.entity.LopMonHoc;
 import vn.bkdn.cntt.repository.LopMonHocRepository;
 
@@ -41,5 +42,10 @@ public class LopMonHocServiceImpl implements LopMonHocService {
     @Override
     public List<LopMonHoc> findByGiaoVienIdAndNamHocKiHocId(int giaoVienId, int namHoc_KiHocId) {
         return lopMonHocRepository.findByGiaoVienIdAndNamHocKiHocId(giaoVienId, namHoc_KiHocId);
+    }
+
+    @Override
+    public List<LopMonHoc> findByKhoa_KhoaHoc(int khoa_KhoaHocId) {
+        return lopMonHocRepository.findByKhoa_KhoaHoc(khoa_KhoaHocId);
     }
 }

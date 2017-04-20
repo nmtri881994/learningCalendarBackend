@@ -1,6 +1,7 @@
 package vn.bkdn.cntt.Service;
 
 import vn.bkdn.cntt.entity.GiaoVien;
+import vn.bkdn.cntt.entity.Khoa_KhoaHoc;
 import vn.bkdn.cntt.entity.LopMonHoc;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface LopMonHocService {
     List<LopMonHoc> findByKiHoc_NamHocIdAndKhoa_KhoaHocId(int ki_namHocId, int khoa_khoaHocId);
     LopMonHoc findOne(int lopMonHocId);
     List<LopMonHoc> findByGiaoVienIdAndNamHocKiHocId(int giaoVienId, int namHoc_KiHocId);
+    List<LopMonHoc> findByKhoa_KhoaHoc(int khoa_KhoaHocId);
 }

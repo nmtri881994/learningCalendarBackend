@@ -15,6 +15,7 @@ public class LopHoc {
     private int id;
     private String ma;
     private String ten;
+    private Khoa_KhoaHoc khoa_khoaHoc;
 
     private Set<SinhVien> sinhViens;
 
@@ -47,6 +48,16 @@ public class LopHoc {
 
     public void setTen(String ten) {
         this.ten = ten;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "khoa_khoaHocId")
+    public Khoa_KhoaHoc getKhoa_khoaHoc() {
+        return khoa_khoaHoc;
+    }
+
+    public void setKhoa_khoaHoc(Khoa_KhoaHoc khoa_khoaHoc) {
+        this.khoa_khoaHoc = khoa_khoaHoc;
     }
 
     @OneToMany(mappedBy = "lopHoc")

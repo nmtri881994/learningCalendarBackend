@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.bkdn.cntt.entity.GiaoVien;
+import vn.bkdn.cntt.entity.Khoa_KhoaHoc;
 import vn.bkdn.cntt.entity.LopMonHoc;
 
 import java.util.List;
@@ -24,4 +25,7 @@ public interface LopMonHocRepository extends JpaRepository<LopMonHoc, Integer> {
 
     @Query(value = "select * from lop_mon_hoc where giao_vien_id = ?1 and ki_hoc_nam_hoc_id = ?2", nativeQuery = true)
     List<LopMonHoc> findByGiaoVienIdAndNamHocKiHocId(int giaoVienId, int namHoc_KiHocId);
+
+    @Query(value = "select * from lop_mon_hoc where khoa_khoa_hoc_id = ?1", nativeQuery = true)
+    List<LopMonHoc> findByKhoa_KhoaHoc(int khoa_khoaHocId);
 }

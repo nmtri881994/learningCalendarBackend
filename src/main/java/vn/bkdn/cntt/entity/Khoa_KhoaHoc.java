@@ -20,6 +20,8 @@ public class Khoa_KhoaHoc {
 
     private Set<Khoa_KhoaHoc_Nganh> khoa_khoaHoc_nganhs;
     private Set<LopMonHoc> lopMonHocs;
+    private Set<RegisterTime> registerTimes;
+    private Set<LopHoc> lopHocs;
 
     public Khoa_KhoaHoc() {
     }
@@ -102,5 +104,24 @@ public class Khoa_KhoaHoc {
 
     public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
         this.lopMonHocs = lopMonHocs;
+    }
+
+    @OneToMany(mappedBy = "khoa_khoaHoc")
+    public Set<RegisterTime> getRegisterTimes() {
+        return registerTimes;
+    }
+
+    public void setRegisterTimes(Set<RegisterTime> registerTimes) {
+        this.registerTimes = registerTimes;
+    }
+
+    @OneToMany(mappedBy = "khoa_khoaHoc")
+    @JsonIgnore
+    public Set<LopHoc> getLopHocs() {
+        return lopHocs;
+    }
+
+    public void setLopHocs(Set<LopHoc> lopHocs) {
+        this.lopHocs = lopHocs;
     }
 }

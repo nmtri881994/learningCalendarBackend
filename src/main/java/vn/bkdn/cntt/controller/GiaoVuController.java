@@ -42,6 +42,12 @@ public class GiaoVuController {
     @Autowired
     private KiHoc_NamHocService kiHoc_namHocService;
 
+    @Autowired
+    private KhoaService khoaService;
+
+    @Autowired
+    private RegisterTimeService registerTimeService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/calendar/year-not-end")
     public ResponseEntity<List<NamHoc>> getNamHocsNotEnd() {
@@ -172,5 +178,66 @@ public class GiaoVuController {
     @DeleteMapping(value = "/delete-calendar/{calendarId}")
     public void deleteCalendar(@PathVariable int calendarId) {
         tkb_lichHocTheoTuanService.deleteCalendar(calendarId);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-khoa-khoahoc/{namHocId}/{kiHocId}")
+    public ResponseEntity<List<Khoa>> getKhoa_KhoaHoc(@PathVariable int namHocId, @PathVariable int kiHocId) {
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
+        List<Khoa> khoas = khoaService.findAll();
+        for (Khoa khoa :
+                khoas) {
+            khoa.getKhoa_khoaHocs().removeIf(khoa_khoaHoc -> !checkKhoaFitable(khoa_khoaHoc, kiHoc_namHoc));
+        }
+        khoas.removeIf(khoa -> khoa.getKhoa_khoaHocs().size() == 0);
+
+        for (Khoa khoa :
+                khoas) {
+            for (Khoa_KhoaHoc khoa_khoaHoc :
+                    khoa.getKhoa_khoaHocs()) {
+                khoa_khoaHoc.getRegisterTimes().removeIf(registerTime -> registerTime.getKiHoc_namHoc().getId() != kiHoc_namHoc.getId());
+            }
+        }
+
+        khoas.sort(Comparator.comparing(Khoa::getTen));
+
+        for(Khoa khoa:
+                khoas){
+            List<Khoa_KhoaHoc> khoa_khoaHocs = new ArrayList<>(khoa.getKhoa_khoaHocs());
+            khoa_khoaHocs.sort(Comparator.comparing(Khoa_KhoaHoc::getId));
+            Set<Khoa_KhoaHoc> khoa_khoaHocsSet = new LinkedHashSet<>();
+            for (Khoa_KhoaHoc khoa_khoaHoc:
+                 khoa_khoaHocs) {
+                khoa_khoaHocsSet.add(khoa_khoaHoc);
+            }
+
+            khoa.setKhoa_khoaHocs(khoa_khoaHocsSet);
+        }
+
+        return new ResponseEntity<List<Khoa>>(khoas, HttpStatus.OK);
+    }
+
+    boolean checkKhoaFitable(Khoa_KhoaHoc khoa_khoaHoc, KiHoc_NamHoc kiHoc_namHoc) {
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKhoa_KhoaHoc(khoa_khoaHoc.getId());
+        lopMonHocs.removeIf(lopMonHoc -> lopMonHoc.getKiHoc_namHoc().getId() != kiHoc_namHoc.getId());
+        if (lopMonHocs.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/open-registering/{registerTimeId}")
+    public ResponseEntity<?> openRegistering(@PathVariable int registerTimeId){
+        registerTimeService.udpateRegistering(registerTimeId, true);
+        return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/close-registering/{registerTimeId}")
+    public ResponseEntity<Object> closeRegistering(@PathVariable int registerTimeId){
+        registerTimeService.udpateRegistering(registerTimeId, false);
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 }
