@@ -17,6 +17,7 @@ public class WebsocketBrokerConfig extends AbstractWebSocketMessageBrokerConfigu
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
         stompEndpointRegistry.addEndpoint("/week-calendar/edit").setAllowedOrigins("*").withSockJS();
         stompEndpointRegistry.addEndpoint("/calendar").setAllowedOrigins("*").withSockJS();
+        stompEndpointRegistry.addEndpoint("/register").setAllowedOrigins("*").withSockJS();
     }
 
     @Override
