@@ -19,4 +19,9 @@ public class Khoa_KhoaHocServiceImpl implements Khoa_KhoaHocService {
     public Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId) {
         return khoa_khoaHocRepository.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
     }
+
+    @Override
+    public int getKhoaId(int khoa_khoaHocId) {
+        return khoa_khoaHocRepository.getKhoaId(khoa_khoaHocId);
+    }
 }

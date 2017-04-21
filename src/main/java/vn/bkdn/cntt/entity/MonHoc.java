@@ -14,9 +14,11 @@ public class MonHoc {
     private int id;
     private String maMonHoc;
     private String ten;
+    private float soTinChi;
 
     private Set<LopMonHoc> lopMonHocs;
     private Set<MonHoc_GiangDuong> monHoc_giangDuongs;
+    private Set<SinhVien_LoTrinhMonHoc> sinhVien_loTrinhMonHocs;
 
     public MonHoc() {
     }
@@ -49,6 +51,14 @@ public class MonHoc {
         this.ten = ten;
     }
 
+    public float getSoTinChi() {
+        return soTinChi;
+    }
+
+    public void setSoTinChi(float soTinChi) {
+        this.soTinChi = soTinChi;
+    }
+
     @OneToMany(mappedBy = "monHoc")
     @JsonIgnore
     public Set<LopMonHoc> getLopMonHocs() {
@@ -66,5 +76,15 @@ public class MonHoc {
 
     public void setMonHoc_giangDuongs(Set<MonHoc_GiangDuong> monHoc_giangDuongs) {
         this.monHoc_giangDuongs = monHoc_giangDuongs;
+    }
+
+    @OneToMany(mappedBy = "monHoc")
+    @JsonIgnore
+    public Set<SinhVien_LoTrinhMonHoc> getSinhVien_loTrinhMonHocs() {
+        return sinhVien_loTrinhMonHocs;
+    }
+
+    public void setSinhVien_loTrinhMonHocs(Set<SinhVien_LoTrinhMonHoc> sinhVien_loTrinhMonHocs) {
+        this.sinhVien_loTrinhMonHocs = sinhVien_loTrinhMonHocs;
     }
 }

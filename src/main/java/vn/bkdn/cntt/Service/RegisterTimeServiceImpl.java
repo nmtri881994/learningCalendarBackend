@@ -2,6 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.bkdn.cntt.entity.RegisterTime;
 import vn.bkdn.cntt.repository.RegisterTimeRepository;
 
 /**
@@ -18,5 +19,10 @@ public class RegisterTimeServiceImpl implements RegisterTimeService {
     @Override
     public void udpateRegistering(int registerTimeId, boolean status) {
         registerTimeRepository.updateRegistering(registerTimeId, status);
+    }
+
+    @Override
+    public RegisterTime findOne(int registerTimeId) {
+        return registerTimeRepository.findOne(registerTimeId);
     }
 }

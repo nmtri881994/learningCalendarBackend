@@ -3,8 +3,6 @@ package vn.bkdn.cntt.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +39,18 @@ public class SinhVienController {
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
+    @Autowired
+    private RegisterTimeService registerTimeService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
+
+    @Autowired
+    private Khoa_KhoaHocService khoa_khoaHocService;
+
+    @Autowired
+    private KhoaService khoaService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -98,5 +108,55 @@ public class SinhVienController {
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
         System.out.println(editStudentNote.getEditedNote() + "-" + editStudentNote.getLessonId() + "-" + sinhVien.getId());
         tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), sinhVien.getId());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/register-time/{registerTimeId}")
+    public ResponseEntity<RegisterTime> getRegisterTime(@PathVariable int registerTimeId) {
+        return new ResponseEntity<RegisterTime>(registerTimeService.findOne(registerTimeId), HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/register/classes/{registerTimeId}")
+    public ResponseEntity<MappingJacksonValue> getCanRegisterClasses(@PathVariable int registerTimeId) {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        List<MonHoc> monHocsSinhVienCoTheDangKy = new ArrayList<>();
+        for (SinhVien_LoTrinhMonHoc sinhVien_loTrinhMonHoc :
+             sinhVien.getSinhVien_loTrinhMonHocs()) {
+            if(sinhVien_loTrinhMonHoc.isCoTheDangKy()){
+                monHocsSinhVienCoTheDangKy.add(sinhVien_loTrinhMonHoc.getMonHoc());
+            }
+        }
+        Nganh nganh = sinhVien.getNganh();
+
+        RegisterTime registerTime = registerTimeService.findOne(registerTimeId);
+        int kiHoc_namHocId = registerTime.getKiHoc_namHoc().getId();
+        int khoa_khoaHocId = registerTime.getKhoa_khoaHoc().getId();
+
+        List<LopMonHoc> lopMonHocs;
+
+        if (nganh != null) {
+            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHocId, khoa_khoaHocId, nganh.getId());
+        } else {
+            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHocId, khoa_khoaHocId);
+        }
+
+        lopMonHocs.removeIf(lopMonHoc -> !monHocsSinhVienCoTheDangKy.contains(lopMonHoc.getMonHoc()));
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id", "giaoVien", "khoa_khoaHoc", "monHoc"));
+
+        mappingJacksonValue.setFilters(filterProvider);
+
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/ma-khoa/{khoa_khoaHocId}")
+    public String getMaKhoa(@PathVariable int khoa_khoaHocId){
+        return(khoaService.findOne(khoa_khoaHocService.getKhoaId(khoa_khoaHocId)).getMaKhoa());
     }
 }

@@ -14,4 +14,7 @@ public interface Khoa_KhoaHocRepository extends JpaRepository<Khoa_KhoaHoc, Inte
 
     @Query(value = "select * from khoa_khoa_hoc where khoa_id = ?1 and khoa_hoc_id = ?2", nativeQuery = true)
     Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId);
+
+    @Query(value = "select khoa_id from khoa_khoa_hoc where id = ?1", nativeQuery = true)
+    int getKhoaId(int khoa_khoaHocId);
 }

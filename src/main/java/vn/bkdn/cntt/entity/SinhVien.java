@@ -1,7 +1,5 @@
 package vn.bkdn.cntt.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -17,10 +15,11 @@ public class SinhVien {
     private String hoDem;
     private String ten;
     private LopHoc lopHoc;
+    private Nganh nganh;
 
     private Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens;
     private Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus;
-    private Set<LopMonHoc_SinhVien_CoTheDangKy> lopMonHoc_sinhVien_coTheDangKies;
+    private Set<SinhVien_LoTrinhMonHoc> sinhVien_loTrinhMonHocs;
 
     public SinhVien() {
     }
@@ -73,6 +72,16 @@ public class SinhVien {
         this.lopHoc = lopHoc;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "nganhId")
+    public Nganh getNganh() {
+        return nganh;
+    }
+
+    public void setNganh(Nganh nganh) {
+        this.nganh = nganh;
+    }
+
     @OneToMany(mappedBy = "sinhVien")
     public Set<LopMonHoc_SinhVien> getLopMonHoc_sinhViens() {
         return lopMonHoc_sinhViens;
@@ -92,11 +101,11 @@ public class SinhVien {
     }
 
     @OneToMany(mappedBy = "sinhVien")
-    public Set<LopMonHoc_SinhVien_CoTheDangKy> getLopMonHoc_sinhVien_coTheDangKies() {
-        return lopMonHoc_sinhVien_coTheDangKies;
+    public Set<SinhVien_LoTrinhMonHoc> getSinhVien_loTrinhMonHocs() {
+        return sinhVien_loTrinhMonHocs;
     }
 
-    public void setLopMonHoc_sinhVien_coTheDangKies(Set<LopMonHoc_SinhVien_CoTheDangKy> lopMonHoc_sinhVien_coTheDangKies) {
-        this.lopMonHoc_sinhVien_coTheDangKies = lopMonHoc_sinhVien_coTheDangKies;
+    public void setSinhVien_loTrinhMonHocs(Set<SinhVien_LoTrinhMonHoc> sinhVien_loTrinhMonHocs) {
+        this.sinhVien_loTrinhMonHocs = sinhVien_loTrinhMonHocs;
     }
 }

@@ -16,6 +16,7 @@ public class Nganh {
 
     private Set<Khoa_KhoaHoc_Nganh> khoa_khoaHoc_nganhs;
     private Set<LopMonHoc> lopMonHocs;
+    private Set<SinhVien> sinhViens;
 
     public Nganh() {
     }
@@ -56,5 +57,15 @@ public class Nganh {
 
     public void setLopMonHocs(Set<LopMonHoc> lopMonHocs) {
         this.lopMonHocs = lopMonHocs;
+    }
+
+    @OneToMany(mappedBy = "nganh")
+    @JsonIgnore
+    public Set<SinhVien> getSinhViens() {
+        return sinhViens;
+    }
+
+    public void setSinhViens(Set<SinhVien> sinhViens) {
+        this.sinhViens = sinhViens;
     }
 }

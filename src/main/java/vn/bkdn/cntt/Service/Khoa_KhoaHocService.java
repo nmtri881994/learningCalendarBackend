@@ -7,4 +7,5 @@ import vn.bkdn.cntt.entity.Khoa_KhoaHoc;
  */
 public interface Khoa_KhoaHocService {
     Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId);
+    int getKhoaId(int khoa_khoaHocId);
 }

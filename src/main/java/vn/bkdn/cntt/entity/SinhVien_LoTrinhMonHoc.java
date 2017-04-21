@@ -10,12 +10,14 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-public class LopMonHoc_SinhVien_CoTheDangKy {
+public class SinhVien_LoTrinhMonHoc {
     private int id;
-    private LopMonHoc lopMonHoc;
+    private int ki;
+    private MonHoc monHoc;
     private SinhVien sinhVien;
+    private boolean coTheDangKy;
 
-    public LopMonHoc_SinhVien_CoTheDangKy() {
+    public SinhVien_LoTrinhMonHoc() {
     }
 
     @Id
@@ -28,15 +30,23 @@ public class LopMonHoc_SinhVien_CoTheDangKy {
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "lopMonHocId")
-    @NotNull
-    public LopMonHoc getLopMonHoc() {
-        return lopMonHoc;
+    public int getKi() {
+        return ki;
     }
 
-    public void setLopMonHoc(LopMonHoc lopMonHoc) {
-        this.lopMonHoc = lopMonHoc;
+    public void setKi(int ki) {
+        this.ki = ki;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "monHocId")
+    @NotNull
+    public MonHoc getMonHoc() {
+        return monHoc;
+    }
+
+    public void setMonHoc(MonHoc monHoc) {
+        this.monHoc = monHoc;
     }
 
     @ManyToOne
@@ -49,5 +59,13 @@ public class LopMonHoc_SinhVien_CoTheDangKy {
 
     public void setSinhVien(SinhVien sinhVien) {
         this.sinhVien = sinhVien;
+    }
+
+    public boolean isCoTheDangKy() {
+        return coTheDangKy;
+    }
+
+    public void setCoTheDangKy(boolean coTheDangKy) {
+        this.coTheDangKy = coTheDangKy;
     }
 }
