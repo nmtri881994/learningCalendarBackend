@@ -52,6 +52,9 @@ public class SinhVienController {
     @Autowired
     private KhoaService khoaService;
 
+    @Autowired
+    private LopMonHoc_SinhVienService lopMonHoc_sinhVienService;
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
     public ResponseEntity<MappingJacksonValue> getCalendarByWeek(@PathVariable String date) throws ParseException {
@@ -123,8 +126,8 @@ public class SinhVienController {
         SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
         List<MonHoc> monHocsSinhVienCoTheDangKy = new ArrayList<>();
         for (SinhVien_LoTrinhMonHoc sinhVien_loTrinhMonHoc :
-             sinhVien.getSinhVien_loTrinhMonHocs()) {
-            if(sinhVien_loTrinhMonHoc.isCoTheDangKy()){
+                sinhVien.getSinhVien_loTrinhMonHocs()) {
+            if (sinhVien_loTrinhMonHoc.isCoTheDangKy()) {
                 monHocsSinhVienCoTheDangKy.add(sinhVien_loTrinhMonHoc.getMonHoc());
             }
         }
@@ -144,10 +147,12 @@ public class SinhVienController {
 
         lopMonHocs.removeIf(lopMonHoc -> !monHocsSinhVienCoTheDangKy.contains(lopMonHoc.getMonHoc()));
 
+        lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
+
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "giaoVien", "khoa_khoaHoc", "monHoc"));
+                        .filterOutAllExcept("id", "giaoVien", "khoa_khoaHoc", "monHoc", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
@@ -156,7 +161,39 @@ public class SinhVienController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/ma-khoa/{khoa_khoaHocId}")
-    public String getMaKhoa(@PathVariable int khoa_khoaHocId){
-        return(khoaService.findOne(khoa_khoaHocService.getKhoaId(khoa_khoaHocId)).getMaKhoa());
+    public String getMaKhoa(@PathVariable int khoa_khoaHocId) {
+        return khoaService.findOne(khoa_khoaHocService.getKhoaId(khoa_khoaHocId)).getMaKhoa();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/register/{classId}/quantity")
+    public int getClassCurrentQuantity(@PathVariable int classId) {
+        return lopMonHoc_sinhVienService.getClassCurrentQuantity(classId);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/register/{classId}")
+    public ResponseEntity<Integer> studentRegister(@PathVariable int classId) {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return new ResponseEntity<Integer>(lopMonHoc_sinhVienService.studentRegister(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()), HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/cancel-register/{classId}")
+    public ResponseEntity<Boolean> studentCancelRegister(@PathVariable int classId) {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        return new ResponseEntity<Boolean>(lopMonHoc_sinhVienService.studentCancelRegister(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()), HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/check-registered/{classId}")
+    public ResponseEntity<Boolean> checkRegisterd(@PathVariable int classId) {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (lopMonHoc_sinhVienService.findByClassIdAndStudentId(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()) != null) {
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
     }
 }
