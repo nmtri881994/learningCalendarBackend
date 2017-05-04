@@ -16,4 +16,5 @@ public interface LopMonHocService {
     LopMonHoc findOne(int lopMonHocId);
     List<LopMonHoc> findByGiaoVienIdAndNamHocKiHocId(int giaoVienId, int namHoc_KiHocId);
     List<LopMonHoc> findByKhoa_KhoaHoc(int khoa_KhoaHocId);
+    List<LopMonHoc> findByKiHoc_NamHocId(int ki_namHocId);
 }

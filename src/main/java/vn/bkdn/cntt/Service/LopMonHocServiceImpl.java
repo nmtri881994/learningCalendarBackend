@@ -48,4 +48,9 @@ public class LopMonHocServiceImpl implements LopMonHocService {
     public List<LopMonHoc> findByKhoa_KhoaHoc(int khoa_KhoaHocId) {
         return lopMonHocRepository.findByKhoa_KhoaHoc(khoa_KhoaHocId);
     }
+
+    @Override
+    public List<LopMonHoc> findByKiHoc_NamHocId(int ki_namHocId) {
+        return lopMonHocRepository.findByKiHoc_NamHocId(ki_namHocId);
+    }
 }

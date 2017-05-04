@@ -8,4 +8,6 @@ import vn.bkdn.cntt.entity.GiaoVien;
 
 public interface GiaoVienService {
     GiaoVien findByMaGiaoVien(String maGiaoVien);
+
+    GiaoVien findOne(int giaoVienId);
 }

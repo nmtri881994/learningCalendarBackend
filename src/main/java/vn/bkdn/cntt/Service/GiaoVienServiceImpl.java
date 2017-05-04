@@ -19,4 +19,9 @@ public class GiaoVienServiceImpl implements GiaoVienService{
     public GiaoVien findByMaGiaoVien(String maGiaoVien) {
         return giaoVienRepository.findByMaGiaoVien(maGiaoVien);
     }
+
+    @Override
+    public GiaoVien findOne(int giaoVienId) {
+        return giaoVienRepository.findOne(giaoVienId);
+    }
 }

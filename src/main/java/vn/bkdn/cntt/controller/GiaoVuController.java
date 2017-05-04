@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
+import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
 
 import java.util.*;
@@ -47,6 +48,8 @@ public class GiaoVuController {
 
     @Autowired
     private RegisterTimeService registerTimeService;
+
+    private GeneticAlgorithmUtils geneticAlgorithmUtils;
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/calendar/year-not-end")
@@ -239,5 +242,12 @@ public class GiaoVuController {
     public ResponseEntity<Object> closeRegistering(@PathVariable int registerTimeId){
         registerTimeService.udpateRegistering(registerTimeId, false);
         return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/generate-random-calendar/{semesterId}")
+    public void generateRandomCalendarForSemester(@PathVariable int semesterId){
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
+        System.out.println(lopMonHocs.size());
     }
 }

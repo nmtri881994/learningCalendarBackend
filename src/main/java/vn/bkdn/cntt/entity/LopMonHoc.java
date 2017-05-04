@@ -174,7 +174,6 @@ public class LopMonHoc {
         this.lopMonHoc_sinhViens = lopMonHoc_sinhViens;
     }
 
-
     @OneToMany(mappedBy = "lopMonHoc")
     public Set<TKB_LichHocTheoTuan> getTkb_lichHocTheoTuans() {
         return tkb_lichHocTheoTuans;
