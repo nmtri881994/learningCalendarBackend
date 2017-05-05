@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
+import vn.bkdn.cntt.entity.geneticAlgorithm.TKB_Tuan;
 
 import java.util.*;
 
@@ -18,6 +19,10 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "api/giaovu")
 public class GiaoVuController {
+
+    private int numberOfInviduals = 20;
+    private int numberOfMaximumIterations = 100;
+    private int bestAdaptationPoint = 20;
 
     @Autowired
     private NamHocService namHocService;
@@ -204,13 +209,13 @@ public class GiaoVuController {
 
         khoas.sort(Comparator.comparing(Khoa::getTen));
 
-        for(Khoa khoa:
-                khoas){
+        for (Khoa khoa :
+                khoas) {
             List<Khoa_KhoaHoc> khoa_khoaHocs = new ArrayList<>(khoa.getKhoa_khoaHocs());
             khoa_khoaHocs.sort(Comparator.comparing(Khoa_KhoaHoc::getId));
             Set<Khoa_KhoaHoc> khoa_khoaHocsSet = new LinkedHashSet<>();
-            for (Khoa_KhoaHoc khoa_khoaHoc:
-                 khoa_khoaHocs) {
+            for (Khoa_KhoaHoc khoa_khoaHoc :
+                    khoa_khoaHocs) {
                 khoa_khoaHocsSet.add(khoa_khoaHoc);
             }
 
@@ -232,22 +237,189 @@ public class GiaoVuController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/open-registering/{registerTimeId}")
-    public ResponseEntity<?> openRegistering(@PathVariable int registerTimeId){
+    public ResponseEntity<?> openRegistering(@PathVariable int registerTimeId) {
         registerTimeService.udpateRegistering(registerTimeId, true);
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/close-registering/{registerTimeId}")
-    public ResponseEntity<Object> closeRegistering(@PathVariable int registerTimeId){
+    public ResponseEntity<Object> closeRegistering(@PathVariable int registerTimeId) {
         registerTimeService.udpateRegistering(registerTimeId, false);
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/generate-random-calendar/{semesterId}")
-    public void generateRandomCalendarForSemester(@PathVariable int semesterId){
+    public ResponseEntity<String> generateRandomCalendarForSemester(@PathVariable int semesterId) {
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
-        System.out.println(lopMonHocs.size());
+        if (this.checkLopMonHocsAllFree(lopMonHocs)) {
+
+//            for (int i = 1; i < this.numberOfMaximumIterations; i++) {
+//
+//            }
+            for (LopMonHoc lopMonHoc :
+                    lopMonHocs) {
+                this.randomCalendarForClass(lopMonHoc);
+            }
+            return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
+        }
     }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/delete-all-calendars/{semesterId}")
+    public ResponseEntity<String> deleteAllCalendarsOfSemester(@PathVariable int semesterId) {
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            if (!lopMonHoc.getTkb_lichHocTheoTuans().isEmpty()) {
+                tkb_lichHocTheoTuanService.deleteWeekCalendarOfLopMonHoc(lopMonHoc.getId());
+            }
+        }
+
+        return new ResponseEntity<String>("Reset thời khóa biểu thành công", HttpStatus.OK);
+    }
+
+    public int soTietChuaCoLichConLaiCuaLopMonHoc(LopMonHoc lopMonHoc) {
+        int totalLessons = lopMonHoc.getSoTietLyThuyet() + lopMonHoc.getSoTietThucHanh();
+        int haveClassLessons = 0;
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                lopMonHoc.getTkb_lichHocTheoTuans()) {
+            int numberOfWeeks = tkb_lichHocTheoTuan.getTuanKetThuc() - tkb_lichHocTheoTuan.getTuanBatDau() + 1;
+            haveClassLessons += numberOfWeeks * (tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu() - tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + 1);
+        }
+
+        return totalLessons - haveClassLessons;
+    }
+
+    public boolean checkLopMonHocsAllFree(List<LopMonHoc> lopMonHocs) {
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            if (!lopMonHoc.getTkb_lichHocTheoTuans().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String randomCalendarForClass(LopMonHoc lopMonHoc) {
+        int numberOfTheoryLessons = lopMonHoc.getSoTietLyThuyet();
+        int numberOfPracticeLessons = lopMonHoc.getSoTietThucHanh();
+
+        int totalWeek = lopMonHoc.getGioiHanTuanKetThuc() - lopMonHoc.getGioiHanTuanBatDau() + 1;
+
+        int numberOfTheoryLessonsPerWeek = (numberOfTheoryLessons + totalWeek - 1) / totalWeek;
+        int numberOfPracticeLessonsPerWeek = (numberOfPracticeLessons + totalWeek - 1) / totalWeek;
+
+        int theoryWeeksNeeded = numberOfTheoryLessonsPerWeek != 0 ? (numberOfTheoryLessons + numberOfTheoryLessonsPerWeek - 1) / numberOfTheoryLessonsPerWeek : 0;
+        int practiceWeeksNeeded = numberOfPracticeLessonsPerWeek != 0 ? (numberOfPracticeLessons + numberOfPracticeLessonsPerWeek - 1) / numberOfPracticeLessonsPerWeek : 0;
+
+        int soBuoiLyThuyetMotTuan = 0;
+        int soBuoiThucHanhMotTuan = 0;
+
+        if (numberOfTheoryLessonsPerWeek != 0) {
+            if (numberOfTheoryLessonsPerWeek < 6) {
+                soBuoiLyThuyetMotTuan = 1;
+            } else if (numberOfTheoryLessonsPerWeek < 11) {
+                soBuoiLyThuyetMotTuan = 2;
+            } else {
+                return "Có lớp môn học yêu cầu nhiều hơn 2 buổi 1 tuần";
+            }
+        }
+
+        if (numberOfPracticeLessonsPerWeek != 0) {
+            if (numberOfPracticeLessonsPerWeek < 6) {
+                soBuoiThucHanhMotTuan = 1;
+            } else if (numberOfPracticeLessonsPerWeek < 11) {
+                soBuoiThucHanhMotTuan = 2;
+            } else {
+                return "Có lớp môn học yêu cầu nhiều hơn 2 buổi 1 tuần";
+            }
+        }
+
+        List<TKB_Tuan> danhSachBuoiHocLyThuyet = new ArrayList<>();
+        if (soBuoiLyThuyetMotTuan == 1) {
+            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(numberOfTheoryLessonsPerWeek));
+        } else if (soBuoiLyThuyetMotTuan == 2) {
+            int soTietLyThuyetBuoiMot = numberOfTheoryLessonsPerWeek / 2;
+            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(soTietLyThuyetBuoiMot));
+            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(numberOfTheoryLessonsPerWeek - soTietLyThuyetBuoiMot));
+        }
+
+        List<TKB_Tuan> danhSachBuoiHocThucHanh = new ArrayList<>();
+        if (soBuoiThucHanhMotTuan == 1) {
+            danhSachBuoiHocThucHanh.add(new TKB_Tuan(numberOfPracticeLessonsPerWeek));
+        } else if (soBuoiThucHanhMotTuan == 2) {
+            int soTietThucHanhBuoiMot = numberOfPracticeLessonsPerWeek / 2;
+            danhSachBuoiHocThucHanh.add(new TKB_Tuan(soTietThucHanhBuoiMot));
+            danhSachBuoiHocThucHanh.add(new TKB_Tuan(numberOfPracticeLessonsPerWeek - soTietThucHanhBuoiMot));
+        }
+
+        //Get list of rooms
+        List<GiangDuong> giangDuongs = new ArrayList<>();
+        for (MonHoc_GiangDuong monHoc_giangDuong :
+                lopMonHoc.getMonHoc().getMonHoc_giangDuongs()) {
+            giangDuongs.add(monHoc_giangDuong.getGiangDuong());
+        }
+
+        List<GiangDuong> giangDuongLyThuyets = new ArrayList<>();
+        List<GiangDuong> giangDuongThucHanhs = new ArrayList<>();
+        for (GiangDuong giangDuong :
+                giangDuongs) {
+            if ("Dãy nhà lý thuyết".equals(giangDuong.getDayNha().getTen())) {
+                giangDuongLyThuyets.add(giangDuong);
+            } else {
+                giangDuongThucHanhs.add(giangDuong);
+            }
+        }
+
+
+        Random random = new Random();
+        //random weekday
+        List<TKB_Thu> tkb_thus = tkb_thuService.findAll();
+        tkb_thus.removeIf(tkb_thu -> "Thứ 7".equals(tkb_thu.getTen()) || "Chủ nhật".equals(tkb_thu.getTen()));
+
+        for (TKB_Thu tkb_thu :
+                tkb_thus) {
+
+        }
+
+        return "Thành công";
+    }
+
+    public boolean kiemTraThuCoTheXepLich(TKB_Thu tkb_thu, List<GiangDuong> giangDuongs, int soTietToiDa, LopMonHoc lopMonHoc) {
+        List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
+
+        List<TKB_Tiet> danhSachTietBanCuaGiaoVien = this.getDanhSachTietBanCuaGiaoVien(tkb_thu, lopMonHoc.getGiaoVien(), lopMonHoc.getKiHoc_namHoc());
+        tkb_tiets.removeAll(danhSachTietBanCuaGiaoVien);
+    }
+
+    public List<TKB_Tiet> getDanhSachTietBanCuaGiaoVien(TKB_Thu tkb_thu, GiaoVien giaoVien, KiHoc_NamHoc kiHoc_namHoc) {
+        List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
+        List<TKB_Tiet> tkb_tietsTemp = tkb_tiets;
+
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
+
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(giaoVien.getId(), kiHoc_namHoc.getId());
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                    lopMonHoc.getTkb_lichHocTheoTuans()) {
+                if (tkb_lichHocTheoTuan.getTkb_thu().getId() == tkb_thu.getId()) {
+                    tkb_lichHocTheoTuans.add(tkb_lichHocTheoTuan);
+                }
+            }
+        }
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            tkb_tiets.removeIf(tkb_tiet -> tkb_tiet.getThuTu() >= tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() && tkb_tiet.getThuTu() <= tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+        }
+        tkb_tietsTemp.removeAll(tkb_tiets);
+        return tkb_tietsTemp;
+    }
+
 }

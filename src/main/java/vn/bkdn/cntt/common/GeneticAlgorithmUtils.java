@@ -13,18 +13,25 @@ public class GeneticAlgorithmUtils {
 
     private LopMonHocService lopMonHocService;
 
-    public int soTietChuaCoLichConLaiCuaLopMonHoc(int lopMonHocId){
-        LopMonHoc lopMonHoc = lopMonHocService.findOne(lopMonHocId);
-        int totalLessons = lopMonHoc.getSoTietLyThuyet() + lopMonHoc.getSoTietThucHanh();
-        
-        int haveClassLessons = 0;
-        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
-             lopMonHoc.getTkb_lichHocTheoTuans()) {
-            int numberOfWeeks = tkb_lichHocTheoTuan.getTuanKetThuc() - tkb_lichHocTheoTuan.getTuanBatDau() + 1;
-            haveClassLessons += numberOfWeeks*(tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu() - tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() +1);
-        }
-
-        return totalLessons - haveClassLessons;
-    }
+//    public int soTietChuaCoLichConLaiCuaLopMonHoc(LopMonHoc lopMonHoc){
+//        int totalLessons = lopMonHoc.getSoTietLyThuyet() + lopMonHoc.getSoTietThucHanh();
+//
+//        System.out.println("-----------"+totalLessons);
+//
+//        int haveClassLessons = 0;
+//
+//        if(!lopMonHoc.getTkb_lichHocTheoTuans().isEmpty()){
+//            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+//                    lopMonHoc.getTkb_lichHocTheoTuans()) {
+//                int numberOfWeeks = tkb_lichHocTheoTuan.getTuanKetThuc() - tkb_lichHocTheoTuan.getTuanBatDau() + 1;
+//                haveClassLessons += numberOfWeeks*(tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu() - tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() +1);
+//            }
+//
+//            return totalLessons - haveClassLessons;
+//        }else{
+//            return totalLessons;
+//        }
+//
+//    }
 
 }
