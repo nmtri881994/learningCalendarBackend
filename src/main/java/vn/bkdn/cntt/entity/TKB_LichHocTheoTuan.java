@@ -14,6 +14,7 @@ public class TKB_LichHocTheoTuan {
     private int id;
     private LopMonHoc lopMonHoc;
     private TKB_Thu tkb_thu;
+    private int soTiet;
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
     private GiangDuong giangDuong;
@@ -21,6 +22,10 @@ public class TKB_LichHocTheoTuan {
     private int tuanKetThuc;
 
     public TKB_LichHocTheoTuan() {
+    }
+
+    public TKB_LichHocTheoTuan(int soTiet) {
+        this.soTiet = soTiet;
     }
 
     @Id
@@ -52,6 +57,14 @@ public class TKB_LichHocTheoTuan {
 
     public void setTkb_thu(TKB_Thu tkb_thu) {
         this.tkb_thu = tkb_thu;
+    }
+
+    public int getSoTiet() {
+        return soTiet;
+    }
+
+    public void setSoTiet(int soTiet) {
+        this.soTiet = soTiet;
     }
 
     @ManyToOne

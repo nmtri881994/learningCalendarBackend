@@ -19,6 +19,7 @@ public class GiaoVien {
 
     private Set<LopMonHoc> lopMonHocs;
     private Set<TKB_LichNghiCuaGiaoVien> tkb_lichNghiCuaGiaoViens;
+    private Set<TKB_GiaoVien_NgayNghiTrongTuan> tkb_giaoVien_ngayNghiTrongTuans;
 
     public GiaoVien() {
     }
@@ -78,5 +79,14 @@ public class GiaoVien {
 
     public void setTkb_lichNghiCuaGiaoViens(Set<TKB_LichNghiCuaGiaoVien> tkb_lichNghiCuaGiaoViens) {
         this.tkb_lichNghiCuaGiaoViens = tkb_lichNghiCuaGiaoViens;
+    }
+
+    @OneToMany(mappedBy = "giaoVien")
+    public Set<TKB_GiaoVien_NgayNghiTrongTuan> getTkb_giaoVien_ngayNghiTrongTuans() {
+        return tkb_giaoVien_ngayNghiTrongTuans;
+    }
+
+    public void setTkb_giaoVien_ngayNghiTrongTuans(Set<TKB_GiaoVien_NgayNghiTrongTuan> tkb_giaoVien_ngayNghiTrongTuans) {
+        this.tkb_giaoVien_ngayNghiTrongTuans = tkb_giaoVien_ngayNghiTrongTuans;
     }
 }

@@ -37,6 +37,27 @@ public class LopMonHoc {
     public LopMonHoc() {
     }
 
+    public LopMonHoc(LopMonHoc lopMonHoc) {
+        this.id = lopMonHoc.getId();
+        this.monHoc = lopMonHoc.getMonHoc();
+        this.giaoVien = lopMonHoc.getGiaoVien();
+        this.kiHoc_namHoc = lopMonHoc.getKiHoc_namHoc();
+        this.khoa_khoaHoc = lopMonHoc.getKhoa_khoaHoc();
+        this.nganh = lopMonHoc.getNganh();
+        this.soTietLyThuyet = lopMonHoc.getSoTietLyThuyet();
+        this.soTietThucHanh = lopMonHoc.getSoTietThucHanh();
+        this.soLuongToiDa = lopMonHoc.getSoLuongToiDa();
+        this.soBuoiLyThuyetMotTuan = lopMonHoc.getSoBuoiLyThuyetMotTuan();
+        this.soTietLyThuyetMotTuan = lopMonHoc.getSoTietLyThuyetMotTuan();
+        this.soBuoiThucHanhMotTuan = lopMonHoc.getSoBuoiThucHanhMotTuan();
+        this.soTietThucHanhMotTuan = lopMonHoc.getSoTietThucHanhMotTuan();
+        this.gioiHanTuanBatDau = lopMonHoc.getGioiHanTuanBatDau();
+        this.gioiHanTuanKetThuc = lopMonHoc.getGioiHanTuanKetThuc();
+        this.tkb_lichHocTheoNgays = lopMonHoc.getTkb_lichHocTheoNgays();
+        this.lopMonHoc_sinhViens = lopMonHoc.getLopMonHoc_sinhViens();
+        this.tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

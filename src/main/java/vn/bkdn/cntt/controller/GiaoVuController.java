@@ -1,5 +1,6 @@
 package vn.bkdn.cntt.controller;
 
+import org.hibernate.annotations.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
-import vn.bkdn.cntt.entity.geneticAlgorithm.TKB_Tuan;
 
 import java.util.*;
 
@@ -253,15 +253,53 @@ public class GiaoVuController {
     @GetMapping(value = "/generate-random-calendar/{semesterId}")
     public ResponseEntity<String> generateRandomCalendarForSemester(@PathVariable int semesterId) {
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
+        lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
+        List<List<LopMonHoc>> quanThe = new ArrayList<>();
+        for (int i = 0; i < numberOfInviduals; i++) {
+            List<LopMonHoc> lopMonHocsTemp = new ArrayList<>();
+            for (LopMonHoc lopMonHoc :
+                    lopMonHocs) {
+                lopMonHocsTemp.add(new LopMonHoc(lopMonHoc));
+            }
+            quanThe.add(lopMonHocsTemp);
+        }
         if (this.checkLopMonHocsAllFree(lopMonHocs)) {
 
+            //khoi tao quan the ban dau
+            for (List<LopMonHoc> lopMonHocList :
+                    quanThe) {
+                for (LopMonHoc lopMonHoc :
+                        lopMonHocList) {
+                    String result = randomCalendarForClass(lopMonHoc);
+                    if (result != "Thành công") {
+                        return new ResponseEntity<String>(result, HttpStatus.OK);
+                    }
+                }
+            }
+
+            //Tien hanh tien hoa
 //            for (int i = 1; i < this.numberOfMaximumIterations; i++) {
 //
 //            }
-            for (LopMonHoc lopMonHoc :
-                    lopMonHocs) {
-                this.randomCalendarForClass(lopMonHoc);
+
+            int i = 1;
+            for (List<LopMonHoc> lopMonHocList :
+                    quanThe) {
+                System.out.println("----------Ca the " + i + ": " + this.getDiemThichNghiCuaCaThe(lopMonHocList) + "---------");
+                i++;
+                for (LopMonHoc lopMonHoc :
+                        lopMonHocList) {
+                    System.out.println("lop mon hoc " + lopMonHoc.getId() + " - " + lopMonHoc.getMonHoc().getTen());
+                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                            lopMonHoc.getTkb_lichHocTheoTuans()) {
+                        System.out.println(tkb_lichHocTheoTuan.getTkb_thu().getTen() + " - " + tkb_lichHocTheoTuan.getGiangDuong().getTen()
+                                + " - " + tkb_lichHocTheoTuan.getTuanBatDau() + " toi " + tkb_lichHocTheoTuan.getTuanKetThuc() + " - "
+                                + tkb_lichHocTheoTuan.getTkb_tietDauTien().getTen() + " toi " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getTen());
+                    }
+                }
             }
+
+
             return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
@@ -280,6 +318,149 @@ public class GiaoVuController {
         }
 
         return new ResponseEntity<String>("Reset thời khóa biểu thành công", HttpStatus.OK);
+    }
+
+    public int getDiemThichNghiCuaCaThe(List<LopMonHoc> lopMonHocs) {
+        int diem = 0;
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            diem += this.getDiemThichNghiCuaLopMonHoc(lopMonHoc);
+        }
+
+        return diem;
+    }
+
+    public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc) {
+        int diem = 0;
+        diem += this.dk1(lopMonHoc);
+        System.out.println(diem);
+        diem += this.dk2(lopMonHoc);
+        System.out.println(diem);
+        diem += this.dk3(lopMonHoc);
+        System.out.println(diem);
+        diem += this.dk4(lopMonHoc);
+        System.out.println(diem);
+        diem += this.dk5(lopMonHoc);
+        System.out.println(diem);
+        return diem;
+    }
+
+    public int dk1(LopMonHoc lopMonHoc) {
+        int diem = 0;
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+        List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
+        for (LopMonHoc lopMonHocCuaGiaoVien :
+                lopMonHocsCuaGiaoVien) {
+            lichDaysCuaGiaoVien.addAll(new ArrayList<TKB_LichHocTheoTuan>(lopMonHocCuaGiaoVien.getTkb_lichHocTheoTuans()));
+        }
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+            int tongSoTiet = 0;
+            for (TKB_LichHocTheoTuan lichDayCuaGiaoVien :
+                    lichDaysCuaGiaoVienTemp) {
+                tongSoTiet += lichDayCuaGiaoVien.getSoTiet();
+            }
+            if (tongSoTiet > 8) {
+                diem++;
+            }
+        }
+
+        return diem * 5;
+    }
+
+    public int dk2(LopMonHoc lopMonHoc) {
+        int diem = 0;
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+        List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
+        for (LopMonHoc lopMonHocCuaGiaoVien :
+                lopMonHocsCuaGiaoVien) {
+            lichDaysCuaGiaoVien.addAll(new ArrayList<TKB_LichHocTheoTuan>(lopMonHocCuaGiaoVien.getTkb_lichHocTheoTuans()));
+        }
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> !"Dãy nhà lý thuyết".equals(lichDayCuaGiaoVien.getGiangDuong().getDayNha().getTen()));
+            int tongSoTiet = 0;
+            for (TKB_LichHocTheoTuan lichDayCuaGiaoVien :
+                    lichDaysCuaGiaoVienTemp) {
+                tongSoTiet += lichDayCuaGiaoVien.getSoTiet();
+            }
+            if (tongSoTiet > 6) {
+                diem++;
+            }
+        }
+
+        return diem * 5;
+    }
+
+    public int dk3(LopMonHoc lopMonHoc) {
+        int diem = 0;
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+        List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
+        for (LopMonHoc lopMonHocCuaGiaoVien :
+                lopMonHocsCuaGiaoVien) {
+            lichDaysCuaGiaoVien.addAll(new ArrayList<TKB_LichHocTheoTuan>(lopMonHocCuaGiaoVien.getTkb_lichHocTheoTuans()));
+        }
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> !"Dãy nhà lý thuyết".equals(lichDayCuaGiaoVien.getGiangDuong().getDayNha().getTen()));
+            int tongSoTiet = 0;
+            for (TKB_LichHocTheoTuan lichDayCuaGiaoVien :
+                    lichDaysCuaGiaoVienTemp) {
+                tongSoTiet += lichDayCuaGiaoVien.getSoTiet();
+            }
+            if (tongSoTiet > 30) {
+                diem++;
+            }
+        }
+
+        return diem * 5;
+    }
+
+    public int dk4(LopMonHoc lopMonHoc) {
+        int diem = 0;
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        Set<TKB_GiaoVien_NgayNghiTrongTuan> tkb_giaoVien_ngayNghiTrongTuans = lopMonHoc.getGiaoVien().getTkb_giaoVien_ngayNghiTrongTuans();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            for (TKB_GiaoVien_NgayNghiTrongTuan tkb_giaoVien_ngayNghiTrongTuan :
+                    tkb_giaoVien_ngayNghiTrongTuans) {
+                if (tkb_lichHocTheoTuan.getTkb_thu().getId() == tkb_giaoVien_ngayNghiTrongTuan.getTkb_thu().getId()) {
+                    diem++;
+                }
+            }
+        }
+
+        return diem * 10;
+    }
+
+    public int dk5(LopMonHoc lopMonHoc) {
+        int diem = 0;
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuanList = new ArrayList<>(tkb_lichHocTheoTuans);
+        if (tkb_lichHocTheoTuanList.size() > 1) {
+            for (int i = 0; i < tkb_lichHocTheoTuanList.size() - 1; i++) {
+                for (int j = i + 1; j < tkb_lichHocTheoTuanList.size(); j++) {
+                    if (tkb_lichHocTheoTuanList.get(i).getTkb_thu().getId() == tkb_lichHocTheoTuanList.get(j).getTkb_thu().getId()) {
+                        diem++;
+                    }
+                }
+            }
+        }
+
+        return diem * 15;
     }
 
     public int soTietChuaCoLichConLaiCuaLopMonHoc(LopMonHoc lopMonHoc) {
@@ -326,7 +507,7 @@ public class GiaoVuController {
             } else if (numberOfTheoryLessonsPerWeek < 11) {
                 soBuoiLyThuyetMotTuan = 2;
             } else {
-                return "Có lớp môn học yêu cầu nhiều hơn 2 buổi 1 tuần";
+                return "lớp môn học " + lopMonHoc.getId() + " yêu cầu nhiều hơn 2 buổi ly thuyet 1 tuần";
             }
         }
 
@@ -336,26 +517,26 @@ public class GiaoVuController {
             } else if (numberOfPracticeLessonsPerWeek < 11) {
                 soBuoiThucHanhMotTuan = 2;
             } else {
-                return "Có lớp môn học yêu cầu nhiều hơn 2 buổi 1 tuần";
+                return "lớp môn học " + lopMonHoc.getId() + " yêu cầu nhiều hơn 2 buổi thuc hanh 1 tuần";
             }
         }
 
-        List<TKB_Tuan> danhSachBuoiHocLyThuyet = new ArrayList<>();
+        List<TKB_LichHocTheoTuan> danhSachBuoiHocLyThuyet = new ArrayList<>();
         if (soBuoiLyThuyetMotTuan == 1) {
-            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(numberOfTheoryLessonsPerWeek));
+            danhSachBuoiHocLyThuyet.add(new TKB_LichHocTheoTuan(numberOfTheoryLessonsPerWeek));
         } else if (soBuoiLyThuyetMotTuan == 2) {
             int soTietLyThuyetBuoiMot = numberOfTheoryLessonsPerWeek / 2;
-            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(soTietLyThuyetBuoiMot));
-            danhSachBuoiHocLyThuyet.add(new TKB_Tuan(numberOfTheoryLessonsPerWeek - soTietLyThuyetBuoiMot));
+            danhSachBuoiHocLyThuyet.add(new TKB_LichHocTheoTuan(soTietLyThuyetBuoiMot));
+            danhSachBuoiHocLyThuyet.add(new TKB_LichHocTheoTuan(numberOfTheoryLessonsPerWeek - soTietLyThuyetBuoiMot));
         }
 
-        List<TKB_Tuan> danhSachBuoiHocThucHanh = new ArrayList<>();
+        List<TKB_LichHocTheoTuan> danhSachBuoiHocThucHanh = new ArrayList<>();
         if (soBuoiThucHanhMotTuan == 1) {
-            danhSachBuoiHocThucHanh.add(new TKB_Tuan(numberOfPracticeLessonsPerWeek));
+            danhSachBuoiHocThucHanh.add(new TKB_LichHocTheoTuan(numberOfPracticeLessonsPerWeek));
         } else if (soBuoiThucHanhMotTuan == 2) {
             int soTietThucHanhBuoiMot = numberOfPracticeLessonsPerWeek / 2;
-            danhSachBuoiHocThucHanh.add(new TKB_Tuan(soTietThucHanhBuoiMot));
-            danhSachBuoiHocThucHanh.add(new TKB_Tuan(numberOfPracticeLessonsPerWeek - soTietThucHanhBuoiMot));
+            danhSachBuoiHocThucHanh.add(new TKB_LichHocTheoTuan(soTietThucHanhBuoiMot));
+            danhSachBuoiHocThucHanh.add(new TKB_LichHocTheoTuan(numberOfPracticeLessonsPerWeek - soTietThucHanhBuoiMot));
         }
 
         //Get list of rooms
@@ -369,11 +550,21 @@ public class GiaoVuController {
         List<GiangDuong> giangDuongThucHanhs = new ArrayList<>();
         for (GiangDuong giangDuong :
                 giangDuongs) {
-            if ("Dãy nhà lý thuyết".equals(giangDuong.getDayNha().getTen())) {
-                giangDuongLyThuyets.add(giangDuong);
-            } else {
-                giangDuongThucHanhs.add(giangDuong);
+            if (giangDuong.getSoLuong() >= 1.2 * lopMonHoc.getSoLuongToiDa()) {
+                if ("Dãy nhà lý thuyết".equals(giangDuong.getDayNha().getTen())) {
+                    giangDuongLyThuyets.add(giangDuong);
+                } else {
+                    giangDuongThucHanhs.add(giangDuong);
+                }
             }
+        }
+
+        if (numberOfTheoryLessons > 0 && giangDuongLyThuyets.isEmpty()) {
+            return "Lop hoc " + lopMonHoc.getId() + " co tiet ly thuyet nhung khong co phong ly thuyet";
+        }
+
+        if (numberOfPracticeLessons > 0 && giangDuongThucHanhs.isEmpty()) {
+            return "Lop hoc " + lopMonHoc.getId() + " co tiet thuc hanh nhung khong co phong thuc hanh";
         }
 
 
@@ -382,20 +573,77 @@ public class GiaoVuController {
         List<TKB_Thu> tkb_thus = tkb_thuService.findAll();
         tkb_thus.removeIf(tkb_thu -> "Thứ 7".equals(tkb_thu.getTen()) || "Chủ nhật".equals(tkb_thu.getTen()));
 
-        for (TKB_Thu tkb_thu :
-                tkb_thus) {
+        int index;
 
+        List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                danhSachBuoiHocLyThuyet) {
+            //Random thu
+            index = random.nextInt(tkb_thus.size());
+            tkb_lichHocTheoTuan.setTkb_thu(tkb_thus.get(index));
+
+            //Random giangDuong
+            index = random.nextInt(giangDuongLyThuyets.size());
+            tkb_lichHocTheoTuan.setGiangDuong(giangDuongLyThuyets.get(index));
+
+            //random tiet
+            index = random.nextInt(1);
+            if (index == 0) {
+                index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 1;
+            } else {
+                index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 6;
+            }
+            tkb_lichHocTheoTuan.setTkb_tietDauTien(this.findTietByThuTu(tkb_tiets, index));
+            tkb_lichHocTheoTuan.setTkb_tietCuoiCung(this.findTietByThuTu(tkb_tiets, index + tkb_lichHocTheoTuan.getSoTiet() - 1));
+
+            //Set tuan
+            tkb_lichHocTheoTuan.setTuanBatDau(lopMonHoc.getGioiHanTuanBatDau());
+            tkb_lichHocTheoTuan.setTuanKetThuc(lopMonHoc.getGioiHanTuanBatDau() + theoryWeeksNeeded - 1);
         }
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                danhSachBuoiHocThucHanh) {
+            //Random thu
+            index = random.nextInt(tkb_thus.size());
+            tkb_lichHocTheoTuan.setTkb_thu(tkb_thus.get(index));
+
+            //Random giangDuong
+            index = random.nextInt(giangDuongThucHanhs.size());
+            tkb_lichHocTheoTuan.setGiangDuong(giangDuongThucHanhs.get(index));
+
+            //random tiet
+            index = random.nextInt(1);
+            if (index == 0) {
+                index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 1;
+            } else {
+                index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 6;
+            }
+            tkb_lichHocTheoTuan.setTkb_tietDauTien(this.findTietByThuTu(tkb_tiets, index));
+            tkb_lichHocTheoTuan.setTkb_tietCuoiCung(this.findTietByThuTu(tkb_tiets, index + tkb_lichHocTheoTuan.getSoTiet() - 1));
+
+            //Set tuan
+            tkb_lichHocTheoTuan.setTuanBatDau(lopMonHoc.getGioiHanTuanBatDau());
+            tkb_lichHocTheoTuan.setTuanKetThuc(lopMonHoc.getGioiHanTuanBatDau() + theoryWeeksNeeded - 1);
+        }
+
+        danhSachBuoiHocLyThuyet.addAll(danhSachBuoiHocThucHanh);
+        lopMonHoc.setTkb_lichHocTheoTuans(new HashSet<>(danhSachBuoiHocLyThuyet));
 
         return "Thành công";
     }
 
-    public boolean kiemTraThuCoTheXepLich(TKB_Thu tkb_thu, List<GiangDuong> giangDuongs, int soTietToiDa, LopMonHoc lopMonHoc) {
-        List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
+    public TKB_Tiet findTietByThuTu(List<TKB_Tiet> tkb_tiets, int thuTu) {
+        for (TKB_Tiet tkb_tiet :
+                tkb_tiets) {
+            if (tkb_tiet.getThuTu() == thuTu) {
+                return tkb_tiet;
+            }
+        }
 
-        List<TKB_Tiet> danhSachTietBanCuaGiaoVien = this.getDanhSachTietBanCuaGiaoVien(tkb_thu, lopMonHoc.getGiaoVien(), lopMonHoc.getKiHoc_namHoc());
-        tkb_tiets.removeAll(danhSachTietBanCuaGiaoVien);
+        return null;
     }
+
 
     public List<TKB_Tiet> getDanhSachTietBanCuaGiaoVien(TKB_Thu tkb_thu, GiaoVien giaoVien, KiHoc_NamHoc kiHoc_namHoc) {
         List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
