@@ -202,6 +202,7 @@ public class GiaoVienController {
             sinhVienCuaTietHocs.add(lopMonHoc_sinhVien.getSinhVien());
         }
 
+        System.out.println("-------"+sinhVienCuaTietHocs.size());
 
         for (SinhVien sinhVien:
                 sinhVienCuaTietHocs) {

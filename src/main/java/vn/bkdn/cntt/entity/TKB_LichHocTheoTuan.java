@@ -24,6 +24,18 @@ public class TKB_LichHocTheoTuan {
     public TKB_LichHocTheoTuan() {
     }
 
+    public TKB_LichHocTheoTuan(TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
+        this.id = tkb_lichHocTheoTuan.getId();
+        this.lopMonHoc = tkb_lichHocTheoTuan.getLopMonHoc();
+        this.tkb_thu = tkb_lichHocTheoTuan.getTkb_thu();
+        this.soTiet = tkb_lichHocTheoTuan.getSoTiet();
+        this.tkb_tietDauTien = tkb_lichHocTheoTuan.getTkb_tietDauTien();
+        this.tkb_tietCuoiCung = tkb_lichHocTheoTuan.getTkb_tietCuoiCung();
+        this.giangDuong = tkb_lichHocTheoTuan.getGiangDuong();
+        this.tuanBatDau = tkb_lichHocTheoTuan.getTuanBatDau();
+        this.tuanKetThuc = tkb_lichHocTheoTuan.getTuanKetThuc();
+    }
+
     public TKB_LichHocTheoTuan(int soTiet) {
         this.soTiet = soTiet;
     }

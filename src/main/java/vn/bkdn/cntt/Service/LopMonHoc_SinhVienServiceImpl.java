@@ -6,6 +6,8 @@ import vn.bkdn.cntt.entity.LopMonHoc;
 import vn.bkdn.cntt.entity.LopMonHoc_SinhVien;
 import vn.bkdn.cntt.repository.LopMonHoc_SinhVienRepository;
 
+import java.util.List;
+
 /**
  * Created by XuanVinh on 4/22/2017.
  */
@@ -64,5 +66,10 @@ public class LopMonHoc_SinhVienServiceImpl implements LopMonHoc_SinhVienService 
     @Override
     public LopMonHoc_SinhVien findByClassIdAndStudentId(int classId, int studentId) {
         return lopMonHoc_sinhVienRepository.findByClassIdAndStudentId(classId, studentId);
+    }
+
+    @Override
+    public List<Integer> findSinhVienByClassId(int classId) {
+        return lopMonHoc_sinhVienRepository.findSinhVienByClassId(classId);
     }
 }

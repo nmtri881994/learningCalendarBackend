@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.controller;
 
-import org.hibernate.annotations.SourceType;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
+import vn.bkdn.cntt.entity.geneticAlgorithm.CaThe;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
 @RequestMapping(value = "api/giaovu")
 public class GiaoVuController {
 
-    private int numberOfInviduals = 20;
+    private int numberOfInviduals = 1;
     private int numberOfMaximumIterations = 100;
     private int bestAdaptationPoint = 20;
 
@@ -53,6 +54,12 @@ public class GiaoVuController {
 
     @Autowired
     private RegisterTimeService registerTimeService;
+
+    @Autowired
+    private LopMonHoc_SinhVienService lopMonHoc_sinhVienService;
+
+    @Autowired
+    private SinhVienService sinhVienService;
 
     private GeneticAlgorithmUtils geneticAlgorithmUtils;
 
@@ -249,33 +256,41 @@ public class GiaoVuController {
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
+    private int tkbtuan_index;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/generate-random-calendar/{semesterId}")
     public ResponseEntity<String> generateRandomCalendarForSemester(@PathVariable int semesterId) {
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
         lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
-        List<List<LopMonHoc>> quanThe = new ArrayList<>();
+        List<CaThe> quanThe = new ArrayList<>();
         for (int i = 0; i < numberOfInviduals; i++) {
             List<LopMonHoc> lopMonHocsTemp = new ArrayList<>();
             for (LopMonHoc lopMonHoc :
                     lopMonHocs) {
                 lopMonHocsTemp.add(new LopMonHoc(lopMonHoc));
             }
-            quanThe.add(lopMonHocsTemp);
+            quanThe.add(new CaThe(lopMonHocsTemp));
         }
         if (this.checkLopMonHocsAllFree(lopMonHocs)) {
 
             //khoi tao quan the ban dau
-            for (List<LopMonHoc> lopMonHocList :
-                    quanThe) {
+            for (CaThe caThe : quanThe) {
                 for (LopMonHoc lopMonHoc :
-                        lopMonHocList) {
+                        caThe.getLopMonHocList()) {
                     String result = randomCalendarForClass(lopMonHoc);
                     if (result != "Thành công") {
                         return new ResponseEntity<String>(result, HttpStatus.OK);
                     }
                 }
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList()));
             }
+            this.danhSoTKB_TuanId(quanThe);
+            for (CaThe caThe : quanThe) {
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList()));
+            }
+
+            quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
 
             //Tien hanh tien hoa
 //            for (int i = 1; i < this.numberOfMaximumIterations; i++) {
@@ -283,16 +298,17 @@ public class GiaoVuController {
 //            }
 
             int i = 1;
-            for (List<LopMonHoc> lopMonHocList :
+            for (CaThe caThe :
                     quanThe) {
-                System.out.println("----------Ca the " + i + ": " + this.getDiemThichNghiCuaCaThe(lopMonHocList) + "---------");
+                System.out.println("--------------------------");
+                System.out.println("Ca the " + i + ": " + caThe.getDiemThichNghi());
                 i++;
                 for (LopMonHoc lopMonHoc :
-                        lopMonHocList) {
-                    System.out.println("lop mon hoc " + lopMonHoc.getId() + " - " + lopMonHoc.getMonHoc().getTen());
+                        caThe.getLopMonHocList()) {
+                    System.out.println("Mon hoc: " + lopMonHoc.getMonHoc().getTen() + " - giao vien: " + lopMonHoc.getGiaoVien().getTen());
                     for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                             lopMonHoc.getTkb_lichHocTheoTuans()) {
-                        System.out.println(tkb_lichHocTheoTuan.getTkb_thu().getTen() + " - " + tkb_lichHocTheoTuan.getGiangDuong().getTen()
+                        System.out.println(tkb_lichHocTheoTuan.getId() + " - " + tkb_lichHocTheoTuan.getTkb_thu().getTen() + " - " + tkb_lichHocTheoTuan.getGiangDuong().getTen()
                                 + " - " + tkb_lichHocTheoTuan.getTuanBatDau() + " toi " + tkb_lichHocTheoTuan.getTuanKetThuc() + " - "
                                 + tkb_lichHocTheoTuan.getTkb_tietDauTien().getTen() + " toi " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getTen());
                     }
@@ -320,34 +336,81 @@ public class GiaoVuController {
         return new ResponseEntity<String>("Reset thời khóa biểu thành công", HttpStatus.OK);
     }
 
+    public void danhSoTKB_TuanId(List<CaThe> quanThe) {
+        for (CaThe caThe :
+                quanThe) {
+            int id = 1;
+            for (LopMonHoc lopMonHoc :
+                    caThe.getLopMonHocList()) {
+                for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                        lopMonHoc.getTkb_lichHocTheoTuans()) {
+                    tkb_lichHocTheoTuan.setId(id);
+                    id++;
+                }
+            }
+        }
+    }
+
+    public boolean checkCaThePerfect(List<CaThe> quanThe) {
+        for (CaThe caThe :
+                quanThe) {
+            if (caThe.getDiemThichNghi() < 30) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int getDiemThichNghiCuaCaThe(List<LopMonHoc> lopMonHocs) {
         int diem = 0;
         for (LopMonHoc lopMonHoc :
                 lopMonHocs) {
-            diem += this.getDiemThichNghiCuaLopMonHoc(lopMonHoc);
+            diem += this.getDiemThichNghiCuaLopMonHoc(lopMonHoc, lopMonHocs);
         }
 
         return diem;
     }
 
-    public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc) {
+    public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+//        System.out.println("----**Size: " + lopMonHocs.size() + "**----");
         int diem = 0;
-        diem += this.dk1(lopMonHoc);
-        System.out.println(diem);
-        diem += this.dk2(lopMonHoc);
-        System.out.println(diem);
-        diem += this.dk3(lopMonHoc);
-        System.out.println(diem);
+        diem += this.dk1(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
+        diem += this.dk2(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
+        diem += this.dk3(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
         diem += this.dk4(lopMonHoc);
-        System.out.println(diem);
+//        System.out.println(diem);
         diem += this.dk5(lopMonHoc);
-        System.out.println(diem);
+//        System.out.println(diem);
+        diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
+        diem += this.dk7(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
+        diem += this.dk8(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
+        diem += this.dk9(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+//        System.out.println(diem);
         return diem;
     }
 
-    public int dk1(LopMonHoc lopMonHoc) {
+    public List<LopMonHoc> cloneListLopMonHoc(List<LopMonHoc> lopMonHocs) {
+        List<LopMonHoc> clone = new ArrayList<>();
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            clone.add(new LopMonHoc(lopMonHoc));
+        }
+
+        return clone;
+    }
+
+    public int dk1(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
         int diem = 0;
-        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+//        System.out.println(lopMonHocs.size());
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
+        lopMonHocsCuaGiaoVien.removeIf(lopMonHoc1 -> lopMonHoc1.getGiaoVien().getId() != lopMonHoc.getGiaoVien().getId());
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (LopMonHoc lopMonHocCuaGiaoVien :
                 lopMonHocsCuaGiaoVien) {
@@ -358,6 +421,7 @@ public class GiaoVuController {
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 tkb_lichHocTheoTuans) {
             List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> (lichDayCuaGiaoVien.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (lichDayCuaGiaoVien.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
             lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
             int tongSoTiet = 0;
             for (TKB_LichHocTheoTuan lichDayCuaGiaoVien :
@@ -372,9 +436,11 @@ public class GiaoVuController {
         return diem * 5;
     }
 
-    public int dk2(LopMonHoc lopMonHoc) {
+    public int dk2(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
         int diem = 0;
-        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+//        System.out.println(lopMonHocs.size());
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
+        lopMonHocsCuaGiaoVien.removeIf(lopMonHoc1 -> lopMonHoc1.getGiaoVien().getId() != lopMonHoc.getGiaoVien().getId());
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (LopMonHoc lopMonHocCuaGiaoVien :
                 lopMonHocsCuaGiaoVien) {
@@ -385,6 +451,7 @@ public class GiaoVuController {
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 tkb_lichHocTheoTuans) {
             List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> (lichDayCuaGiaoVien.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (lichDayCuaGiaoVien.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
             lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
             lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> !"Dãy nhà lý thuyết".equals(lichDayCuaGiaoVien.getGiangDuong().getDayNha().getTen()));
             int tongSoTiet = 0;
@@ -400,9 +467,11 @@ public class GiaoVuController {
         return diem * 5;
     }
 
-    public int dk3(LopMonHoc lopMonHoc) {
+    public int dk3(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
         int diem = 0;
-        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocService.findByGiaoVienIdAndNamHocKiHocId(lopMonHoc.getGiaoVien().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+//        System.out.println(lopMonHocs.size());
+        List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
+        lopMonHocsCuaGiaoVien.removeIf(lopMonHoc1 -> lopMonHoc1.getGiaoVien().getId() != lopMonHoc.getGiaoVien().getId());
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (LopMonHoc lopMonHocCuaGiaoVien :
                 lopMonHocsCuaGiaoVien) {
@@ -413,6 +482,7 @@ public class GiaoVuController {
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 tkb_lichHocTheoTuans) {
             List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = lichDaysCuaGiaoVien;
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> (lichDayCuaGiaoVien.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (lichDayCuaGiaoVien.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
             lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> !"Dãy nhà lý thuyết".equals(lichDayCuaGiaoVien.getGiangDuong().getDayNha().getTen()));
             int tongSoTiet = 0;
             for (TKB_LichHocTheoTuan lichDayCuaGiaoVien :
@@ -461,6 +531,250 @@ public class GiaoVuController {
         }
 
         return diem * 15;
+    }
+
+    public int dk6(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocsCuaGiaoVien) {
+        int diem = 0;
+        lopMonHocsCuaGiaoVien.removeIf(lopMonHoc1 -> lopMonHoc1.getGiaoVien().getId() != lopMonHoc.getGiaoVien().getId());
+        List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
+        for (LopMonHoc lopMonHocCuaGiaoVien :
+                lopMonHocsCuaGiaoVien) {
+            lichDaysCuaGiaoVien.addAll(new ArrayList<TKB_LichHocTheoTuan>(lopMonHocCuaGiaoVien.getTkb_lichHocTheoTuans()));
+        }
+
+        Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVienTemp = this.cloneTKBTuan(lichDaysCuaGiaoVien);
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getId() == tkb_lichHocTheoTuan.getId());
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> (lichDayCuaGiaoVien.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (lichDayCuaGiaoVien.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
+            lichDaysCuaGiaoVienTemp.removeIf(lichDayCuaGiaoVien -> lichDayCuaGiaoVien.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+            List<TKB_Tiet> tietsDayCuaGiaoVien = this.getTietNotFree(lichDaysCuaGiaoVienTemp);
+            if (this.checkTrungLich(tietsDayCuaGiaoVien, tkb_lichHocTheoTuan)) {
+                diem++;
+            }
+        }
+
+        return diem * 100;
+    }
+
+    public int dk7(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+        int diem = 0;
+        if (lopMonHoc.getNganh() == null) {
+            lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId());
+        } else {
+            lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getNganh() == null);
+            lopMonHocs.removeIf(lopMonHoc1 -> (lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId()) && (lopMonHoc.getNganh().getId() != lopMonHoc1.getNganh().getId()));
+//            lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId() && lopMonHoc1.getNganh().getId() != lopMonHoc.getNganh().getId());
+        }
+
+        List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh = new ArrayList<>();
+        for (LopMonHoc lopMonHoc1 :
+                lopMonHocs) {
+            lichHocCuaKhoaKhoaHocNganh.addAll(lopMonHoc1.getTkb_lichHocTheoTuans());
+        }
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                lopMonHoc.getTkb_lichHocTheoTuans()) {
+            List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganhTemp = this.cloneTKBTuan(lichHocCuaKhoaKhoaHocNganh);
+            lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
+            lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> (tkb_lichHocTheoTuan1.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (tkb_lichHocTheoTuan1.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
+            if (this.checkTrungLichKhoaKhoaHocNganh(tkb_lichHocTheoTuan, lichHocCuaKhoaKhoaHocNganhTemp)) {
+                diem++;
+            }
+        }
+
+        return diem * 100;
+    }
+
+    public int dk8(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+        int diem = 0;
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
+        for (LopMonHoc lopMonHoc1 :
+                lopMonHocs) {
+            tkb_lichHocTheoTuans.addAll(lopMonHoc1.getTkb_lichHocTheoTuans());
+        }
+
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                lopMonHoc.getTkb_lichHocTheoTuans()) {
+            List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuansTemp = this.cloneTKBTuan(tkb_lichHocTheoTuans);
+            tkb_lichHocTheoTuansTemp.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
+            tkb_lichHocTheoTuansTemp.removeIf(tkb_lichHocTheoTuan1 -> (tkb_lichHocTheoTuan1.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (tkb_lichHocTheoTuan1.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
+            if (checkTrungLichPhong(tkb_lichHocTheoTuan, tkb_lichHocTheoTuansTemp)) {
+                diem++;
+            }
+        }
+
+        return diem * 100;
+    }
+
+    public int dk9(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+        int diem = 0;
+        if (lopMonHoc.getNganh() == null) {
+            lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId());
+        } else {
+            lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getNganh() == null);
+            lopMonHocs.removeIf(lopMonHoc1 -> (lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId()) && (lopMonHoc.getNganh().getId() != lopMonHoc1.getNganh().getId()));
+        }
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                lopMonHoc.getTkb_lichHocTheoTuans()) {
+            if (this.checkQuaNhieuBuoiHocTrongCungKhoangThoiGian(tkb_lichHocTheoTuan, lopMonHocs)) {
+                diem++;
+            }
+        }
+
+        return diem * 100;
+    }
+
+    public void mutate(CaThe caThe) {
+        Random random = new Random();
+        int caTheMutate1 = random.nextInt(caThe.getLopMonHocList().size());
+        caThe.getLopMonHocList().get(caTheMutate1).setTkb_lichHocTheoTuans(null);
+        this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate1));
+
+        int caTheMutate2 = random.nextInt(caThe.getLopMonHocList().size());
+        while (caTheMutate2 == caTheMutate1) {
+            caTheMutate2 = random.nextInt(caThe.getLopMonHocList().size());
+        }
+        caThe.getLopMonHocList().get(caTheMutate2).setTkb_lichHocTheoTuans(null);
+        this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate2));
+    }
+
+    public CaThe crossOver1_1(CaThe caThe1, CaThe caThe2, int crossOverPoint) {
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (int i = 0; i < crossOverPoint; i++) {
+            lopMonHocs.add(caThe1.getLopMonHocList().get(i));
+        }
+        for (int i = crossOverPoint; i< caThe1.getLopMonHocList().size(); i++){
+            lopMonHocs.add(caThe2.getLopMonHocList().get(i));
+        }
+
+        return new CaThe(lopMonHocs);
+    }
+
+    public CaThe crossOver1_2(CaThe caThe1, CaThe caThe2, int crossOverPoint) {
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (int i = 0; i < crossOverPoint; i++) {
+            lopMonHocs.add(caThe2.getLopMonHocList().get(i));
+        }
+        for (int i = crossOverPoint; i< caThe1.getLopMonHocList().size(); i++){
+            lopMonHocs.add(caThe1.getLopMonHocList().get(i));
+        }
+
+        return new CaThe(lopMonHocs);
+    }
+
+    public CaThe crossOver2_1(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2){
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (int i = 0; i < crossOverPoint1; i++) {
+            lopMonHocs.add(caThe1.getLopMonHocList().get(i));
+        }
+        for (int i = crossOverPoint1; i< crossOverPoint2; i++){
+            lopMonHocs.add(caThe2.getLopMonHocList().get(i));
+        }
+        for (int i = 0; i < caThe1.getLopMonHocList().size(); i++) {
+            lopMonHocs.add(caThe1.getLopMonHocList().get(i));
+        }
+
+        return new CaThe(lopMonHocs);
+    }
+
+    public CaThe crossOver2_2(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2){
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (int i = 0; i < crossOverPoint1; i++) {
+            lopMonHocs.add(caThe2.getLopMonHocList().get(i));
+        }
+        for (int i = crossOverPoint1; i< crossOverPoint2; i++){
+            lopMonHocs.add(caThe1.getLopMonHocList().get(i));
+        }
+        for (int i = 0; i < caThe1.getLopMonHocList().size(); i++) {
+            lopMonHocs.add(caThe2.getLopMonHocList().get(i));
+        }
+
+        return new CaThe(lopMonHocs);
+    }
+
+    public List<TKB_LichHocTheoTuan> cloneTKBTuan(List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
+        List<TKB_LichHocTheoTuan> clone = new ArrayList<>();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+            clone.add(new TKB_LichHocTheoTuan(tkb_lichHocTheoTuan));
+        }
+
+        return clone;
+    }
+
+    public boolean checkQuaNhieuBuoiHocTrongCungKhoangThoiGian(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<LopMonHoc> lopMonHocs) {
+        List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
+        for (LopMonHoc lopMonHoc :
+                lopMonHocs) {
+            tkb_lichHocTheoTuans.addAll(lopMonHoc.getTkb_lichHocTheoTuans());
+        }
+        tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+        tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
+
+        int weekCalendarSameTime = 0;
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan1 :
+                tkb_lichHocTheoTuans) {
+            boolean condition1 = tkb_lichHocTheoTuan1.getTkb_tietCuoiCung().getThuTu() < tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu();
+            boolean condition2 = tkb_lichHocTheoTuan1.getTkb_tietDauTien().getThuTu() > tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu();
+            if (!(condition1 || condition2)) {
+                weekCalendarSameTime++;
+            }
+        }
+
+        if (weekCalendarSameTime < 3) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean checkTrungLichPhong(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaPhong) {
+        System.out.println("-----" + tkb_lichHocTheoTuan.getId() + "-------");
+        System.out.println(tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + " - " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+        System.out.println("bat dau: " + lichHocCuaPhong.size());
+        lichHocCuaPhong.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getGiangDuong().getId() != tkb_lichHocTheoTuan.getGiangDuong().getId());
+        lichHocCuaPhong.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+        System.out.println("ket thuc: " + lichHocCuaPhong.size());
+        List<TKB_Tiet> tietBanCuaKhoaPhong = this.getTietNotFree(lichHocCuaPhong);
+        for (TKB_Tiet tkb_tiet :
+                tietBanCuaKhoaPhong) {
+            System.out.println(tkb_tiet.getTen());
+        }
+        return this.checkTrungLich(tietBanCuaKhoaPhong, tkb_lichHocTheoTuan);
+    }
+
+    public boolean checkTrungLichKhoaKhoaHocNganh(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh) {
+        lichHocCuaKhoaKhoaHocNganh.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+        List<TKB_Tiet> tietBanCuaKhoaKhoaHocNganh = this.getTietNotFree(lichHocCuaKhoaKhoaHocNganh);
+        return this.checkTrungLich(tietBanCuaKhoaKhoaHocNganh, tkb_lichHocTheoTuan);
+    }
+
+
+    public boolean checkTrungLich(List<TKB_Tiet> tkb_tiets, TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
+        for (TKB_Tiet tkb_tiet :
+                tkb_tiets) {
+            if (tkb_tiet.getThuTu() >= tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() && tkb_tiet.getThuTu() <= tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public List<TKB_Tiet> getTietNotFree(List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
+        List<TKB_Tiet> tkb_tiets = tkb_tietService.findAll();
+        List<TKB_Tiet> tkb_tietsTemp = tkb_tietService.findAll();
+        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                tkb_lichHocTheoTuans) {
+//            System.out.println("Dsadsa"+tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu()+"-"+tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+            tkb_tietsTemp.removeIf(tkb_tiet -> tkb_tiet.getThuTu() >= tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() && tkb_tiet.getThuTu() <= tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+        }
+
+        tkb_tiets.removeAll(tkb_tietsTemp);
+//        System.out.println("--+=="+tkb_tiets.size());
+        return tkb_tiets;
     }
 
     public int soTietChuaCoLichConLaiCuaLopMonHoc(LopMonHoc lopMonHoc) {
@@ -588,7 +902,7 @@ public class GiaoVuController {
             tkb_lichHocTheoTuan.setGiangDuong(giangDuongLyThuyets.get(index));
 
             //random tiet
-            index = random.nextInt(1);
+            index = random.nextInt(2);
             if (index == 0) {
                 index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 1;
             } else {
@@ -613,7 +927,7 @@ public class GiaoVuController {
             tkb_lichHocTheoTuan.setGiangDuong(giangDuongThucHanhs.get(index));
 
             //random tiet
-            index = random.nextInt(1);
+            index = random.nextInt(2);
             if (index == 0) {
                 index = random.nextInt(6 - tkb_lichHocTheoTuan.getSoTiet()) + 1;
             } else {
