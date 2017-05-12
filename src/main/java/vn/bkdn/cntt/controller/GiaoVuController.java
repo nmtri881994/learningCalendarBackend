@@ -1,6 +1,7 @@
 package vn.bkdn.cntt.controller;
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import javafx.scene.Parent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
 import vn.bkdn.cntt.entity.geneticAlgorithm.CaThe;
+import vn.bkdn.cntt.entity.geneticAlgorithm.Setting;
 
 import java.util.*;
 
@@ -21,9 +23,10 @@ import java.util.*;
 @RequestMapping(value = "api/giaovu")
 public class GiaoVuController {
 
-    private int numberOfInviduals = 1;
-    private int numberOfMaximumIterations = 100;
-    private int bestAdaptationPoint = 20;
+    private int numberOfInviduals = 20;
+    private int parentsPercentage = 40;
+    private int crossOverPercentage = 50;
+
 
     @Autowired
     private NamHocService namHocService;
@@ -259,9 +262,10 @@ public class GiaoVuController {
     private int tkbtuan_index;
 
     @PreAuthorize("hasRole('GIAOVU')")
-    @GetMapping(value = "/generate-random-calendar/{semesterId}")
-    public ResponseEntity<String> generateRandomCalendarForSemester(@PathVariable int semesterId) {
-        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
+    @PostMapping(value = "/generate-random-calendar")
+    public ResponseEntity<String> generateRandomCalendarForSemester(@RequestBody Setting setting) {
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(setting.getKyHocId(), setting.getNamHocId());
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(kiHoc_namHoc.getId());
         lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
         List<CaThe> quanThe = new ArrayList<>();
         for (int i = 0; i < numberOfInviduals; i++) {
@@ -283,42 +287,120 @@ public class GiaoVuController {
                         return new ResponseEntity<String>(result, HttpStatus.OK);
                     }
                 }
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList()));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList(), setting));
             }
             this.danhSoTKB_TuanId(quanThe);
             for (CaThe caThe : quanThe) {
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList()));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList(), setting));
             }
 
             quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
+            System.out.println("------------------------------------------Thế hệ 1------------------------------------------");
+            printQuanThe(quanThe);
 
-            //Tien hanh tien hoa
-//            for (int i = 1; i < this.numberOfMaximumIterations; i++) {
-//
-//            }
+            if (checkSuccess(quanThe, setting.getDiemThichNghiToiUu())) {
+                return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+            } else {
 
-            int i = 1;
-            for (CaThe caThe :
-                    quanThe) {
-                System.out.println("--------------------------");
-                System.out.println("Ca the " + i + ": " + caThe.getDiemThichNghi());
-                i++;
-                for (LopMonHoc lopMonHoc :
-                        caThe.getLopMonHocList()) {
-                    System.out.println("Mon hoc: " + lopMonHoc.getMonHoc().getTen() + " - giao vien: " + lopMonHoc.getGiaoVien().getTen());
-                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
-                            lopMonHoc.getTkb_lichHocTheoTuans()) {
-                        System.out.println(tkb_lichHocTheoTuan.getId() + " - " + tkb_lichHocTheoTuan.getTkb_thu().getTen() + " - " + tkb_lichHocTheoTuan.getGiangDuong().getTen()
-                                + " - " + tkb_lichHocTheoTuan.getTuanBatDau() + " toi " + tkb_lichHocTheoTuan.getTuanKetThuc() + " - "
-                                + tkb_lichHocTheoTuan.getTkb_tietDauTien().getTen() + " toi " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getTen());
-                    }
+            }
+//            Tien hanh tien hoa
+            int numberOfParents = this.numberOfInviduals * this.parentsPercentage / 100;
+            int numberOfCrossOver = this.numberOfInviduals * this.crossOverPercentage / 100;
+            if (numberOfCrossOver % 2 != 0) {
+                numberOfCrossOver--;
+            }
+            int numberOfMutation = this.numberOfInviduals - numberOfParents - numberOfCrossOver;
+            for (int i = 1; i < setting.getSoTheHe(); i++) {
+                List<CaThe> quanTheTemp = new ArrayList<>();
+                List<CaThe> parents = this.chooseParents(quanThe, numberOfParents);
+                List<CaThe> crossOvers = this.crossOverGeneration(parents, numberOfCrossOver);
+                List<CaThe> mutations = this.mutateGeneration(parents, numberOfMutation);
+                quanTheTemp.addAll(parents);
+                quanTheTemp.addAll(crossOvers);
+                quanTheTemp.addAll(mutations);
+
+                this.danhSoTKB_TuanId(quanThe);
+                for (CaThe caThe : quanThe) {
+                    caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList(), setting));
+                }
+
+                quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
+                System.out.println("------------------------------------------Thế hệ " + (i + 1) + "------------------------------------------");
+                printQuanThe(quanThe);
+
+                if (checkSuccess(quanThe, setting.getDiemThichNghiToiUu())) {
+                    return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
                 }
             }
-
-
-            return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+            return new ResponseEntity<String>("Sinh thời khóa biểu tự động thất bại", HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
+        }
+    }
+
+    public List<CaThe> chooseParents(List<CaThe> quanThe, int numberOfParents) {
+        List<CaThe> parents = new ArrayList<>();
+        for (int i = 0; i < numberOfParents; i++) {
+            parents.add(new CaThe(quanThe.get(i).getLopMonHocList()));
+        }
+        return parents;
+    }
+
+    public List<CaThe> crossOverGeneration(List<CaThe> parents, int numberOfCrossOver) {
+        List<CaThe> crossOvers = new ArrayList<>();
+        Random random = new Random();
+        int index1, index2;
+        int crossOverPoint = (parents.get(0).getLopMonHocList().size())/2;
+        for (int i = 0; i < numberOfCrossOver / 2; i++) {
+            index1 = random.nextInt(parents.size());
+            index2 = random.nextInt(parents.size());
+            while (index2 == index1) {
+                index2 = random.nextInt(parents.size());
+            }
+            crossOvers.add(this.crossOver1_1(parents.get(index1), parents.get(index2), crossOverPoint));
+            crossOvers.add(this.crossOver1_2(parents.get(index1), parents.get(index2), crossOverPoint));
+        }
+
+        return crossOvers;
+    }
+
+    public List<CaThe> mutateGeneration(List<CaThe> parents, int numberOfMutations) {
+        List<CaThe> mutations = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < numberOfMutations; i++) {
+            int index = random.nextInt(parents.size());
+            mutations.add(this.mutate(parents.get(index)));
+        }
+
+        return mutations;
+    }
+
+    public void printQuanThe(List<CaThe> quanThe) {
+        int i = 1;
+        System.out.println("Điểm thích nghi thấp nhất: "+quanThe.get(0).getDiemThichNghi());
+//        for (CaThe caThe :
+//                quanThe) {
+//            System.out.println("--------------------------");
+//            System.out.println("Ca the " + i + ": " + caThe.getDiemThichNghi());
+//            i++;
+//            for (LopMonHoc lopMonHoc :
+//                    caThe.getLopMonHocList()) {
+//                System.out.println("Mon hoc: " + lopMonHoc.getMonHoc().getTen() + " - giao vien: " + lopMonHoc.getGiaoVien().getTen());
+//                for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+//                        lopMonHoc.getTkb_lichHocTheoTuans()) {
+//                    System.out.println(tkb_lichHocTheoTuan.getId() + " - " + tkb_lichHocTheoTuan.getTkb_thu().getTen() + " - " + tkb_lichHocTheoTuan.getGiangDuong().getTen()
+//                            + " - " + tkb_lichHocTheoTuan.getTuanBatDau() + " toi " + tkb_lichHocTheoTuan.getTuanKetThuc() + " - "
+//                            + tkb_lichHocTheoTuan.getTkb_tietDauTien().getTen() + " toi " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getTen());
+//                }
+//            }
+//        }
+    }
+
+    public boolean checkSuccess(List<CaThe> quanThe, int diemThichNghiToiUu) {
+        if (quanThe.get(0).getDiemThichNghi() <= diemThichNghiToiUu) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -362,36 +444,60 @@ public class GiaoVuController {
         return false;
     }
 
-    public int getDiemThichNghiCuaCaThe(List<LopMonHoc> lopMonHocs) {
+    public int getDiemThichNghiCuaCaThe(List<LopMonHoc> lopMonHocs, Setting setting) {
         int diem = 0;
         for (LopMonHoc lopMonHoc :
                 lopMonHocs) {
-            diem += this.getDiemThichNghiCuaLopMonHoc(lopMonHoc, lopMonHocs);
+            diem += this.getDiemThichNghiCuaLopMonHoc(lopMonHoc, lopMonHocs, setting);
         }
 
         return diem;
     }
 
-    public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, Setting setting) {
 //        System.out.println("----**Size: " + lopMonHocs.size() + "**----");
         int diem = 0;
-        diem += this.dk1(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk1()) {
+            diem += this.dk1(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk1Value());
+        }
 //        System.out.println(diem);
-        diem += this.dk2(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk2()) {
+            diem += this.dk2(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk2Value());
+        }
 //        System.out.println(diem);
-        diem += this.dk3(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk3()) {
+            diem += this.dk3(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk3Value());
+        }
 //        System.out.println(diem);
-        diem += this.dk4(lopMonHoc);
+        if (setting.isDk4()) {
+            diem += this.dk4(lopMonHoc, setting.getDk4Value());
+
+        }
 //        System.out.println(diem);
-        diem += this.dk5(lopMonHoc);
+        if (setting.isDk5()) {
+            diem += this.dk5(lopMonHoc, setting.getDk5Value());
+
+        }
 //        System.out.println(diem);
-        diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk6()) {
+            diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk6Value());
+
+        }
 //        System.out.println(diem);
-        diem += this.dk7(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk7()) {
+            diem += this.dk7(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk7Value());
+
+        }
 //        System.out.println(diem);
-        diem += this.dk8(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk8()) {
+            diem += this.dk8(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk8Value());
+
+        }
 //        System.out.println(diem);
-        diem += this.dk9(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs));
+        if (setting.isDk9()) {
+            diem += this.dk9(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk9Value());
+
+        }
 //        System.out.println(diem);
         return diem;
     }
@@ -406,7 +512,7 @@ public class GiaoVuController {
         return clone;
     }
 
-    public int dk1(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk1(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
 //        System.out.println(lopMonHocs.size());
         List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
@@ -433,10 +539,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 5;
+        return diem * dkValue;
     }
 
-    public int dk2(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk2(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
 //        System.out.println(lopMonHocs.size());
         List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
@@ -464,10 +570,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 5;
+        return diem * dkValue;
     }
 
-    public int dk3(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk3(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
 //        System.out.println(lopMonHocs.size());
         List<LopMonHoc> lopMonHocsCuaGiaoVien = lopMonHocs;
@@ -494,10 +600,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 5;
+        return diem * dkValue;
     }
 
-    public int dk4(LopMonHoc lopMonHoc) {
+    public int dk4(LopMonHoc lopMonHoc, int dkValue) {
         int diem = 0;
 
         Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
@@ -512,10 +618,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 10;
+        return diem * dkValue;
     }
 
-    public int dk5(LopMonHoc lopMonHoc) {
+    public int dk5(LopMonHoc lopMonHoc, int dkValue) {
         int diem = 0;
 
         Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = lopMonHoc.getTkb_lichHocTheoTuans();
@@ -530,10 +636,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 15;
+        return diem * dkValue;
     }
 
-    public int dk6(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocsCuaGiaoVien) {
+    public int dk6(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocsCuaGiaoVien, int dkValue) {
         int diem = 0;
         lopMonHocsCuaGiaoVien.removeIf(lopMonHoc1 -> lopMonHoc1.getGiaoVien().getId() != lopMonHoc.getGiaoVien().getId());
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
@@ -555,10 +661,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 100;
+        return diem * dkValue;
     }
 
-    public int dk7(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk7(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
         if (lopMonHoc.getNganh() == null) {
             lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId());
@@ -584,10 +690,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 100;
+        return diem * dkValue;
     }
 
-    public int dk8(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk8(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
         for (LopMonHoc lopMonHoc1 :
@@ -605,10 +711,10 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 100;
+        return diem * dkValue;
     }
 
-    public int dk9(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs) {
+    public int dk9(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, int dkValue) {
         int diem = 0;
         if (lopMonHoc.getNganh() == null) {
             lopMonHocs.removeIf(lopMonHoc1 -> lopMonHoc1.getKhoa_khoaHoc().getId() != lopMonHoc.getKhoa_khoaHoc().getId());
@@ -623,10 +729,11 @@ public class GiaoVuController {
             }
         }
 
-        return diem * 100;
+        return diem * dkValue;
     }
 
-    public void mutate(CaThe caThe) {
+    public CaThe mutate(CaThe caTheParameter) {
+        CaThe caThe = new CaThe(caTheParameter.getLopMonHocList());
         Random random = new Random();
         int caTheMutate1 = random.nextInt(caThe.getLopMonHocList().size());
         caThe.getLopMonHocList().get(caTheMutate1).setTkb_lichHocTheoTuans(null);
@@ -638,6 +745,8 @@ public class GiaoVuController {
         }
         caThe.getLopMonHocList().get(caTheMutate2).setTkb_lichHocTheoTuans(null);
         this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate2));
+
+        return caThe;
     }
 
     public CaThe crossOver1_1(CaThe caThe1, CaThe caThe2, int crossOverPoint) {
@@ -645,7 +754,7 @@ public class GiaoVuController {
         for (int i = 0; i < crossOverPoint; i++) {
             lopMonHocs.add(caThe1.getLopMonHocList().get(i));
         }
-        for (int i = crossOverPoint; i< caThe1.getLopMonHocList().size(); i++){
+        for (int i = crossOverPoint; i < caThe1.getLopMonHocList().size(); i++) {
             lopMonHocs.add(caThe2.getLopMonHocList().get(i));
         }
 
@@ -657,19 +766,19 @@ public class GiaoVuController {
         for (int i = 0; i < crossOverPoint; i++) {
             lopMonHocs.add(caThe2.getLopMonHocList().get(i));
         }
-        for (int i = crossOverPoint; i< caThe1.getLopMonHocList().size(); i++){
+        for (int i = crossOverPoint; i < caThe1.getLopMonHocList().size(); i++) {
             lopMonHocs.add(caThe1.getLopMonHocList().get(i));
         }
 
         return new CaThe(lopMonHocs);
     }
 
-    public CaThe crossOver2_1(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2){
+    public CaThe crossOver2_1(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2) {
         List<LopMonHoc> lopMonHocs = new ArrayList<>();
         for (int i = 0; i < crossOverPoint1; i++) {
             lopMonHocs.add(caThe1.getLopMonHocList().get(i));
         }
-        for (int i = crossOverPoint1; i< crossOverPoint2; i++){
+        for (int i = crossOverPoint1; i < crossOverPoint2; i++) {
             lopMonHocs.add(caThe2.getLopMonHocList().get(i));
         }
         for (int i = 0; i < caThe1.getLopMonHocList().size(); i++) {
@@ -679,12 +788,12 @@ public class GiaoVuController {
         return new CaThe(lopMonHocs);
     }
 
-    public CaThe crossOver2_2(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2){
+    public CaThe crossOver2_2(CaThe caThe1, CaThe caThe2, int crossOverPoint1, int crossOverPoint2) {
         List<LopMonHoc> lopMonHocs = new ArrayList<>();
         for (int i = 0; i < crossOverPoint1; i++) {
             lopMonHocs.add(caThe2.getLopMonHocList().get(i));
         }
-        for (int i = crossOverPoint1; i< crossOverPoint2; i++){
+        for (int i = crossOverPoint1; i < crossOverPoint2; i++) {
             lopMonHocs.add(caThe1.getLopMonHocList().get(i));
         }
         for (int i = 0; i < caThe1.getLopMonHocList().size(); i++) {
@@ -731,16 +840,16 @@ public class GiaoVuController {
     }
 
     public boolean checkTrungLichPhong(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaPhong) {
-        System.out.println("-----" + tkb_lichHocTheoTuan.getId() + "-------");
-        System.out.println(tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + " - " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
-        System.out.println("bat dau: " + lichHocCuaPhong.size());
+//        System.out.println("-----" + tkb_lichHocTheoTuan.getId() + "-------");
+//        System.out.println(tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + " - " + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+//        System.out.println("bat dau: " + lichHocCuaPhong.size());
         lichHocCuaPhong.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getGiangDuong().getId() != tkb_lichHocTheoTuan.getGiangDuong().getId());
         lichHocCuaPhong.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
-        System.out.println("ket thuc: " + lichHocCuaPhong.size());
+//        System.out.println("ket thuc: " + lichHocCuaPhong.size());
         List<TKB_Tiet> tietBanCuaKhoaPhong = this.getTietNotFree(lichHocCuaPhong);
         for (TKB_Tiet tkb_tiet :
                 tietBanCuaKhoaPhong) {
-            System.out.println(tkb_tiet.getTen());
+//            System.out.println(tkb_tiet.getTen());
         }
         return this.checkTrungLich(tietBanCuaKhoaPhong, tkb_lichHocTheoTuan);
     }
