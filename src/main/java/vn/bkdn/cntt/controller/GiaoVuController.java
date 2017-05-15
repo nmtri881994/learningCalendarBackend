@@ -310,26 +310,41 @@ public class GiaoVuController {
                 numberOfCrossOver--;
             }
             int numberOfMutation = this.numberOfInviduals - numberOfParents - numberOfCrossOver;
+            List<CaThe> quanTheTemp = new ArrayList<>();
             for (int i = 1; i < setting.getSoTheHe(); i++) {
-                List<CaThe> quanTheTemp = new ArrayList<>();
+                quanTheTemp.clear();
+//                System.out.println(quanThe.get(0).getDiemThichNghi());
+
                 List<CaThe> parents = this.chooseParents(quanThe, numberOfParents);
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getLopMonHocList(), setting));
+//                System.out.println(quanThe.get(0).getDiemThichNghi());
+
                 List<CaThe> crossOvers = this.crossOverGeneration(parents, numberOfCrossOver);
-                List<CaThe> mutations = this.mutateGeneration(parents, numberOfMutation);
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getLopMonHocList(), setting));
+//                System.out.println(quanThe.get(0).getDiemThichNghi());
+
+                List<CaThe> mutations = this.mutateGeneration(parents, numberOfMutation, setting);
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getLopMonHocList(), setting));
+//                System.out.println(quanThe.get(0).getDiemThichNghi());
+
                 quanTheTemp.addAll(parents);
                 quanTheTemp.addAll(crossOvers);
                 quanTheTemp.addAll(mutations);
 
-                this.danhSoTKB_TuanId(quanThe);
-                for (CaThe caThe : quanThe) {
+                this.danhSoTKB_TuanId(quanTheTemp);
+                for (CaThe caThe : quanTheTemp) {
                     caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getLopMonHocList(), setting));
                 }
 
-                quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
+                quanTheTemp.sort(Comparator.comparing(CaThe::getDiemThichNghi));
                 System.out.println("------------------------------------------Thế hệ " + (i + 1) + "------------------------------------------");
-                printQuanThe(quanThe);
+                printQuanThe(quanTheTemp);
 
-                if (checkSuccess(quanThe, setting.getDiemThichNghiToiUu())) {
+                if (checkSuccess(quanTheTemp, setting.getDiemThichNghiToiUu())) {
                     return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+                }else{
+                    quanThe.clear();
+                    quanThe.addAll(quanTheTemp);
                 }
             }
             return new ResponseEntity<String>("Sinh thời khóa biểu tự động thất bại", HttpStatus.OK);
@@ -350,7 +365,7 @@ public class GiaoVuController {
         List<CaThe> crossOvers = new ArrayList<>();
         Random random = new Random();
         int index1, index2;
-        int crossOverPoint = (parents.get(0).getLopMonHocList().size())/2;
+        int crossOverPoint = (parents.get(0).getLopMonHocList().size()) / 2;
         for (int i = 0; i < numberOfCrossOver / 2; i++) {
             index1 = random.nextInt(parents.size());
             index2 = random.nextInt(parents.size());
@@ -364,7 +379,7 @@ public class GiaoVuController {
         return crossOvers;
     }
 
-    public List<CaThe> mutateGeneration(List<CaThe> parents, int numberOfMutations) {
+    public List<CaThe> mutateGeneration(List<CaThe> parents, int numberOfMutations, Setting setting) {
         List<CaThe> mutations = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < numberOfMutations; i++) {
@@ -377,7 +392,7 @@ public class GiaoVuController {
 
     public void printQuanThe(List<CaThe> quanThe) {
         int i = 1;
-        System.out.println("Điểm thích nghi thấp nhất: "+quanThe.get(0).getDiemThichNghi());
+        System.out.println("Điểm thích nghi thấp nhất: " + quanThe.get(0).getDiemThichNghi());
 //        for (CaThe caThe :
 //                quanThe) {
 //            System.out.println("--------------------------");
@@ -481,7 +496,6 @@ public class GiaoVuController {
 //        System.out.println(diem);
         if (setting.isDk6()) {
             diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk6Value());
-
         }
 //        System.out.println(diem);
         if (setting.isDk7()) {

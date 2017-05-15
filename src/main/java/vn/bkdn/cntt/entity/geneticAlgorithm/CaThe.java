@@ -2,6 +2,7 @@ package vn.bkdn.cntt.entity.geneticAlgorithm;
 
 import vn.bkdn.cntt.entity.LopMonHoc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,12 @@ public class CaThe {
     private List<LopMonHoc> lopMonHocList;
 
     public CaThe(List<LopMonHoc> lopMonHocList) {
-        this.lopMonHocList = lopMonHocList;
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (LopMonHoc lopMonHoc:
+             lopMonHocList) {
+            lopMonHocs.add(new LopMonHoc(lopMonHoc));
+        }
+        this.lopMonHocList = lopMonHocs;
     }
 
     public int getDiemThichNghi() {
