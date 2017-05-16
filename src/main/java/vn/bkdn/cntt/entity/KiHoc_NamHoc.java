@@ -24,6 +24,7 @@ public class KiHoc_NamHoc {
     private Set<Khoa_KhoaHoc> khoaBatDauHocs;
     private Set<Khoa_KhoaHoc> khoaKetThucHocs;
     private Set<RegisterTime> registerTimes;
+    private Set<KiHoc_NamHoc_DieuKien> kiHoc_namHoc_dieuKiens;
 
     public KiHoc_NamHoc() {
     }
@@ -128,5 +129,14 @@ public class KiHoc_NamHoc {
 
     public void setRegisterTimes(Set<RegisterTime> registerTimes) {
         this.registerTimes = registerTimes;
+    }
+
+    @OneToMany(mappedBy = "kiHoc_namHoc")
+    public Set<KiHoc_NamHoc_DieuKien> getKiHoc_namHoc_dieuKiens() {
+        return kiHoc_namHoc_dieuKiens;
+    }
+
+    public void setKiHoc_namHoc_dieuKiens(Set<KiHoc_NamHoc_DieuKien> kiHoc_namHoc_dieuKiens) {
+        this.kiHoc_namHoc_dieuKiens = kiHoc_namHoc_dieuKiens;
     }
 }

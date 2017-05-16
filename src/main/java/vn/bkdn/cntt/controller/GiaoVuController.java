@@ -64,6 +64,9 @@ public class GiaoVuController {
     @Autowired
     private SinhVienService sinhVienService;
 
+    @Autowired
+    private DieuKienService dieuKienService;
+
     private GeneticAlgorithmUtils geneticAlgorithmUtils;
 
     @PreAuthorize("hasRole('GIAOVU')")
@@ -257,6 +260,12 @@ public class GiaoVuController {
     public ResponseEntity<Object> closeRegistering(@PathVariable int registerTimeId) {
         registerTimeService.udpateRegistering(registerTimeId, false);
         return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/generate-calendar/all-conditions")
+    public ResponseEntity<List<DieuKien>> getAllDieuKien(){
+        return new ResponseEntity<List<DieuKien>>(dieuKienService.findAll(), HttpStatus.OK);
     }
 
     private int tkbtuan_index;
