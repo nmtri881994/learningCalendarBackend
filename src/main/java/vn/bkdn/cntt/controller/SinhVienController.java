@@ -175,7 +175,14 @@ public class SinhVienController {
     @GetMapping(value = "/calendar/register/{classId}")
     public ResponseEntity<Integer> studentRegister(@PathVariable int classId) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-
+        LopMonHoc lopMonHoc = lopMonHocService.findOne(classId);
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByMonHocIdAndKiHoc_NamHoc(lopMonHoc.getMonHoc().getId(), lopMonHoc.getKiHoc_namHoc().getId());
+        if(lopMonHocs!=null){
+            for (LopMonHoc lopMonHoc1:
+                 lopMonHocs) {
+                lopMonHoc_sinhVienService.studentCancelRegister(lopMonHoc1.getId(), sinhVienService.findByMaSinhVien(tenDangNhap).getId());
+            }
+        }
         return new ResponseEntity<Integer>(lopMonHoc_sinhVienService.studentRegister(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()), HttpStatus.OK);
     }
 

@@ -31,4 +31,7 @@ public interface LopMonHocRepository extends JpaRepository<LopMonHoc, Integer> {
 
     @Query(value = "select * from lop_mon_hoc where ki_hoc_nam_hoc_id = ?1", nativeQuery = true)
     List<LopMonHoc> findByKiHoc_NamHocId(int ki_namHocId);
+
+    @Query(value = "select * from lop_mon_hoc where mon_hoc_id=?1 and ki_hoc_nam_hoc_id = ?2", nativeQuery = true)
+    List<LopMonHoc> findByMonHocIdAndKiHoc_NamHocId(int monHocId, int ki_namHocId);
 }

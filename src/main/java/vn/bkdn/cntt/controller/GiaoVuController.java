@@ -1,16 +1,22 @@
 package vn.bkdn.cntt.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.scene.Parent;
+import jdk.nashorn.internal.objects.NativeJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
 import vn.bkdn.cntt.entity.geneticAlgorithm.CaThe;
+import vn.bkdn.cntt.entity.geneticAlgorithm.GenerationSocketMessage;
 import vn.bkdn.cntt.entity.geneticAlgorithm.Setting;
 
 import java.util.*;
@@ -26,6 +32,9 @@ public class GiaoVuController {
     private int numberOfInviduals = 20;
     private int parentsPercentage = 40;
     private int crossOverPercentage = 50;
+
+    private int tkbtuan_index;
+    private int theHe;
 
 
     @Autowired
@@ -68,6 +77,16 @@ public class GiaoVuController {
     private DieuKienService dieuKienService;
 
     private GeneticAlgorithmUtils geneticAlgorithmUtils;
+
+    @Autowired
+    private SimpMessagingTemplate template;
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    public GiaoVuController(SimpMessagingTemplate template) {
+        this.template = template;
+    }
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/calendar/year-not-end")
@@ -264,15 +283,13 @@ public class GiaoVuController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/generate-calendar/all-conditions")
-    public ResponseEntity<List<DieuKien>> getAllDieuKien(){
+    public ResponseEntity<List<DieuKien>> getAllDieuKien() {
         return new ResponseEntity<List<DieuKien>>(dieuKienService.findAll(), HttpStatus.OK);
     }
 
-    private int tkbtuan_index;
-
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/generate-random-calendar")
-    public ResponseEntity<String> generateRandomCalendarForSemester(@RequestBody Setting setting) {
+    public ResponseEntity<String> generateRandomCalendarForSemester(@RequestBody Setting setting) throws JsonProcessingException {
         KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(setting.getKyHocId(), setting.getNamHocId());
         List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(kiHoc_namHoc.getId());
         lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
@@ -285,6 +302,7 @@ public class GiaoVuController {
             }
             quanThe.add(new CaThe(lopMonHocsTemp));
         }
+        theHe = 1;
         if (this.checkLopMonHocsAllFree(lopMonHocs)) {
 
             //khoi tao quan the ban dau
@@ -307,10 +325,16 @@ public class GiaoVuController {
             System.out.println("------------------------------------------Thế hệ 1------------------------------------------");
             printQuanThe(quanThe);
 
-            if (checkSuccess(quanThe, setting.getDiemThichNghiToiUu())) {
+            if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanThe, setting.getDiemThichNghiToiUu())) {
+                for (LopMonHoc lopMonHoc:
+                        quanThe.get(0).getLopMonHocList()) {
+                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+                            lopMonHoc.getTkb_lichHocTheoTuans()) {
+                        tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHoc.getId()));
+                        tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+                    }
+                }
                 return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
-            } else {
-
             }
 //            Tien hanh tien hoa
             int numberOfParents = this.numberOfInviduals * this.parentsPercentage / 100;
@@ -349,9 +373,17 @@ public class GiaoVuController {
                 System.out.println("------------------------------------------Thế hệ " + (i + 1) + "------------------------------------------");
                 printQuanThe(quanTheTemp);
 
-                if (checkSuccess(quanTheTemp, setting.getDiemThichNghiToiUu())) {
+                if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanTheTemp, setting.getDiemThichNghiToiUu())) {
+                    for (LopMonHoc lopMonHoc:
+                            quanThe.get(0).getLopMonHocList()) {
+                        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+                                lopMonHoc.getTkb_lichHocTheoTuans()) {
+                            tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHoc.getId()));
+                            tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+                        }
+                    }
                     return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
-                }else{
+                } else {
                     quanThe.clear();
                     quanThe.addAll(quanTheTemp);
                 }
@@ -420,7 +452,12 @@ public class GiaoVuController {
 //        }
     }
 
-    public boolean checkSuccess(List<CaThe> quanThe, int diemThichNghiToiUu) {
+
+    public boolean checkSuccess(int kyHocId, int namHocId, List<CaThe> quanThe, int diemThichNghiToiUu) throws JsonProcessingException {
+        GenerationSocketMessage generationSocketMessage = new GenerationSocketMessage(kyHocId, namHocId, theHe, quanThe.get(0).getDiemThichNghi());
+        String mess = this.mapper.writeValueAsString(generationSocketMessage);
+        this.template.convertAndSend("/socket/calendar/auto-generate", mess);
+        this.theHe++;
         if (quanThe.get(0).getDiemThichNghi() <= diemThichNghiToiUu) {
             return true;
         } else {
@@ -429,9 +466,10 @@ public class GiaoVuController {
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
-    @GetMapping(value = "/delete-all-calendars/{semesterId}")
-    public ResponseEntity<String> deleteAllCalendarsOfSemester(@PathVariable int semesterId) {
-        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(semesterId);
+    @GetMapping(value = "/delete-all-calendars/{semesterId}/{yearId}")
+    public ResponseEntity<String> deleteAllCalendarsOfSemester(@PathVariable int semesterId, @PathVariable int yearId) {
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(semesterId, yearId);
+        List<LopMonHoc> lopMonHocs = lopMonHocService.findByKiHoc_NamHocId(kiHoc_namHoc.getId());
         for (LopMonHoc lopMonHoc :
                 lopMonHocs) {
             if (!lopMonHoc.getTkb_lichHocTheoTuans().isEmpty()) {
