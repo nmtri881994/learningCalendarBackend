@@ -16,6 +16,7 @@ import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
 import vn.bkdn.cntt.entity.*;
 import vn.bkdn.cntt.entity.geneticAlgorithm.CaThe;
+import vn.bkdn.cntt.entity.geneticAlgorithm.ChosenCondition;
 import vn.bkdn.cntt.entity.geneticAlgorithm.GenerationSocketMessage;
 import vn.bkdn.cntt.entity.geneticAlgorithm.Setting;
 
@@ -282,9 +283,18 @@ public class GiaoVuController {
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
-    @GetMapping(value = "/generate-calendar/all-conditions")
-    public ResponseEntity<List<DieuKien>> getAllDieuKien() {
-        return new ResponseEntity<List<DieuKien>>(dieuKienService.findAll(), HttpStatus.OK);
+    @GetMapping(value = "/generate-calendar/get-conditions/{termId}/{yearId}")
+    public ResponseEntity<List<DieuKien>> getAllDieuKien(@PathVariable int termId, @PathVariable int yearId) {
+        KiHoc_NamHoc kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(termId, yearId);
+        List<DieuKien> dieuKiens = new ArrayList<>();
+        for (KiHoc_NamHoc_DieuKien kiHoc_namHoc_dieuKien :
+                kiHoc_namHoc.getKiHoc_namHoc_dieuKiens()) {
+            dieuKiens.add(kiHoc_namHoc_dieuKien.getDieuKien());
+        }
+
+        dieuKiens.sort(Comparator.comparing(DieuKien::getId));
+
+        return new ResponseEntity<List<DieuKien>>(dieuKiens, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('GIAOVU')")
@@ -326,9 +336,9 @@ public class GiaoVuController {
             printQuanThe(quanThe);
 
             if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanThe, setting.getDiemThichNghiToiUu())) {
-                for (LopMonHoc lopMonHoc:
+                for (LopMonHoc lopMonHoc :
                         quanThe.get(0).getLopMonHocList()) {
-                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                             lopMonHoc.getTkb_lichHocTheoTuans()) {
                         tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHoc.getId()));
                         tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
@@ -374,9 +384,9 @@ public class GiaoVuController {
                 printQuanThe(quanTheTemp);
 
                 if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanTheTemp, setting.getDiemThichNghiToiUu())) {
-                    for (LopMonHoc lopMonHoc:
+                    for (LopMonHoc lopMonHoc :
                             quanThe.get(0).getLopMonHocList()) {
-                        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan:
+                        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                                 lopMonHoc.getTkb_lichHocTheoTuans()) {
                             tkb_lichHocTheoTuan.setLopMonHoc(lopMonHocService.findOne(lopMonHoc.getId()));
                             tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
@@ -516,50 +526,45 @@ public class GiaoVuController {
         return diem;
     }
 
+
     public int getDiemThichNghiCuaLopMonHoc(LopMonHoc lopMonHoc, List<LopMonHoc> lopMonHocs, Setting setting) {
 //        System.out.println("----**Size: " + lopMonHocs.size() + "**----");
         int diem = 0;
-        if (setting.isDk1()) {
-            diem += this.dk1(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk1Value());
-        }
-//        System.out.println(diem);
-        if (setting.isDk2()) {
-            diem += this.dk2(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk2Value());
-        }
-//        System.out.println(diem);
-        if (setting.isDk3()) {
-            diem += this.dk3(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk3Value());
-        }
-//        System.out.println(diem);
-        if (setting.isDk4()) {
-            diem += this.dk4(lopMonHoc, setting.getDk4Value());
 
+        for (ChosenCondition chosenCondition :
+                setting.getChosenConditions()) {
+            switch (chosenCondition.getId()) {
+                case 1:
+                    diem += this.dk1(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 2:
+                    diem += this.dk2(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 3:
+                    diem += this.dk3(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 4:
+                    diem += this.dk4(lopMonHoc, chosenCondition.getValue());
+                    break;
+                case 5:
+                    diem += this.dk5(lopMonHoc, chosenCondition.getValue());
+                    break;
+                case 6:
+                    diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 7:
+                    diem += this.dk7(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 8:
+                    diem += this.dk8(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                case 9:
+                    diem += this.dk9(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), chosenCondition.getValue());
+                    break;
+                default:
+                    diem += 0;
+            }
         }
-//        System.out.println(diem);
-        if (setting.isDk5()) {
-            diem += this.dk5(lopMonHoc, setting.getDk5Value());
-
-        }
-//        System.out.println(diem);
-        if (setting.isDk6()) {
-            diem += this.dk6(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk6Value());
-        }
-//        System.out.println(diem);
-        if (setting.isDk7()) {
-            diem += this.dk7(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk7Value());
-
-        }
-//        System.out.println(diem);
-        if (setting.isDk8()) {
-            diem += this.dk8(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk8Value());
-
-        }
-//        System.out.println(diem);
-        if (setting.isDk9()) {
-            diem += this.dk9(lopMonHoc, this.cloneListLopMonHoc(lopMonHocs), setting.getDk9Value());
-
-        }
-//        System.out.println(diem);
         return diem;
     }
 

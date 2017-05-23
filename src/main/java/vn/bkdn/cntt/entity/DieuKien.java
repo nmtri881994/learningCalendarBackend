@@ -16,6 +16,7 @@ public class DieuKien {
     private String noiDung;
     private int minPoint;
     private int maxPoint;
+    private int batBuoc;
 
     private Set<KiHoc_NamHoc_DieuKien> kiHoc_namHoc_dieuKiens;
 
@@ -62,6 +63,14 @@ public class DieuKien {
 
     public void setMaxPoint(int maxPoint) {
         this.maxPoint = maxPoint;
+    }
+
+    public int getBatBuoc() {
+        return batBuoc;
+    }
+
+    public void setBatBuoc(int batBuoc) {
+        this.batBuoc = batBuoc;
     }
 
     @OneToMany(mappedBy = "dieuKien")
