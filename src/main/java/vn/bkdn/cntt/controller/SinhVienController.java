@@ -59,12 +59,12 @@ public class SinhVienController {
     @GetMapping(value = "/calendar/week/{date}")
     public ResponseEntity<MappingJacksonValue> getCalendarByWeek(@PathVariable String date) throws ParseException {
         //Get year and WeekOFYear
-        Calendar c = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date utilDate = dateFormat.parse(date);
-        c.setTime(utilDate);
-        int currentYear = utilDate.getYear();
-        int currentWeek = c.get(Calendar.WEEK_OF_YEAR);
+//        Calendar c = Calendar.getInstance();
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date utilDate = dateFormat.parse(date);
+//        c.setTime(utilDate);
+//        int currentYear = utilDate.getYear();
+//        int currentWeek = c.get(Calendar.WEEK_OF_YEAR);
 
         //Get all student classes' calendar
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -78,7 +78,7 @@ public class SinhVienController {
 
         //Filter student classes' calendar by input date
         CalendarCommonUtils calendarCommonUtils = new CalendarCommonUtils();
-        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, currentYear, currentWeek);
+        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, date);
 
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()

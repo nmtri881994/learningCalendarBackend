@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -58,4 +59,23 @@ public class test {
         return new ResponseEntity<GiaoVien>(giaoVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/calendar/week/{date}")
+    public int getWeekOfYear(@PathVariable String date) throws ParseException {
+        Calendar c = Calendar.getInstance(Locale.GERMAN);
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date d = dateFormat.parse(date);
+
+        c.setTime(d);
+        return c.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    @GetMapping(value = "/calendar/date/{date}")
+    public int getDayOfWeek(@PathVariable String date) throws ParseException {
+        Calendar c = Calendar.getInstance(Locale.GERMAN);
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date d = dateFormat.parse(date);
+
+        c.setTime(d);
+        return c.get(Calendar.DAY_OF_WEEK);
+    }
 }

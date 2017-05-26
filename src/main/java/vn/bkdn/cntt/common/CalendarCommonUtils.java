@@ -29,25 +29,43 @@ public class CalendarCommonUtils {
     @Autowired
     private LopMonHocService lopMonHocService;
 
-    public List<LopMonHoc> getClassCalendarByWeek(List<LopMonHoc> lopMonHocs, int year, int week) throws ParseException {
-        java.util.Calendar c = java.util.Calendar.getInstance();
+    public List<LopMonHoc> getClassCalendarByWeek(List<LopMonHoc> lopMonHocs, String date) throws ParseException {
+        java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date chosenDate = dateFormat.parse(date);
+        c.setTime(chosenDate);
+        int week = c.get(Calendar.WEEK_OF_YEAR);
+        int year = chosenDate.getYear();
 
         Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
         Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgaysByWeek;
 
-        for (LopMonHoc lopMonHoc:
+        for (LopMonHoc lopMonHoc :
                 lopMonHocs) {
             tkb_lichHocTheoNgays = lopMonHoc.getTkb_lichHocTheoNgays();
             tkb_lichHocTheoNgaysByWeek = new HashSet<>();
-            for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay:
+            for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay :
                     tkb_lichHocTheoNgays) {
-                if(year == tkb_lichHocTheoNgay.getNgay().getYear()){
-                    String learningDateString = tkb_lichHocTheoNgay.getNgay().toString();
-                    Date learningDate = dateFormat.parse(learningDateString);
-                    c.setTime(learningDate);
+
+                String learningDateString = tkb_lichHocTheoNgay.getNgay().toString();
+                Date learningDate = dateFormat.parse(learningDateString);
+                c.setTime(learningDate);
+
+                if(year == (tkb_lichHocTheoNgay.getNgay().getYear()-1) && chosenDate.before(learningDate)){
                     if(week == c.get(java.util.Calendar.WEEK_OF_YEAR)){
                         tkb_lichHocTheoNgaysByWeek.add(tkb_lichHocTheoNgay);
+                    }
+                }
+
+                if(year == (tkb_lichHocTheoNgay.getNgay().getYear()+1) && chosenDate.after(learningDate)){
+                    if(week == c.get(java.util.Calendar.WEEK_OF_YEAR)){
+                        tkb_lichHocTheoNgaysByWeek.add(tkb_lichHocTheoNgay);
+                    }
+                }
+
+                if (year == tkb_lichHocTheoNgay.getNgay().getYear()) {
+                    if(week == c.get(java.util.Calendar.WEEK_OF_YEAR)){
+                            tkb_lichHocTheoNgaysByWeek.add(tkb_lichHocTheoNgay);
                     }
                 }
             }

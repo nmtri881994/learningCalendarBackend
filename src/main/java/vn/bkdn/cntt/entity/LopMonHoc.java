@@ -23,10 +23,6 @@ public class LopMonHoc {
     private int soTietLyThuyet;
     private int soTietThucHanh;
     private int soLuongToiDa;
-    private int soBuoiLyThuyetMotTuan;
-    private int soTietLyThuyetMotTuan;
-    private int soBuoiThucHanhMotTuan;
-    private int soTietThucHanhMotTuan;
     private int gioiHanTuanBatDau;
     private int gioiHanTuanKetThuc;
 
@@ -47,10 +43,6 @@ public class LopMonHoc {
         this.soTietLyThuyet = lopMonHoc.getSoTietLyThuyet();
         this.soTietThucHanh = lopMonHoc.getSoTietThucHanh();
         this.soLuongToiDa = lopMonHoc.getSoLuongToiDa();
-        this.soBuoiLyThuyetMotTuan = lopMonHoc.getSoBuoiLyThuyetMotTuan();
-        this.soTietLyThuyetMotTuan = lopMonHoc.getSoTietLyThuyetMotTuan();
-        this.soBuoiThucHanhMotTuan = lopMonHoc.getSoBuoiThucHanhMotTuan();
-        this.soTietThucHanhMotTuan = lopMonHoc.getSoTietThucHanhMotTuan();
         this.gioiHanTuanBatDau = lopMonHoc.getGioiHanTuanBatDau();
         this.gioiHanTuanKetThuc = lopMonHoc.getGioiHanTuanKetThuc();
         this.tkb_lichHocTheoNgays = lopMonHoc.getTkb_lichHocTheoNgays();
@@ -144,38 +136,6 @@ public class LopMonHoc {
 
     public void setSoLuongToiDa(int soLuongToiDa) {
         this.soLuongToiDa = soLuongToiDa;
-    }
-
-    public int getSoBuoiLyThuyetMotTuan() {
-        return soBuoiLyThuyetMotTuan;
-    }
-
-    public void setSoBuoiLyThuyetMotTuan(int soBuoiLyThuyetMotTuan) {
-        this.soBuoiLyThuyetMotTuan = soBuoiLyThuyetMotTuan;
-    }
-
-    public int getSoTietLyThuyetMotTuan() {
-        return soTietLyThuyetMotTuan;
-    }
-
-    public void setSoTietLyThuyetMotTuan(int soTietLyThuyetMotTuan) {
-        this.soTietLyThuyetMotTuan = soTietLyThuyetMotTuan;
-    }
-
-    public int getSoBuoiThucHanhMotTuan() {
-        return soBuoiThucHanhMotTuan;
-    }
-
-    public void setSoBuoiThucHanhMotTuan(int soBuoiThucHanhMotTuan) {
-        this.soBuoiThucHanhMotTuan = soBuoiThucHanhMotTuan;
-    }
-
-    public int getSoTietThucHanhMotTuan() {
-        return soTietThucHanhMotTuan;
-    }
-
-    public void setSoTietThucHanhMotTuan(int soTietThucHanhMotTuan) {
-        this.soTietThucHanhMotTuan = soTietThucHanhMotTuan;
     }
 
     public int getGioiHanTuanBatDau() {
