@@ -31,4 +31,7 @@ public interface TKB_LichHocTheoNgayRepository extends JpaRepository<TKB_LichHoc
     List<TKB_LichHocTheoNgay> getLichHocOfRoomByDate(int giangDuongId, String ngay);
 
     List<TKB_LichHocTheoNgay> findByLopMonHocAndNgay(LopMonHoc lopMonHoc, Date ngay);
+    
+    @Query(value = "select lop_mon_hoc_id from tkb_lich_hoc_theo_ngay where id = ?1", nativeQuery = true)
+    int getClassId(int lessonId);
 }

@@ -59,6 +59,9 @@ public class CalendarController {
     @Autowired
     private TKB_TietService tkb_tietService;
 
+    @Autowired
+    private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/learning-year/{date}")
     public ResponseEntity<NamHoc> getNamHocByDate(@PathVariable String date) throws ParseException {
@@ -354,4 +357,29 @@ public class CalendarController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/tkb/{classId}")
+    public ResponseEntity<MappingJacksonValue> findClass(@PathVariable int classId){
+        LopMonHoc lopMonHoc = lopMonHocService.findOne(classId);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHoc);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "soTietLyThuyet", "soTietThucHanh"));
+        mappingJacksonValue.setFilters(filterProvider);
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/tkb/lesson/{lessonId}")
+    public ResponseEntity<MappingJacksonValue> findClassByLesson(@PathVariable int lessonId){
+        int classId = tkb_lichHocTheoNgayService.getClassId(lessonId);
+
+        LopMonHoc lopMonHoc = lopMonHocService.findOne(classId);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHoc);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "soTietLyThuyet", "soTietThucHanh"));
+        mappingJacksonValue.setFilters(filterProvider);
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
 }
