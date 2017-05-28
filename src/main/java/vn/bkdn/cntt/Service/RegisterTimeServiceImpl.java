@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.RegisterTime;
 import vn.bkdn.cntt.repository.RegisterTimeRepository;
 
+import java.util.List;
+
 /**
  * Created by XuanVinh on 4/20/2017.
  */
@@ -24,5 +26,10 @@ public class RegisterTimeServiceImpl implements RegisterTimeService {
     @Override
     public RegisterTime findOne(int registerTimeId) {
         return registerTimeRepository.findOne(registerTimeId);
+    }
+
+    @Override
+    public List<RegisterTime> findAll() {
+        return registerTimeRepository.findAll();
     }
 }
