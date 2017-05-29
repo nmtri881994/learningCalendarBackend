@@ -382,4 +382,26 @@ public class CalendarController {
         mappingJacksonValue.setFilters(filterProvider);
         return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/tkb/first-date-of-week/{yearId}/{week}")
+    public String getFirstDateOfWeek(@PathVariable int yearId,@PathVariable int week){
+        NamHoc namHoc = namHocService.findOne(yearId);
+        Date learningYearStartDate = namHoc.getNgayBatDau();
+
+        int days = 7*(week-1);
+
+        Calendar c = Calendar.getInstance(Locale.GERMAN);
+        c.setTime(learningYearStartDate);
+        c.add(Calendar.DATE, days);
+        if (c.get(Calendar.DAY_OF_WEEK) != 1 && c.get(Calendar.DAY_OF_WEEK) != 2) {
+            c.add(Calendar.DATE, 2 - c.get(Calendar.DAY_OF_WEEK));
+        }
+
+        if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+            c.add(Calendar.DATE, 2 - c.get(1));
+        }
+
+        return new java.sql.Date(c.getTime().getTime()).toString();
+    }
 }

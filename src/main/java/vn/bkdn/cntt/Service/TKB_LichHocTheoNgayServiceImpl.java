@@ -69,6 +69,11 @@ public class TKB_LichHocTheoNgayServiceImpl implements TKB_LichHocTheoNgayServic
         return tkb_lichHocTheoNgayRepository.getClassId(lessonId);
     }
 
+    @Override
+    public void addLichHocTheoNgay(TKB_LichHocTheoNgay tkb_lichHocTheoNgay) {
+        tkb_lichHocTheoNgayRepository.save(tkb_lichHocTheoNgay);
+    }
+
     public int getThuId(int dayOfWeek) {
         TKB_Thu tkb_thu;
         switch (dayOfWeek) {

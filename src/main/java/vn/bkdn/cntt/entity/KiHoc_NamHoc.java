@@ -18,6 +18,7 @@ public class KiHoc_NamHoc {
     private NamHoc namHoc;
     private Date ngayBatDau;
     private Date ngayKetThuc;
+    private boolean daSinhLich;
 
     private Set<LopMonHoc> lopMonHocs;
     private Set<Khoa_KhoaHoc> khoaKhoaHocPhanNganhs;
@@ -79,6 +80,14 @@ public class KiHoc_NamHoc {
 
     public void setNgayKetThuc(Date ngayKetThuc) {
         this.ngayKetThuc = ngayKetThuc;
+    }
+
+    public boolean isDaSinhLich() {
+        return daSinhLich;
+    }
+
+    public void setDaSinhLich(boolean daSinhLich) {
+        this.daSinhLich = daSinhLich;
     }
 
     @OneToMany(mappedBy = "kiHoc_namHoc")

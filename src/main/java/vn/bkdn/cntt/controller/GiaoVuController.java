@@ -33,6 +33,7 @@ public class GiaoVuController {
     private int numberOfInviduals = 20;
     private int parentsPercentage = 40;
     private int crossOverPercentage = 50;
+    private int mutatePercentage = 50;
 
     private int tkbtuan_index;
     private int theHe;
@@ -800,18 +801,20 @@ public class GiaoVuController {
 
     public CaThe mutate(CaThe caTheParameter) {
         CaThe caThe = new CaThe(caTheParameter.getLopMonHocList());
+        int numberOfNSTMutate = mutatePercentage * caThe.getLopMonHocList().size() / 100;
+
         Random random = new Random();
-        int caTheMutate1 = random.nextInt(caThe.getLopMonHocList().size());
-        caThe.getLopMonHocList().get(caTheMutate1).setTkb_lichHocTheoTuans(null);
-        this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate1));
 
-        int caTheMutate2 = random.nextInt(caThe.getLopMonHocList().size());
-        while (caTheMutate2 == caTheMutate1) {
-            caTheMutate2 = random.nextInt(caThe.getLopMonHocList().size());
+        ArrayList<Integer> nstMutateds = new ArrayList<>();
+        for (int i = 0; i < numberOfNSTMutate; i++) {
+            int caTheMutate = random.nextInt(caThe.getLopMonHocList().size());
+            while (nstMutateds.contains(caTheMutate)) {
+                caTheMutate = random.nextInt(caThe.getLopMonHocList().size());
+            }
+            caThe.getLopMonHocList().get(caTheMutate).setTkb_lichHocTheoTuans(null);
+            this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate));
+            nstMutateds.add(caTheMutate);
         }
-        caThe.getLopMonHocList().get(caTheMutate2).setTkb_lichHocTheoTuans(null);
-        this.randomCalendarForClass(caThe.getLopMonHocList().get(caTheMutate2));
-
         return caThe;
     }
 
@@ -889,14 +892,19 @@ public class GiaoVuController {
         tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
 
         int weekCalendarSameTime = 0;
-        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan1 :
-                tkb_lichHocTheoTuans) {
-            boolean condition1 = tkb_lichHocTheoTuan1.getTkb_tietCuoiCung().getThuTu() < tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu();
-            boolean condition2 = tkb_lichHocTheoTuan1.getTkb_tietDauTien().getThuTu() > tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu();
-            if (!(condition1 || condition2)) {
-                weekCalendarSameTime++;
+        if (tkb_lichHocTheoTuans != null && !tkb_lichHocTheoTuans.isEmpty()) {
+            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan1 :
+                    tkb_lichHocTheoTuans) {
+                if (tkb_lichHocTheoTuan1.getTkb_tietDauTien() != null && tkb_lichHocTheoTuan1.getTkb_tietCuoiCung() != null && tkb_lichHocTheoTuan.getTkb_tietDauTien() != null && tkb_lichHocTheoTuan.getTkb_tietCuoiCung() != null) {
+                    boolean condition1 = tkb_lichHocTheoTuan1.getTkb_tietCuoiCung().getThuTu() < tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu();
+                    boolean condition2 = tkb_lichHocTheoTuan1.getTkb_tietDauTien().getThuTu() > tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu();
+                    if (!(condition1 || condition2)) {
+                        weekCalendarSameTime++;
+                    }
+                }
             }
         }
+
 
         if (weekCalendarSameTime < 3) {
             return false;

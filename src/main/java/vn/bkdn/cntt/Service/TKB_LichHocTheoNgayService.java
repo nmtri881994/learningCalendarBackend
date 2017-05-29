@@ -16,4 +16,6 @@ public interface TKB_LichHocTheoNgayService {
     List<TKB_LichHocTheoNgay> getLichHocOfRoomByDate(int giangDuongId, String ngay);
     List<TKB_LichHocTheoNgay> findByLopMonHocAndNgay(LopMonHoc lopMonHoc, Date ngay);
     int getClassId(int lessonId);
+
+    void addLichHocTheoNgay(TKB_LichHocTheoNgay tkb_lichHocTheoNgay);
 }

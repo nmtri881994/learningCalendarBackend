@@ -30,6 +30,21 @@ public class TKB_LichHocTheoNgay {
     public TKB_LichHocTheoNgay() {
     }
 
+    public TKB_LichHocTheoNgay(Date ngay, TKB_Thu tkb_thu, LopMonHoc lopMonHoc, GiangDuong giangDuong,
+                               TKB_Tiet tkb_tietDauTien, TKB_Tiet tkb_tietCuoiCung, boolean thiGiuaKy, boolean thiCuoiKy,
+                               String giaoVienNhan, String giaoVienGhiChu) {
+        this.ngay = ngay;
+        this.tkb_thu = tkb_thu;
+        this.lopMonHoc = lopMonHoc;
+        this.giangDuong = giangDuong;
+        this.tkb_tietDauTien = tkb_tietDauTien;
+        this.tkb_tietCuoiCung = tkb_tietCuoiCung;
+        this.thiGiuaKy = thiGiuaKy;
+        this.thiCuoiKy = thiCuoiKy;
+        this.giaoVienNhan = giaoVienNhan;
+        this.giaoVienGhiChu = giaoVienGhiChu;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
