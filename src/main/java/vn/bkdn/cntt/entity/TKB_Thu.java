@@ -16,7 +16,7 @@ public class TKB_Thu {
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans;
-    private Set<TKB_GiaoVien_NgayNghiTrongTuan> tkb_giaoVien_ngayNghiTrongTuans;
+    private Set<TKB_NhanVien_NgayNghiTrongTuan> tkb_nhanVien_ngayNghiTrongTuans;
 
     public TKB_Thu() {
     }
@@ -63,11 +63,11 @@ public class TKB_Thu {
 
     @OneToMany(mappedBy = "tkb_thu")
     @JsonIgnore
-    public Set<TKB_GiaoVien_NgayNghiTrongTuan> getTkb_giaoVien_ngayNghiTrongTuans() {
-        return tkb_giaoVien_ngayNghiTrongTuans;
+    public Set<TKB_NhanVien_NgayNghiTrongTuan> getTkb_nhanVien_ngayNghiTrongTuans() {
+        return tkb_nhanVien_ngayNghiTrongTuans;
     }
 
-    public void setTkb_giaoVien_ngayNghiTrongTuans(Set<TKB_GiaoVien_NgayNghiTrongTuan> tkb_giaoVien_ngayNghiTrongTuans) {
-        this.tkb_giaoVien_ngayNghiTrongTuans = tkb_giaoVien_ngayNghiTrongTuans;
+    public void setTkb_nhanVien_ngayNghiTrongTuans(Set<TKB_NhanVien_NgayNghiTrongTuan> tkb_nhanVien_ngayNghiTrongTuans) {
+        this.tkb_nhanVien_ngayNghiTrongTuans = tkb_nhanVien_ngayNghiTrongTuans;
     }
 }

@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.entity.geneticAlgorithm;
 
-import vn.bkdn.cntt.entity.LopMonHoc;
+import vn.bkdn.cntt.entity.DMLopMonHoc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +10,15 @@ import java.util.List;
  */
 public class CaThe {
     private int diemThichNghi;
-    private List<LopMonHoc> lopMonHocList;
+    private List<DMLopMonHoc> DMLopMonHocList;
 
-    public CaThe(List<LopMonHoc> lopMonHocList) {
-        List<LopMonHoc> lopMonHocs = new ArrayList<>();
-        for (LopMonHoc lopMonHoc:
-             lopMonHocList) {
-            lopMonHocs.add(new LopMonHoc(lopMonHoc));
+    public CaThe(List<DMLopMonHoc> DMLopMonHocList) {
+        List<DMLopMonHoc> dmLopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc DMLopMonHoc:
+             DMLopMonHocList) {
+            dmLopMonHocs.add(new DMLopMonHoc(DMLopMonHoc));
         }
-        this.lopMonHocList = lopMonHocs;
+        this.DMLopMonHocList = dmLopMonHocs;
     }
 
     public int getDiemThichNghi() {
@@ -29,11 +29,11 @@ public class CaThe {
         this.diemThichNghi = diemThichNghi;
     }
 
-    public List<LopMonHoc> getLopMonHocList() {
-        return lopMonHocList;
+    public List<DMLopMonHoc> getDMLopMonHocList() {
+        return DMLopMonHocList;
     }
 
-    public void setLopMonHocList(List<LopMonHoc> lopMonHocList) {
-        this.lopMonHocList = lopMonHocList;
+    public void setDMLopMonHocList(List<DMLopMonHoc> DMLopMonHocList) {
+        this.DMLopMonHocList = DMLopMonHocList;
     }
 }

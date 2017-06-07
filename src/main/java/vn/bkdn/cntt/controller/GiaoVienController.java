@@ -14,7 +14,6 @@ import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
 import vn.bkdn.cntt.entity.*;
 
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,19 +29,20 @@ import java.util.Date;
 public class GiaoVienController {
 
     @Autowired
-    private GiaoVienService giaoVienService;
+    private NhanVienService nhanVienService;
 
     @Autowired
     private LopMonHocService lopMonHocService;
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
+    private String role;
 
     @Autowired
     private TKB_TietService tkb_tietService;
 
     @Autowired
-    private TKB_LichNghiCuaGiaoVienService tkb_lichNghiCuaGiaoVienService;
+    private TKB_LichNghiCuaNhanVienService tkb_lichNghiCuaNhanVienService;
 
     @Autowired
     private TKB_LichNghiCuaTruongService tkb_lichNghiCuaTruongService;
@@ -60,18 +60,18 @@ public class GiaoVienController {
 
         //Get teacher who requests
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(tenDangNhap);
+        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(tenDangNhap);
 
         //TODO Có được date rồi thì tìm kì học - năm học của date đó rồi find lớp môn học theo kì học - năm học đó
-        List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
         //Filter student classes' calendar by input date
         CalendarCommonUtils calendarCommonUtils = new CalendarCommonUtils();
-        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, date);
+        dmLopMonHocs = calendarCommonUtils.getClassCalendarByWeek(dmLopMonHocs, date);
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
-                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
                         .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "monHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
@@ -103,11 +103,11 @@ public class GiaoVienController {
 
         //Lay lich nghi cua truong va lich nghi cua giao vien
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(tenDangNhap);
-        TKB_LichNghiCuaGiaoVien tkb_lichNghiCuaGiaoVien = tkb_lichNghiCuaGiaoVienService.findByGiaoVienAndFindNgay(giaoVien, sqlDate);
+        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(tenDangNhap);
+        TKB_LichNghiCuaNhanVien tkb_lichNghiCuaNhanVien = tkb_lichNghiCuaNhanVienService.findByGiaoVienAndFindNgay(giaoVien, sqlDate);
 
 
-        if(tkb_lichNghiCuaGiaoVien==null){
+        if(tkb_lichNghiCuaNhanVien ==null){
 
             TKB_LichNghiCuaTruong tkb_lichNghiCuaTruong = tkb_lichNghiCuaTruongService.findByNgay(sqlDate);
             if(tkb_lichNghiCuaTruong==null){
@@ -170,13 +170,13 @@ public class GiaoVienController {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
 
-        GiaoVien giaoVien = giaoVienService.findByMaGiaoVien(maGiaoVien);
-        List<LopMonHoc> lopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
+        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(maGiaoVien);
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
         List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaGiaoVien = new ArrayList<>();
-        for (LopMonHoc lopMonHoc :
-                lopMonHocs) {
-            tkb_lichHocTheoNgayCuaGiaoVien.addAll(tkb_lichHocTheoNgayService.findByLopMonHocAndNgay(lopMonHoc, date));
+        for (DMLopMonHoc DMLopMonHoc :
+                dmLopMonHocs) {
+            tkb_lichHocTheoNgayCuaGiaoVien.addAll(tkb_lichHocTheoNgayService.findByDMLopMonHocAndNgay(DMLopMonHoc, date));
         }
 //        tkb_lichHocTheoNgayCuaGiaoVien.removeIf(tkb_lichHocTheoNgay -> !date.equals(tkb_lichHocTheoNgay.getNgay().toString()));
 
@@ -196,27 +196,27 @@ public class GiaoVienController {
 //        System.out.println("------"+lessonId);
         TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
 
-        LopMonHoc lopMonHoc = tkbLichHocTheoNgay.getLopMonHoc();
-        List<SinhVien> sinhVienCuaTietHocs = new ArrayList<>();
-        for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-                lopMonHoc.getLopMonHoc_sinhViens()) {
-            sinhVienCuaTietHocs.add(lopMonHoc_sinhVien.getSinhVien());
+        DMLopMonHoc dmLopMonHoc = tkbLichHocTheoNgay.getDmLopMonHoc();
+        List<DMSinhVien> dmSinhVienCuaTietHocs = new ArrayList<>();
+        for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien:
+                dmLopMonHoc.getDMLopMonHoc_sinhViens()) {
+            dmSinhVienCuaTietHocs.add(dmLopMonHoc_sinhVien.getDmSinhVien());
         }
 
-        System.out.println("-------"+sinhVienCuaTietHocs.size());
+        System.out.println("-------"+ dmSinhVienCuaTietHocs.size());
 
-        for (SinhVien sinhVien:
-                sinhVienCuaTietHocs) {
-            Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens = sinhVien.getLopMonHoc_sinhViens();
-            List<LopMonHoc> lopMonHocCuaSinhViens = new ArrayList<>();
-            for (LopMonHoc_SinhVien lopMonHoc_sinhVien:
-                    lopMonHoc_sinhViens) {
-                lopMonHocCuaSinhViens.add(lopMonHoc_sinhVien.getLopMonHoc());
+        for (DMSinhVien dmSinhVien :
+                dmSinhVienCuaTietHocs) {
+            Set<DMLopMonHoc_SinhVien> DMLopMonHoc_sinhViens = dmSinhVien.getDMLopMonHoc_sinhViens();
+            List<DMLopMonHoc> DMLopMonHocCuaSinhViens = new ArrayList<>();
+            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien:
+                    DMLopMonHoc_sinhViens) {
+                DMLopMonHocCuaSinhViens.add(dmLopMonHoc_sinhVien.getDmLopMonHoc());
             }
 
-            for (LopMonHoc lopMonHocCuaSinhVien:
-                    lopMonHocCuaSinhViens) {
-                List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = tkb_lichHocTheoNgayService.findByLopMonHocAndNgay(lopMonHocCuaSinhVien, date);
+            for (DMLopMonHoc DMLopMonHocCuaSinhVien:
+                    DMLopMonHocCuaSinhViens) {
+                List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = tkb_lichHocTheoNgayService.findByDMLopMonHocAndNgay(DMLopMonHocCuaSinhVien, date);
                 for (TKB_LichHocTheoNgay tkbLichHocTheoNgay1:
                         tkb_lichHocTheoNgays) {
                     List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay1.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay1.getTkb_tietCuoiCung().getId() + 1);

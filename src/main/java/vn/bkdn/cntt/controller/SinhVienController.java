@@ -15,9 +15,7 @@ import vn.bkdn.cntt.common.CalendarCommonUtils;
 import vn.bkdn.cntt.controller.APIEntity.EditStudentNote;
 import vn.bkdn.cntt.entity.*;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -41,7 +39,7 @@ public class SinhVienController {
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
 
     @Autowired
-    private RegisterTimeService registerTimeService;
+    private ThoiGianDangKyService thoiGianDangKyService;
 
     @Autowired
     private LopMonHocService lopMonHocService;
@@ -68,21 +66,21 @@ public class SinhVienController {
 
         //Get all student classes' calendar
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
-        Set<LopMonHoc_SinhVien> lopMonHoc_sinhViens = sinhVien.getLopMonHoc_sinhViens();
-        List<LopMonHoc> lopMonHocs = new ArrayList<>();
-        for (LopMonHoc_SinhVien lopMonHoc_sinhVien :
-                lopMonHoc_sinhViens) {
-            lopMonHocs.add(lopMonHoc_sinhVien.getLopMonHoc());
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        Set<DMLopMonHoc_SinhVien> DMLopMonHoc_sinhViens = dmSinhVien.getDMLopMonHoc_sinhViens();
+        List<DMLopMonHoc> dmLopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc_SinhVien DMLopMonHoc_sinhVien :
+                DMLopMonHoc_sinhViens) {
+            dmLopMonHocs.add(DMLopMonHoc_sinhVien.getDmLopMonHoc());
         }
 
         //Filter student classes' calendar by input date
         CalendarCommonUtils calendarCommonUtils = new CalendarCommonUtils();
-        lopMonHocs = calendarCommonUtils.getClassCalendarByWeek(lopMonHocs, date);
+        dmLopMonHocs = calendarCommonUtils.getClassCalendarByWeek(dmLopMonHocs, date);
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
-                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
                         .filterOutAllExcept("id", "giaoVien", "tkb_lichHocTheoNgays", "monHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
@@ -94,9 +92,9 @@ public class SinhVienController {
     @GetMapping("/calendar/note/{lichHocTheoNgayId}")
     public String getNoteByCalendarId(@PathVariable int lichHocTheoNgayId) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
 
-        TKB_LichHocTheoNgay_SinhVienGhiChu tkb_lichHocTheoNgay_sinhVienGhiChu = tkb_lichHocTheoNgay_sinhVienGhiChuService.findByTkbLichHocTheoNgayAndSinhVien(lichHocTheoNgayId, sinhVien.getId());
+        TKB_LichHocTheoNgay_SinhVienGhiChu tkb_lichHocTheoNgay_sinhVienGhiChu = tkb_lichHocTheoNgay_sinhVienGhiChuService.findByTkbLichHocTheoNgayAndSinhVien(lichHocTheoNgayId, dmSinhVien.getId());
         if (tkb_lichHocTheoNgay_sinhVienGhiChu != null) {
             return tkb_lichHocTheoNgay_sinhVienGhiChu.getSinhVienGhiChu();
         } else {
@@ -108,50 +106,50 @@ public class SinhVienController {
     @PostMapping(value = "/calendar/note/edit")
     public void editCalendarNote(@RequestBody EditStudentNote editStudentNote) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
-        System.out.println(editStudentNote.getEditedNote() + "-" + editStudentNote.getLessonId() + "-" + sinhVien.getId());
-        tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), sinhVien.getId());
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        System.out.println(editStudentNote.getEditedNote() + "-" + editStudentNote.getLessonId() + "-" + dmSinhVien.getId());
+        tkb_lichHocTheoNgay_sinhVienGhiChuService.editCalendarStudentNote(editStudentNote.getEditedNote(), editStudentNote.getLessonId(), dmSinhVien.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/register-time/{registerTimeId}")
-    public ResponseEntity<RegisterTime> getRegisterTime(@PathVariable int registerTimeId) {
-        return new ResponseEntity<RegisterTime>(registerTimeService.findOne(registerTimeId), HttpStatus.OK);
+    public ResponseEntity<TKB_ThoiGianDangKy> getRegisterTime(@PathVariable int registerTimeId) {
+        return new ResponseEntity<TKB_ThoiGianDangKy>(thoiGianDangKyService.findOne(registerTimeId), HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/register/classes/{registerTimeId}")
     public ResponseEntity<MappingJacksonValue> getCanRegisterClasses(@PathVariable int registerTimeId) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        SinhVien sinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
-        List<MonHoc> monHocsSinhVienCoTheDangKy = new ArrayList<>();
-        for (SinhVien_LoTrinhMonHoc sinhVien_loTrinhMonHoc :
-                sinhVien.getSinhVien_loTrinhMonHocs()) {
-            if (sinhVien_loTrinhMonHoc.isCoTheDangKy()) {
-                monHocsSinhVienCoTheDangKy.add(sinhVien_loTrinhMonHoc.getMonHoc());
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        List<DMMonHoc> dmmonHocsSinhVienCoTheDangKy = new ArrayList<>();
+        for (TKB_SinhVien_LoTrinhMonHoc tkb_sinhVien_loTrinhMonHoc :
+                dmSinhVien.getTkb_sinhVien_loTrinhMonHocs()) {
+            if (tkb_sinhVien_loTrinhMonHoc.isCoTheDangKy()) {
+                dmmonHocsSinhVienCoTheDangKy.add(tkb_sinhVien_loTrinhMonHoc.getDmMonHoc());
             }
         }
-        Nganh nganh = sinhVien.getNganh();
+        DMNganh dmNganh = dmSinhVien.getDmNganh();
 
-        RegisterTime registerTime = registerTimeService.findOne(registerTimeId);
-        int kiHoc_namHocId = registerTime.getKiHoc_namHoc().getId();
-        int khoa_khoaHocId = registerTime.getKhoa_khoaHoc().getId();
+        TKB_ThoiGianDangKy tkbThoiGianDangKy = thoiGianDangKyService.findOne(registerTimeId);
+        int kiHoc_namHocId = tkbThoiGianDangKy.getTkb_kiHoc_namHoc().getId();
+        int khoa_khoaHocId = tkbThoiGianDangKy.getTkb_khoa_khoaHoc().getId();
 
-        List<LopMonHoc> lopMonHocs;
+        List<DMLopMonHoc> dmLopMonHocs;
 
-        if (nganh != null) {
-            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHocId, khoa_khoaHocId, nganh.getId());
+        if (dmNganh != null) {
+            dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(kiHoc_namHocId, khoa_khoaHocId, dmNganh.getId());
         } else {
-            lopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHocId, khoa_khoaHocId);
+            dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(kiHoc_namHocId, khoa_khoaHocId);
         }
 
-        lopMonHocs.removeIf(lopMonHoc -> !monHocsSinhVienCoTheDangKy.contains(lopMonHoc.getMonHoc()));
+        dmLopMonHocs.removeIf(DMLopMonHoc -> !dmmonHocsSinhVienCoTheDangKy.contains(DMLopMonHoc.getDmMonHoc()));
 
-        lopMonHocs.sort(Comparator.comparing(LopMonHoc::getId));
+        dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
 
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(lopMonHocs);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
-                .addFilter("filter.LopMonHoc", SimpleBeanPropertyFilter
+                .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
                         .filterOutAllExcept("id", "giaoVien", "khoa_khoaHoc", "monHoc", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
@@ -162,7 +160,7 @@ public class SinhVienController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/ma-khoa/{khoa_khoaHocId}")
     public String getMaKhoa(@PathVariable int khoa_khoaHocId) {
-        return khoaService.findOne(khoa_khoaHocService.getKhoaId(khoa_khoaHocId)).getMaKhoa();
+        return khoaService.findOne(khoa_khoaHocService.getKhoaId(khoa_khoaHocId)).getMa();
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -175,12 +173,12 @@ public class SinhVienController {
     @GetMapping(value = "/calendar/register/{classId}")
     public ResponseEntity<Integer> studentRegister(@PathVariable int classId) {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        LopMonHoc lopMonHoc = lopMonHocService.findOne(classId);
-        List<LopMonHoc> lopMonHocs = lopMonHocService.findByMonHocIdAndKiHoc_NamHoc(lopMonHoc.getMonHoc().getId(), lopMonHoc.getKiHoc_namHoc().getId());
-        if(lopMonHocs!=null){
-            for (LopMonHoc lopMonHoc1:
-                 lopMonHocs) {
-                lopMonHoc_sinhVienService.studentCancelRegister(lopMonHoc1.getId(), sinhVienService.findByMaSinhVien(tenDangNhap).getId());
+        DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(classId);
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByMonHocIdAndKiHoc_NamHoc(dmLopMonHoc.getDmMonHoc().getId(), dmLopMonHoc.getTkb_kiHoc_namHoc().getId());
+        if(dmLopMonHocs!=null){
+            for (DMLopMonHoc DMLopMonHoc1:
+                 dmLopMonHocs) {
+                lopMonHoc_sinhVienService.studentCancelRegister(DMLopMonHoc1.getId(), sinhVienService.findByMaSinhVien(tenDangNhap).getId());
             }
         }
         return new ResponseEntity<Integer>(lopMonHoc_sinhVienService.studentRegister(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()), HttpStatus.OK);

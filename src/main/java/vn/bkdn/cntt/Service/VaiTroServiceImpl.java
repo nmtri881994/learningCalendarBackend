@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.VaiTro;
+import vn.bkdn.cntt.entity.TK_VaiTro;
 import vn.bkdn.cntt.repository.VaiTroRepository;
 
 /**
@@ -16,7 +16,7 @@ public class VaiTroServiceImpl implements VaiTroService {
     private VaiTroRepository vaiTroRepository;
 
     @Override
-    public VaiTro getVaiTroByName(String tenVaiTro) {
+    public TK_VaiTro getVaiTroByName(String tenVaiTro) {
         return vaiTroRepository.findByTenVaiTro(tenVaiTro);
     }
 }

@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.DayNha;
+import vn.bkdn.cntt.entity.DMLoaiPhong;
 import vn.bkdn.cntt.repository.DayNhaRepository;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class DayNhaServiceImpl implements DayNhaService {
     private DayNhaRepository dayNhaRepository;
 
     @Override
-    public List<DayNha> findAll() {
+    public List<DMLoaiPhong> findAll() {
         return dayNhaRepository.findAll();
     }
 }

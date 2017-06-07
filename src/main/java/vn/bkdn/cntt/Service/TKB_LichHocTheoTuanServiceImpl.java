@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.LopMonHoc;
+import vn.bkdn.cntt.entity.DMLopMonHoc;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoTuan;
 import vn.bkdn.cntt.repository.TKB_LichHocTheoTuanRepository;
 
@@ -31,7 +31,7 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
 
     @Override
     public void updateWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
-        tkb_lichHocTheoTuanRepository.updateWeekCalendar(tkb_lichHocTheoTuan.getGiangDuong().getId(),
+        tkb_lichHocTheoTuanRepository.updateWeekCalendar(tkb_lichHocTheoTuan.getDmGiangDuong().getId(),
                 tkb_lichHocTheoTuan.getTkb_thu().getId(), tkb_lichHocTheoTuan.getTkb_tietDauTien().getId(),
                 tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId(), tkb_lichHocTheoTuan.getTuanBatDau(),
                 tkb_lichHocTheoTuan.getTuanKetThuc(), tkb_lichHocTheoTuan.getId());
@@ -48,16 +48,16 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
     }
 
     @Override
-    public int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId) {
-        return tkb_lichHocTheoTuanRepository.getLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuanId);
+    public int getDMLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId) {
+        return tkb_lichHocTheoTuanRepository.getDMLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuanId);
     }
 
     @Override
-    public boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<LopMonHoc> lopMonHocs) {
+    public boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<DMLopMonHoc> dmLopMonHocs) {
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
-        for (LopMonHoc lopMonHoc:
-             lopMonHocs) {
-            tkb_lichHocTheoTuans.addAll(lopMonHoc.getTkb_lichHocTheoTuans());
+        for (DMLopMonHoc DMLopMonHoc:
+             dmLopMonHocs) {
+            tkb_lichHocTheoTuans.addAll(DMLopMonHoc.getTkb_lichHocTheoTuans());
         }
         tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId()!=tkb_lichHocTheoTuan.getTkb_thu().getId());
 
@@ -80,12 +80,12 @@ public class TKB_LichHocTheoTuanServiceImpl implements TKB_LichHocTheoTuanServic
     }
 
     @Override
-    public int findLopMonHocIdOfLichHocTheoTuan(int tkb_lichHocTheoTuanId) {
-        return tkb_lichHocTheoTuanRepository.getLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuanId);
+    public int findDMLopMonHocIdOfLichHocTheoTuan(int tkb_lichHocTheoTuanId) {
+        return tkb_lichHocTheoTuanRepository.getDMLopMonHocIdByTKB_LichHocTheoTuanId(tkb_lichHocTheoTuanId);
     }
 
     @Override
-    public void deleteWeekCalendarOfLopMonHoc(int lopMonHocId) {
-        tkb_lichHocTheoTuanRepository.deleteWeekCalendarOfLopMonHoc(lopMonHocId);
+    public void deleteWeekCalendarOfDMLopMonHoc(int DMLopMonHocId) {
+        tkb_lichHocTheoTuanRepository.deleteWeekCalendarOfDMLopMonHoc(DMLopMonHocId);
     }
 }

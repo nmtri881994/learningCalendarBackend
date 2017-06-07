@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.LopMonHoc;
+import vn.bkdn.cntt.entity.DMLopMonHoc;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoTuan;
 
 import java.util.List;
@@ -14,8 +14,8 @@ public interface TKB_LichHocTheoTuanService {
     void updateWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan);
     void addWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan);
     void deleteCalendar(int calendarId);
-    int getLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId);
-    boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<LopMonHoc> lopMonHocs);
-    int findLopMonHocIdOfLichHocTheoTuan(int tkb_lichHocTheoTuanId);
-    void deleteWeekCalendarOfLopMonHoc(int lopMonHocId);
+    int getDMLopMonHocIdByTKB_LichHocTheoTuanId(int tkb_lichHocTheoTuanId);
+    boolean canAddOrEditWeekCalendar(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<DMLopMonHoc> dmLopMonHocs);
+    int findDMLopMonHocIdOfLichHocTheoTuan(int tkb_lichHocTheoTuanId);
+    void deleteWeekCalendarOfDMLopMonHoc(int DMLopMonHocId);
 }

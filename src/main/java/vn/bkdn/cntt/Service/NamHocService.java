@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.NamHoc;
+import vn.bkdn.cntt.entity.TKB_NamHoc;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Tri on 3/21/2017.
  */
 public interface NamHocService {
-    List<NamHoc> findAll();
-    List<NamHoc> getYearsNotEnd();
-    NamHoc findOne(int namHocId);
+    List<TKB_NamHoc> findAll();
+    List<TKB_NamHoc> getYearsNotEnd();
+    TKB_NamHoc findOne(int namHocId);
 }

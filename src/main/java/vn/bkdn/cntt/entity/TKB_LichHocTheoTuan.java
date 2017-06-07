@@ -12,12 +12,12 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class TKB_LichHocTheoTuan {
     private int id;
-    private LopMonHoc lopMonHoc;
+    private DMLopMonHoc dmLopMonHoc;
     private TKB_Thu tkb_thu;
     private int soTiet;
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
-    private GiangDuong giangDuong;
+    private DMGiangDuong dmGiangDuong;
     private int tuanBatDau;
     private int tuanKetThuc;
 
@@ -26,12 +26,12 @@ public class TKB_LichHocTheoTuan {
 
     public TKB_LichHocTheoTuan(TKB_LichHocTheoTuan tkb_lichHocTheoTuan) {
         this.id = tkb_lichHocTheoTuan.getId();
-        this.lopMonHoc = tkb_lichHocTheoTuan.getLopMonHoc();
+        this.dmLopMonHoc = tkb_lichHocTheoTuan.getDmLopMonHoc();
         this.tkb_thu = tkb_lichHocTheoTuan.getTkb_thu();
         this.soTiet = tkb_lichHocTheoTuan.getSoTiet();
         this.tkb_tietDauTien = tkb_lichHocTheoTuan.getTkb_tietDauTien();
         this.tkb_tietCuoiCung = tkb_lichHocTheoTuan.getTkb_tietCuoiCung();
-        this.giangDuong = tkb_lichHocTheoTuan.getGiangDuong();
+        this.dmGiangDuong = tkb_lichHocTheoTuan.getDmGiangDuong();
         this.tuanBatDau = tkb_lichHocTheoTuan.getTuanBatDau();
         this.tuanKetThuc = tkb_lichHocTheoTuan.getTuanKetThuc();
     }
@@ -51,14 +51,14 @@ public class TKB_LichHocTheoTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "lopMonHocId")
+    @JoinColumn(name = "dmLopMonHocId")
     @JsonIgnore
-    public LopMonHoc getLopMonHoc() {
-        return lopMonHoc;
+    public DMLopMonHoc getDmLopMonHoc() {
+        return dmLopMonHoc;
     }
 
-    public void setLopMonHoc(LopMonHoc lopMonHoc) {
-        this.lopMonHoc = lopMonHoc;
+    public void setDmLopMonHoc(DMLopMonHoc dmLopMonHoc) {
+        this.dmLopMonHoc = dmLopMonHoc;
     }
 
     @ManyToOne
@@ -80,7 +80,7 @@ public class TKB_LichHocTheoTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbTietDauTienId")
+    @JoinColumn(name = "tkb_tietDauTienId")
     @NotNull
     public TKB_Tiet getTkb_tietDauTien() {
         return tkb_tietDauTien;
@@ -91,7 +91,7 @@ public class TKB_LichHocTheoTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbTietCuoiCungId")
+    @JoinColumn(name = "tkb_tietCuoiCungId")
     @NotNull
     public TKB_Tiet getTkb_tietCuoiCung() {
         return tkb_tietCuoiCung;
@@ -102,13 +102,13 @@ public class TKB_LichHocTheoTuan {
     }
 
     @ManyToOne
-    @JoinColumn(name = "giangDuongId")
-    public GiangDuong getGiangDuong() {
-        return giangDuong;
+    @JoinColumn(name = "dmGiangDuongId")
+    public DMGiangDuong getDmGiangDuong() {
+        return dmGiangDuong;
     }
 
-    public void setGiangDuong(GiangDuong giangDuong) {
-        this.giangDuong = giangDuong;
+    public void setDmGiangDuong(DMGiangDuong dmGiangDuong) {
+        this.dmGiangDuong = dmGiangDuong;
     }
 
     public int getTuanBatDau() {

@@ -11,8 +11,8 @@ import javax.persistence.*;
 @Entity
 public class TKB_LichHocTheoNgay_SinhVienGhiChu {
     private int id;
-    private TKB_LichHocTheoNgay tkbLichHocTheoNgay;
-    private SinhVien sinhVien;
+    private TKB_LichHocTheoNgay tkb_lichHocTheoNgay;
+    private DMSinhVien dmSinhVien;
     private String sinhVienGhiChu;
 
     public TKB_LichHocTheoNgay_SinhVienGhiChu() {
@@ -29,25 +29,25 @@ public class TKB_LichHocTheoNgay_SinhVienGhiChu {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbLichHocTheoNgayId")
+    @JoinColumn(name = "tkb_lichHocTheoNgayId")
     @JsonIgnore
-    public TKB_LichHocTheoNgay getTkbLichHocTheoNgay() {
-        return tkbLichHocTheoNgay;
+    public TKB_LichHocTheoNgay getTkb_lichHocTheoNgay() {
+        return tkb_lichHocTheoNgay;
     }
 
-    public void setTkbLichHocTheoNgay(TKB_LichHocTheoNgay tkbLichHocTheoNgay) {
-        this.tkbLichHocTheoNgay = tkbLichHocTheoNgay;
+    public void setTkb_lichHocTheoNgay(TKB_LichHocTheoNgay tkb_lichHocTheoNgay) {
+        this.tkb_lichHocTheoNgay = tkb_lichHocTheoNgay;
     }
 
     @ManyToOne
-    @JoinColumn(name = "sinhVienId")
+    @JoinColumn(name = "dmSinhVienId")
     @JsonIgnore
-    public SinhVien getSinhVien() {
-        return sinhVien;
+    public DMSinhVien getDmSinhVien() {
+        return dmSinhVien;
     }
 
-    public void setSinhVien(SinhVien sinhVien) {
-        this.sinhVien = sinhVien;
+    public void setDmSinhVien(DMSinhVien dmSinhVien) {
+        this.dmSinhVien = dmSinhVien;
     }
 
     public String getSinhVienGhiChu() {

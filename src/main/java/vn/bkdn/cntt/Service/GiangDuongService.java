@@ -1,10 +1,10 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.GiangDuong;
+import vn.bkdn.cntt.entity.DMGiangDuong;
 
 /**
  * Created by XuanVinh on 4/10/2017.
  */
 public interface GiangDuongService {
-    GiangDuong findOne(int giangDuongId);
+    DMGiangDuong findOne(int giangDuongId);
 }

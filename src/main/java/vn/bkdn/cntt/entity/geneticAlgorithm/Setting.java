@@ -1,7 +1,5 @@
 package vn.bkdn.cntt.entity.geneticAlgorithm;
 
-import vn.bkdn.cntt.entity.DieuKien;
-
 import java.util.List;
 
 /**

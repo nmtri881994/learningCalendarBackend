@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import vn.bkdn.cntt.entity.LopMonHoc_SinhVien;
+import vn.bkdn.cntt.entity.DMLopMonHoc_SinhVien;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
  */
 
 @Repository
-public interface LopMonHoc_SinhVienRepository extends JpaRepository<LopMonHoc_SinhVien, Integer> {
-    @Query(value = "select count(id) from lop_mon_hoc_sinh_vien where lop_mon_hoc_id = ?1", nativeQuery = true)
-    int getClassCurrentQuantity(int lopMonHocId);
+public interface LopMonHoc_SinhVienRepository extends JpaRepository<DMLopMonHoc_SinhVien, Integer> {
+    @Query(value = "select count(id) from dmlop_mon_hoc_sinh_vien where dm_lop_mon_hoc_id = ?1", nativeQuery = true)
+    int getClassCurrentQuantity(int DMLopMonHocId);
 
-    @Query(value = "select * from lop_mon_hoc_sinh_vien where lop_mon_hoc_id = ?1 and sinh_vien_id = ?2", nativeQuery = true)
-    LopMonHoc_SinhVien findByClassIdAndStudentId(int classId, int studentId);
+    @Query(value = "select * from dmlop_mon_hoc_sinh_vien where dm_lop_mon_hoc_id = ?1 and dm_sinh_vien_id = ?2", nativeQuery = true)
+    DMLopMonHoc_SinhVien findByClassIdAndStudentId(int classId, int studentId);
 
-    @Query(value = "select sinh_vien_id from lop_mon_hoc_sinh_vien where lop_mon_hoc_id = ?1", nativeQuery = true)
+    @Query(value = "select dm_sinh_vien_id from dmlop_mon_hoc_sinh_vien where dm_lop_mon_hoc_id = ?1", nativeQuery = true)
     List<Integer> findSinhVienByClassId(int classId);
 }

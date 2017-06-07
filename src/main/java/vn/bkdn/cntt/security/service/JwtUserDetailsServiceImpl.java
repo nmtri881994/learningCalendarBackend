@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
-import vn.bkdn.cntt.entity.TaiKhoanHeThong;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
 import vn.bkdn.cntt.security.JwtUser;
 
 import java.util.List;
@@ -25,16 +25,16 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String tenDangNhap) throws UsernameNotFoundException {
-        TaiKhoanHeThong taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhap(tenDangNhap);
-        if (taiKhoanHeThong == null) {
+        TK_TaiKhoanHeThong tk_taiKhoanHeThong = taiKhoanHeThongService.findByTenDangNhap(tenDangNhap);
+        if (tk_taiKhoanHeThong == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", tenDangNhap));
         } else {
 
             return new JwtUser(
-                    taiKhoanHeThong.getId(),
-                    taiKhoanHeThong.getTenDangNhap(),
-                    taiKhoanHeThong.getHoVaTen(),
-                    this.mapToGrantedAuthorities(taiKhoanHeThong.getId()));
+                    tk_taiKhoanHeThong.getId(),
+                    tk_taiKhoanHeThong.getTenDangNhap(),
+                    tk_taiKhoanHeThong.getHoVaTen(),
+                    this.mapToGrantedAuthorities(tk_taiKhoanHeThong.getId()));
         }
     }
 

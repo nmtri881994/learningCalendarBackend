@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.GiangDuong;
+import vn.bkdn.cntt.entity.DMGiangDuong;
 import vn.bkdn.cntt.repository.GiangDuongRepository;
 
 /**
@@ -16,7 +16,7 @@ public class GiangDuongServiceImpl implements GiangDuongService {
     private GiangDuongRepository giangDuongRepository;
 
     @Override
-    public GiangDuong findOne(int giangDuongId) {
+    public DMGiangDuong findOne(int giangDuongId) {
         return giangDuongRepository.findOne(giangDuongId);
     }
 }

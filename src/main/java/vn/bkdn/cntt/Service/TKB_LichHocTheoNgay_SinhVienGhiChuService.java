@@ -1,7 +1,5 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.SinhVien;
-import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay_SinhVienGhiChu;
 
 /**

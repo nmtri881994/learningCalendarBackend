@@ -4,16 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import vn.bkdn.cntt.Service.GiaoVienService;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
+import vn.bkdn.cntt.Service.NhanVienService;
 import vn.bkdn.cntt.Service.TaiKhoanHeThong_VaiTroService;
-import vn.bkdn.cntt.common.CalendarCommonUtils;
-import vn.bkdn.cntt.entity.GiaoVien;
-import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
+import vn.bkdn.cntt.entity.DMNhanVien;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,7 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by XuanVinh on 3/13/2017.
@@ -39,7 +34,7 @@ public class test {
     private TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
     @Autowired
-    private GiaoVienService giaoVienService;
+    private NhanVienService nhanVienService;
 
     @GetMapping(value = "/1")
     public void getCalendaer() throws ParseException {
@@ -50,13 +45,13 @@ public class test {
     }
 
     @GetMapping(value="/taikhoan/{taiKhoanId}")
-    public ResponseEntity<List<TaiKhoanHeThong_VaiTro>> getTaiKhoanVaiTro(@PathVariable int taiKhoanId){
-        return new ResponseEntity<List<TaiKhoanHeThong_VaiTro>>(taiKhoanHeThong_vaiTroService.getTaiKhoanHeThongVaiTrosByTaiKhoan(taiKhoanHeThongRepository.findOne(taiKhoanId)), HttpStatus.OK);
+    public ResponseEntity<List<TK_TaiKhoanHeThong_VaiTro>> getTaiKhoanVaiTro(@PathVariable int taiKhoanId){
+        return new ResponseEntity<List<TK_TaiKhoanHeThong_VaiTro>>(taiKhoanHeThong_vaiTroService.getTaiKhoanHeThongVaiTrosByTaiKhoan(taiKhoanHeThongRepository.findOne(taiKhoanId)), HttpStatus.OK);
     }
 
     @GetMapping(value="/giaovien/{maGiaoVien}")
-    public ResponseEntity<GiaoVien> getGiaoVien(@PathVariable String maGiaoVien){
-        return new ResponseEntity<GiaoVien>(giaoVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
+    public ResponseEntity<DMNhanVien> getGiaoVien(@PathVariable String maGiaoVien){
+        return new ResponseEntity<DMNhanVien>(nhanVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
     }
 
     @GetMapping(value = "/calendar/week/{date}")

@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.KiHoc_NamHoc;
+import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc;
 import vn.bkdn.cntt.repository.KiHoc_NamHocRepository;
 
 import java.util.List;
@@ -18,12 +18,12 @@ public class KiHoc_NamHocServiceImpl implements KiHoc_NamHocService {
     private KiHoc_NamHocRepository kiHoc_namHocRepository;
 
     @Override
-    public KiHoc_NamHoc findKiHocNamHocByKyHocIdAndNamHocId(int kiHocId, int namHocId) {
+    public TKB_KiHoc_NamHoc findKiHocNamHocByKyHocIdAndNamHocId(int kiHocId, int namHocId) {
         return kiHoc_namHocRepository.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
     }
 
     @Override
-    public List<KiHoc_NamHoc> findAll() {
+    public List<TKB_KiHoc_NamHoc> findAll() {
         return kiHoc_namHocRepository.findAll();
     }
 

@@ -1,9 +1,6 @@
 package vn.bkdn.cntt.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.entity.*;
 
@@ -18,7 +15,7 @@ import java.util.*;
 public class CalendarCommonUtils {
 
     @Autowired
-    private GiaoVienService giaoVienService;
+    private NhanVienService nhanVienService;
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
@@ -29,7 +26,7 @@ public class CalendarCommonUtils {
     @Autowired
     private LopMonHocService lopMonHocService;
 
-    public List<LopMonHoc> getClassCalendarByWeek(List<LopMonHoc> lopMonHocs, String date) throws ParseException {
+    public List<DMLopMonHoc> getClassCalendarByWeek(List<DMLopMonHoc> dmLopMonHocs, String date) throws ParseException {
         java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date chosenDate = dateFormat.parse(date);
@@ -40,9 +37,9 @@ public class CalendarCommonUtils {
         Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
         Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgaysByWeek;
 
-        for (LopMonHoc lopMonHoc :
-                lopMonHocs) {
-            tkb_lichHocTheoNgays = lopMonHoc.getTkb_lichHocTheoNgays();
+        for (DMLopMonHoc DMLopMonHoc :
+                dmLopMonHocs) {
+            tkb_lichHocTheoNgays = DMLopMonHoc.getTkb_lichHocTheoNgays();
             tkb_lichHocTheoNgaysByWeek = new HashSet<>();
             for (TKB_LichHocTheoNgay tkb_lichHocTheoNgay :
                     tkb_lichHocTheoNgays) {
@@ -69,10 +66,10 @@ public class CalendarCommonUtils {
                     }
                 }
             }
-            lopMonHoc.setTkb_lichHocTheoNgays(tkb_lichHocTheoNgaysByWeek);
+            DMLopMonHoc.setTkb_lichHocTheoNgays(tkb_lichHocTheoNgaysByWeek);
         }
 
-        return lopMonHocs;
+        return dmLopMonHocs;
     }
 
 

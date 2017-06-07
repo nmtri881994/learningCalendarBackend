@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.SinhVien;
+import vn.bkdn.cntt.entity.DMSinhVien;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import java.util.List;
  * Created by Tri on 3/15/2017.
  */
 public interface SinhVienService {
-    List<SinhVien> findAll();
+    List<DMSinhVien> findAll();
 
-    SinhVien findOne(int sinhVienId);
-    SinhVien findByMaSinhVien(String maSinhVien);
+    DMSinhVien findOne(int sinhVienId);
+    DMSinhVien findByMaSinhVien(String maSinhVien);
 }

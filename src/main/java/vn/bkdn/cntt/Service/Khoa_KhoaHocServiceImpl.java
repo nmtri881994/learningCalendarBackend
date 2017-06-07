@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.Khoa_KhoaHoc;
+import vn.bkdn.cntt.entity.TKB_Khoa_KhoaHoc;
 import vn.bkdn.cntt.repository.Khoa_KhoaHocRepository;
 
 /**
@@ -16,7 +16,7 @@ public class Khoa_KhoaHocServiceImpl implements Khoa_KhoaHocService {
     private Khoa_KhoaHocRepository khoa_khoaHocRepository;
 
     @Override
-    public Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId) {
+    public TKB_Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId) {
         return khoa_khoaHocRepository.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
     }
 

@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.NamHoc;
+import vn.bkdn.cntt.entity.TKB_NamHoc;
 import vn.bkdn.cntt.repository.NamHocRepository;
 
 import java.util.List;
@@ -18,17 +18,17 @@ public class NamHocServiceImpl implements NamHocService {
     private NamHocRepository namHocRepository;
 
     @Override
-    public List<NamHoc> findAll() {
+    public List<TKB_NamHoc> findAll() {
         return namHocRepository.findAll();
     }
 
     @Override
-    public List<NamHoc> getYearsNotEnd() {
+    public List<TKB_NamHoc> getYearsNotEnd() {
         return namHocRepository.getYearsNotEnd();
     }
 
     @Override
-    public NamHoc findOne(int namHocId) {
+    public TKB_NamHoc findOne(int namHocId) {
         return namHocRepository.findOne(namHocId);
     }
 }

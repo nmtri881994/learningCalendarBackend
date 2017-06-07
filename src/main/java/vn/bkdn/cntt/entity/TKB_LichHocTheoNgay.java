@@ -16,8 +16,8 @@ public class TKB_LichHocTheoNgay {
     private int id;
     private Date ngay;
     private TKB_Thu tkb_thu;
-    private LopMonHoc lopMonHoc;
-    private GiangDuong giangDuong;
+    private DMLopMonHoc dmLopMonHoc;
+    private DMGiangDuong dmGiangDuong;
     private TKB_Tiet tkb_tietDauTien;
     private TKB_Tiet tkb_tietCuoiCung;
     private boolean thiGiuaKy;
@@ -30,13 +30,13 @@ public class TKB_LichHocTheoNgay {
     public TKB_LichHocTheoNgay() {
     }
 
-    public TKB_LichHocTheoNgay(Date ngay, TKB_Thu tkb_thu, LopMonHoc lopMonHoc, GiangDuong giangDuong,
+    public TKB_LichHocTheoNgay(Date ngay, TKB_Thu tkb_thu, DMLopMonHoc dmLopMonHoc, DMGiangDuong dmGiangDuong,
                                TKB_Tiet tkb_tietDauTien, TKB_Tiet tkb_tietCuoiCung, boolean thiGiuaKy, boolean thiCuoiKy,
                                String giaoVienNhan, String giaoVienGhiChu) {
         this.ngay = ngay;
         this.tkb_thu = tkb_thu;
-        this.lopMonHoc = lopMonHoc;
-        this.giangDuong = giangDuong;
+        this.dmLopMonHoc = dmLopMonHoc;
+        this.dmGiangDuong = dmGiangDuong;
         this.tkb_tietDauTien = tkb_tietDauTien;
         this.tkb_tietCuoiCung = tkb_tietCuoiCung;
         this.thiGiuaKy = thiGiuaKy;
@@ -65,29 +65,29 @@ public class TKB_LichHocTheoNgay {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "lopMonHocId")
+    @JoinColumn(name = "dmLopMonHocId")
     @NotNull
-    public LopMonHoc getLopMonHoc() {
-        return lopMonHoc;
+    public DMLopMonHoc getDmLopMonHoc() {
+        return dmLopMonHoc;
     }
 
-    public void setLopMonHoc(LopMonHoc lopMonHoc) {
-        this.lopMonHoc = lopMonHoc;
+    public void setDmLopMonHoc(DMLopMonHoc dmLopMonHoc) {
+        this.dmLopMonHoc = dmLopMonHoc;
     }
 
     @ManyToOne
-    @JoinColumn(name = "giangDuongId")
+    @JoinColumn(name = "dmGiangDuongId")
     @NotNull
-    public GiangDuong getGiangDuong() {
-        return giangDuong;
+    public DMGiangDuong getDmGiangDuong() {
+        return dmGiangDuong;
     }
 
-    public void setGiangDuong(GiangDuong giangDuong) {
-        this.giangDuong = giangDuong;
+    public void setDmGiangDuong(DMGiangDuong dmGiangDuong) {
+        this.dmGiangDuong = dmGiangDuong;
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbThuId")
+    @JoinColumn(name = "tkb_thuId")
     @NotNull
     public TKB_Thu getTkb_thu() {
         return tkb_thu;
@@ -98,7 +98,7 @@ public class TKB_LichHocTheoNgay {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbTietDauTienId")
+    @JoinColumn(name = "tkb_tietDauTienId")
     @NotNull
     public TKB_Tiet getTkb_tietDauTien() {
         return tkb_tietDauTien;
@@ -109,7 +109,7 @@ public class TKB_LichHocTheoNgay {
     }
 
     @ManyToOne
-    @JoinColumn(name = "tkbTietCuoiCungId")
+    @JoinColumn(name = "tkb_tietCuoiCungId")
     @NotNull
     public TKB_Tiet getTkb_tietCuoiCung() {
         return tkb_tietCuoiCung;
@@ -157,7 +157,7 @@ public class TKB_LichHocTheoNgay {
         this.giaoVienGhiChu = giaoVienGhiChu;
     }
 
-    @OneToMany(mappedBy = "tkbLichHocTheoNgay")
+    @OneToMany(mappedBy = "tkb_lichHocTheoNgay")
     public Set<TKB_LichHocTheoNgay_SinhVienGhiChu> getTkb_lichHocTheoNgay_sinhVienGhiChus() {
         return tkb_lichHocTheoNgay_sinhVienGhiChus;
     }

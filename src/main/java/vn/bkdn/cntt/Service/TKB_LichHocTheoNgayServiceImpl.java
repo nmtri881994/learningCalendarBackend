@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.LopMonHoc;
+import vn.bkdn.cntt.entity.DMLopMonHoc;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
 import vn.bkdn.cntt.entity.TKB_Thu;
 import vn.bkdn.cntt.repository.TKB_LichHocTheoNgayRepository;
@@ -41,7 +41,7 @@ public class TKB_LichHocTheoNgayServiceImpl implements TKB_LichHocTheoNgayServic
             Date utilDate = dateFormat.parse(tkb_lichHocTheoNgay.getNgay().toString());
             c.setTime(utilDate);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-            this.tkb_lichHocTheoNgayRepository.updateBuoiHoc(tkb_lichHocTheoNgay.getNgay(), getThuId(dayOfWeek), tkb_lichHocTheoNgay.getGiangDuong().getId(),
+            this.tkb_lichHocTheoNgayRepository.updateBuoiHoc(tkb_lichHocTheoNgay.getNgay(), getThuId(dayOfWeek), tkb_lichHocTheoNgay.getDmGiangDuong().getId(),
                     tkb_lichHocTheoNgay.getTkb_tietDauTien().getId(), tkb_lichHocTheoNgay.getTkb_tietCuoiCung().getId(),
                     tkb_lichHocTheoNgay.isThiGiuaKy(), tkb_lichHocTheoNgay.isThiCuoiKy(), tkb_lichHocTheoNgay.getGiaoVienNhan(), tkb_lichHocTheoNgay.getGiaoVienGhiChu(),
                     tkb_lichHocTheoNgay.getId());
@@ -60,8 +60,8 @@ public class TKB_LichHocTheoNgayServiceImpl implements TKB_LichHocTheoNgayServic
     }
 
     @Override
-    public List<TKB_LichHocTheoNgay> findByLopMonHocAndNgay(LopMonHoc lopMonHoc, java.sql.Date ngay) {
-        return tkb_lichHocTheoNgayRepository.findByLopMonHocAndNgay(lopMonHoc, ngay);
+    public List<TKB_LichHocTheoNgay> findByDMLopMonHocAndNgay(DMLopMonHoc DMLopMonHoc, java.sql.Date ngay) {
+        return tkb_lichHocTheoNgayRepository.findByDmLopMonHocAndNgay(DMLopMonHoc, ngay);
     }
 
     @Override

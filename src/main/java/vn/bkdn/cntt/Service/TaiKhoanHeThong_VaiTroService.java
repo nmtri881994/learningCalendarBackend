@@ -1,7 +1,7 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.TaiKhoanHeThong;
-import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong_VaiTro;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface TaiKhoanHeThong_VaiTroService {
-    List<TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TaiKhoanHeThong taiKhoanHeThong);
+    List<TK_TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TK_TaiKhoanHeThong tk_taiKhoanHeThong);
 }

@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.MonHoc;
+import vn.bkdn.cntt.entity.DMMonHoc;
 import vn.bkdn.cntt.repository.MonHocRepository;
 
 /**
@@ -16,7 +16,7 @@ public class MonHocServiceImpl implements MonHocService{
     private MonHocRepository monHocRepository;
 
     @Override
-    public MonHoc findOne(int id) {
+    public DMMonHoc findOne(int id) {
         return monHocRepository.findOne(id);
     }
 }

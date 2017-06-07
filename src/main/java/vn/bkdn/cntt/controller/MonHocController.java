@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.bkdn.cntt.Service.MonHocService;
-import vn.bkdn.cntt.entity.GiangDuong;
-import vn.bkdn.cntt.entity.MonHoc;
-import vn.bkdn.cntt.entity.MonHoc_GiangDuong;
+import vn.bkdn.cntt.entity.DMGiangDuong;
+import vn.bkdn.cntt.entity.DMMonHoc;
+import vn.bkdn.cntt.entity.DMMonHoc_GiangDuong;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +28,15 @@ public class MonHocController {
     private MonHocService monHocService;
 
     @GetMapping(value = "/{monHocId}")
-    public ResponseEntity<List<GiangDuong>> getGiangDuongsByMonHocId(@PathVariable int monHocId){
-        MonHoc monHoc = monHocService.findOne(monHocId);
-        Set<MonHoc_GiangDuong> monHoc_giangDuongs = monHoc.getMonHoc_giangDuongs();
-        List<GiangDuong> giangDuongs = new ArrayList<>();
-        for (MonHoc_GiangDuong monHoc_giangDuong:
-             monHoc_giangDuongs) {
-            giangDuongs.add(monHoc_giangDuong.getGiangDuong());
+    public ResponseEntity<List<DMGiangDuong>> getGiangDuongsByMonHocId(@PathVariable int monHocId){
+        DMMonHoc dmmonHoc = monHocService.findOne(monHocId);
+        Set<DMMonHoc_GiangDuong> dm_monHoc_giangDuong = dmmonHoc.getDm_monHoc_giangDuong();
+        List<DMGiangDuong> dmGiangDuongs = new ArrayList<>();
+        for (DMMonHoc_GiangDuong dm_monHoc_giangDuong1 :
+                dm_monHoc_giangDuong) {
+            dmGiangDuongs.add(dm_monHoc_giangDuong1.getDmGiangDuong());
         }
 
-        return new ResponseEntity<List<GiangDuong>>(giangDuongs, HttpStatus.OK);
+        return new ResponseEntity<List<DMGiangDuong>>(dmGiangDuongs, HttpStatus.OK);
     }
 }

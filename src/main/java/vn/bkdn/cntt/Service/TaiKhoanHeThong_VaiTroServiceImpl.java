@@ -2,8 +2,8 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.TaiKhoanHeThong;
-import vn.bkdn.cntt.entity.TaiKhoanHeThong_VaiTro;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
+import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.repository.TaiKhoanHeThong_VaiTroRepository;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class TaiKhoanHeThong_VaiTroServiceImpl implements TaiKhoanHeThong_VaiTro
     private TaiKhoanHeThong_VaiTroRepository taiKhoanHeThong_vaiTroRepository;
 
     @Override
-    public List<TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TaiKhoanHeThong taiKhoanHeThong) {
-        return taiKhoanHeThong_vaiTroRepository.findByTaiKhoanHeThong(taiKhoanHeThong);
+    public List<TK_TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TK_TaiKhoanHeThong tk_taiKhoanHeThong) {
+        return taiKhoanHeThong_vaiTroRepository.findByTK_TaiKhoanHeThong(tk_taiKhoanHeThong.getId());
     }
 }

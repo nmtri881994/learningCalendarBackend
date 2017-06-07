@@ -1,6 +1,6 @@
 package vn.bkdn.cntt.Service;
 
-import vn.bkdn.cntt.entity.DieuKien;
+import vn.bkdn.cntt.entity.TKB_DieuKien_TuDong;
 
 import java.util.List;
 
@@ -8,5 +8,5 @@ import java.util.List;
  * Created by XuanVinh on 5/15/2017.
  */
 public interface DieuKienService {
-    List<DieuKien> findAll();
+    List<TKB_DieuKien_TuDong> findAll();
 }
