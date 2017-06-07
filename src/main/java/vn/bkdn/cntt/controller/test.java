@@ -51,7 +51,7 @@ public class test {
 
     @GetMapping(value="/giaovien/{maGiaoVien}")
     public ResponseEntity<DMNhanVien> getGiaoVien(@PathVariable String maGiaoVien){
-        return new ResponseEntity<DMNhanVien>(nhanVienService.findByMaGiaoVien(maGiaoVien), HttpStatus.OK);
+        return new ResponseEntity<DMNhanVien>(nhanVienService.findByMaNhanVien(maGiaoVien), HttpStatus.OK);
     }
 
     @GetMapping(value = "/calendar/week/{date}")

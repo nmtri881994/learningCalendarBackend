@@ -60,7 +60,7 @@ public class GiaoVienController {
 
         //Get teacher who requests
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(tenDangNhap);
+        DMNhanVien giaoVien = nhanVienService.findByMaNhanVien(tenDangNhap);
 
         //TODO Có được date rồi thì tìm kì học - năm học của date đó rồi find lớp môn học theo kì học - năm học đó
         List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
@@ -103,7 +103,7 @@ public class GiaoVienController {
 
         //Lay lich nghi cua truong va lich nghi cua giao vien
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(tenDangNhap);
+        DMNhanVien giaoVien = nhanVienService.findByMaNhanVien(tenDangNhap);
         TKB_LichNghiCuaNhanVien tkb_lichNghiCuaNhanVien = tkb_lichNghiCuaNhanVienService.findByGiaoVienAndFindNgay(giaoVien, sqlDate);
 
 
@@ -170,7 +170,7 @@ public class GiaoVienController {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
 
-        DMNhanVien giaoVien = nhanVienService.findByMaGiaoVien(maGiaoVien);
+        DMNhanVien giaoVien = nhanVienService.findByMaNhanVien(maGiaoVien);
         List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByGiaoVien(giaoVien);
 
         List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgayCuaGiaoVien = new ArrayList<>();

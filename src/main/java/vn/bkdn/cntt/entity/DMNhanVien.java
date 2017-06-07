@@ -17,11 +17,11 @@ public class DMNhanVien {
     private String hoDem;
     private String ten;
     private DMDonVi dmDonVi;
-    private DMChucVu dmChucVu;
 
     private Set<DMLopMonHoc> dmLopMonHocs;
     private Set<TKB_LichNghiCuaNhanVien> tkb_lichNghiCuaNhanViens;
     private Set<TKB_NhanVien_NgayNghiTrongTuan> tkb_nhanVien_ngayNghiTrongTuans;
+    private Set<DMNhanVien_ChucVu> dmNhanVien_chucVus;
 
     public DMNhanVien() {
     }
@@ -36,7 +36,6 @@ public class DMNhanVien {
         this.id = id;
     }
 
-    @NotNull
     @Column(columnDefinition = "VARCHAR(20)")
     public String getMaNhanVien() {
         return maNhanVien;
@@ -75,17 +74,6 @@ public class DMNhanVien {
         this.dmDonVi = dmDonVi;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "dmChucVuId")
-    @JsonIgnore
-    public DMChucVu getDmChucVu() {
-        return dmChucVu;
-    }
-
-    public void setDmChucVu(DMChucVu dmChucVu) {
-        this.dmChucVu = dmChucVu;
-    }
-
     @OneToMany(mappedBy = "dmNhanVien")
     @JsonIgnore
     public Set<DMLopMonHoc> getDmLopMonHocs() {
@@ -112,5 +100,14 @@ public class DMNhanVien {
 
     public void setTkb_nhanVien_ngayNghiTrongTuans(Set<TKB_NhanVien_NgayNghiTrongTuan> tkb_nhanVien_ngayNghiTrongTuans) {
         this.tkb_nhanVien_ngayNghiTrongTuans = tkb_nhanVien_ngayNghiTrongTuans;
+    }
+
+    @OneToMany(mappedBy = "dmNhanVien")
+    public Set<DMNhanVien_ChucVu> getDmNhanVien_chucVus() {
+        return dmNhanVien_chucVus;
+    }
+
+    public void setDmNhanVien_chucVus(Set<DMNhanVien_ChucVu> dmNhanVien_chucVus) {
+        this.dmNhanVien_chucVus = dmNhanVien_chucVus;
     }
 }

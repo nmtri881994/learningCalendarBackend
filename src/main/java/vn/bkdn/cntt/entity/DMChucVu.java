@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -13,7 +15,7 @@ public class DMChucVu {
     private String ten;
     private String ghiChu;
 
-    private Set<DMNhanVien> dmNhanViens;
+    private Set<DMNhanVien_ChucVu> dmNhanVien_chucVus;
 
     public DMChucVu() {
     }
@@ -45,11 +47,12 @@ public class DMChucVu {
     }
 
     @OneToMany(mappedBy = "dmChucVu")
-    public Set<DMNhanVien> getDmNhanViens() {
-        return dmNhanViens;
+    @JsonIgnore
+    public Set<DMNhanVien_ChucVu> getDmNhanVien_chucVus() {
+        return dmNhanVien_chucVus;
     }
 
-    public void setDmNhanViens(Set<DMNhanVien> dmNhanViens) {
-        this.dmNhanViens = dmNhanViens;
+    public void setDmNhanVien_chucVus(Set<DMNhanVien_ChucVu> dmNhanVien_chucVus) {
+        this.dmNhanVien_chucVus = dmNhanVien_chucVus;
     }
 }

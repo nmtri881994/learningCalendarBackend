@@ -188,7 +188,7 @@ public class CalendarController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping(value = "/dmLopMonHocs/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}/{nganhId}")
+    @GetMapping(value = "/lopMonHocs/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}/{nganhId}")
     public ResponseEntity<MappingJacksonValue> getdmLopMonHocs(@PathVariable int namHocId, @PathVariable int kiHocId, @PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId) {
         TKB_Khoa_KhoaHoc khoa_khoaHoc = khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
         TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
@@ -214,7 +214,7 @@ public class CalendarController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "monHoc", "giaoVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "soBuoiLyThuyetMotTuan", "soTietLyThuyetMotTuan", "soBuoiThucHanhMotTuan", "soTietThucHanhMotTuan", "tkb_lichHocTheoTuans"));
+                        .filterOutAllExcept("id", "dmMonHoc", "dmNhanVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "soBuoiLyThuyetMotTuan", "soTietLyThuyetMotTuan", "soBuoiThucHanhMotTuan", "soTietThucHanhMotTuan", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
