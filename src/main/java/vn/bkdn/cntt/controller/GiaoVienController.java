@@ -72,7 +72,7 @@ public class GiaoVienController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "monHoc"));
+                        .filterOutAllExcept("id", "tkb_lichHocTheoNgays", "dmMonHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
 

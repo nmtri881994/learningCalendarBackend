@@ -81,7 +81,7 @@ public class SinhVienController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "giaoVien", "tkb_lichHocTheoNgays", "monHoc"));
+                        .filterOutAllExcept("id", "dmNhanVien", "tkb_lichHocTheoNgays", "dmMonHoc"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
@@ -150,7 +150,7 @@ public class SinhVienController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "giaoVien", "khoa_khoaHoc", "monHoc", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
+                        .filterOutAllExcept("id", "dmNhanVien", "tkb_khoa_khoaHoc", "dmMonHoc", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
