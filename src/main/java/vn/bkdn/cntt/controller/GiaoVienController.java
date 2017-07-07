@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
+import vn.bkdn.cntt.controller.APIEntity.SimpleSinhVien;
 import vn.bkdn.cntt.entity.*;
 
 import java.text.DateFormat;
@@ -46,6 +47,12 @@ public class GiaoVienController {
 
     @Autowired
     private TKB_LichNghiCuaTruongService tkb_lichNghiCuaTruongService;
+
+    @Autowired
+    private DMLopMonHoc_SinhVienService dmLopMonHoc_sinhVienService;
+
+    @Autowired
+    private SinhVienService sinhVienService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -94,6 +101,26 @@ public class GiaoVienController {
     }
 
     @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/calendar/students/{lessonId}")
+    public ResponseEntity<List<SimpleSinhVien>> getSinhViensOfLopMonHoc(@PathVariable int lessonId) {
+        System.out.println("!111111111111, " + lessonId);
+        int classId = tkb_lichHocTheoNgayService.getClassId(lessonId);
+        DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(classId);
+
+        List<Integer> sinhVienIds = dmLopMonHoc_sinhVienService.getSinhVienIdsOfLopMonHoc(dmLopMonHoc.getId());
+        List<SimpleSinhVien> simpleSinhViens = new ArrayList<>();
+        DMSinhVien dmSinhVien;
+        for (Integer id :
+                sinhVienIds) {
+            dmSinhVien = sinhVienService.findOne(id);
+            simpleSinhViens.add(new SimpleSinhVien(dmSinhVien.getId(), dmSinhVien.getHoDem(), dmSinhVien.getTen(), dmSinhVien.getDmLopHoc().getTen()));
+        }
+
+        simpleSinhViens.sort(Comparator.comparing(SimpleSinhVien::getTen));
+        return new ResponseEntity<List<SimpleSinhVien>>(simpleSinhViens, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIANGVIEN')")
     @GetMapping(value = "/available-lessons/{lessonId}/{roomId}/{date}")
     public ResponseEntity<?> getAvailableLessonForRoomAtDate(@PathVariable int lessonId, @PathVariable int roomId, @PathVariable String date) throws ParseException {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
@@ -107,10 +134,10 @@ public class GiaoVienController {
         TKB_LichNghiCuaNhanVien tkb_lichNghiCuaNhanVien = tkb_lichNghiCuaNhanVienService.findByGiaoVienAndFindNgay(giaoVien, sqlDate);
 
 
-        if(tkb_lichNghiCuaNhanVien ==null){
+        if (tkb_lichNghiCuaNhanVien == null) {
 
             TKB_LichNghiCuaTruong tkb_lichNghiCuaTruong = tkb_lichNghiCuaTruongService.findByNgay(sqlDate);
-            if(tkb_lichNghiCuaTruong==null){
+            if (tkb_lichNghiCuaTruong == null) {
                 //Loc lich cua phong theo ngay
                 List<TKB_Tiet> notFreeLessonsOfRoomByDate = this.getCalendarOfRoomByDate(roomId, date);
                 tkb_availableLessons.removeAll(notFreeLessonsOfRoomByDate);
@@ -124,11 +151,11 @@ public class GiaoVienController {
                 tkb_availableLessons.removeAll(notFreeLessonsOfStudentsOfLessonByDate);
 
                 TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
-                if(date.equals(tkbLichHocTheoNgay.getNgay().toString())){
+                if (date.equals(tkbLichHocTheoNgay.getNgay().toString())) {
                     List<TKB_Tiet> tkb_tietHienTaiCuaLessons = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay.getTkb_tietCuoiCung().getId() + 1);
-                    for (TKB_Tiet tkb_tiet:
+                    for (TKB_Tiet tkb_tiet :
                             tkb_tietHienTaiCuaLessons) {
-                        if(!tkb_availableLessons.contains(tkb_tiet)){
+                        if (!tkb_availableLessons.contains(tkb_tiet)) {
                             tkb_availableLessons.add(tkb_tiet);
                         }
                     }
@@ -136,18 +163,18 @@ public class GiaoVienController {
 
                 tkb_availableLessons.sort(Comparator.comparing(TKB_Tiet::getThuTu));
                 return new ResponseEntity<List<TKB_Tiet>>(tkb_availableLessons, HttpStatus.OK);
-            }else {
+            } else {
                 return new ResponseEntity<>("Cấn lịch nghỉ của trường", HttpStatus.OK);
             }
 
-        }else{
+        } else {
             return new ResponseEntity<>("Cấn lịch nghỉ của giáo viên", HttpStatus.OK);
         }
 
 
     }
 
-    public List<TKB_Tiet> getCalendarOfRoomByDate(int roomId, String date){
+    public List<TKB_Tiet> getCalendarOfRoomByDate(int roomId, String date) {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
 
@@ -159,14 +186,14 @@ public class GiaoVienController {
         }
         tkb_availableLessonsClone.removeAll(tkb_availableLessons);
 
-        for (TKB_Tiet tkb_tiet:
-             tkb_availableLessonsClone) {
+        for (TKB_Tiet tkb_tiet :
+                tkb_availableLessonsClone) {
             System.out.println(tkb_tiet.getTen());
         }
         return tkb_availableLessonsClone;
     }
 
-    public List<TKB_Tiet> getCalendarOfTeacherByDate(String maGiaoVien, java.sql.Date date){
+    public List<TKB_Tiet> getCalendarOfTeacherByDate(String maGiaoVien, java.sql.Date date) {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
 
@@ -190,7 +217,7 @@ public class GiaoVienController {
         return tkb_availableLessonsClone;
     }
 
-    public List<TKB_Tiet> getCalendarOfStudentsOfLessonByDate(int lessonId, java.sql.Date date){
+    public List<TKB_Tiet> getCalendarOfStudentsOfLessonByDate(int lessonId, java.sql.Date date) {
         List<TKB_Tiet> tkb_availableLessons = tkb_tietService.findAll();
         List<TKB_Tiet> tkb_availableLessonsClone = tkb_tietService.findAll();
 //        System.out.println("------"+lessonId);
@@ -198,30 +225,30 @@ public class GiaoVienController {
 
         DMLopMonHoc dmLopMonHoc = tkbLichHocTheoNgay.getDmLopMonHoc();
         List<DMSinhVien> dmSinhVienCuaTietHocs = new ArrayList<>();
-        for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien:
+        for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien :
                 dmLopMonHoc.getDMLopMonHoc_sinhViens()) {
             dmSinhVienCuaTietHocs.add(dmLopMonHoc_sinhVien.getDmSinhVien());
         }
 
-        System.out.println("-------"+ dmSinhVienCuaTietHocs.size());
+        System.out.println("-------" + dmSinhVienCuaTietHocs.size());
 
         for (DMSinhVien dmSinhVien :
                 dmSinhVienCuaTietHocs) {
             Set<DMLopMonHoc_SinhVien> DMLopMonHoc_sinhViens = dmSinhVien.getDMLopMonHoc_sinhViens();
             List<DMLopMonHoc> DMLopMonHocCuaSinhViens = new ArrayList<>();
-            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien:
+            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien :
                     DMLopMonHoc_sinhViens) {
                 DMLopMonHocCuaSinhViens.add(dmLopMonHoc_sinhVien.getDmLopMonHoc());
             }
 
-            for (DMLopMonHoc DMLopMonHocCuaSinhVien:
+            for (DMLopMonHoc DMLopMonHocCuaSinhVien :
                     DMLopMonHocCuaSinhViens) {
                 List<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays = tkb_lichHocTheoNgayService.findByDMLopMonHocAndNgay(DMLopMonHocCuaSinhVien, date);
-                for (TKB_LichHocTheoNgay tkbLichHocTheoNgay1:
+                for (TKB_LichHocTheoNgay tkbLichHocTheoNgay1 :
                         tkb_lichHocTheoNgays) {
                     List<TKB_Tiet> tkb_tietNotFrees = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkbLichHocTheoNgay1.getTkb_tietDauTien().getId() - 1, tkbLichHocTheoNgay1.getTkb_tietCuoiCung().getId() + 1);
                     tkb_availableLessons.removeAll(tkb_tietNotFrees);
-                    if(tkb_availableLessons.isEmpty()){
+                    if (tkb_availableLessons.isEmpty()) {
                         break;
                     }
                 }

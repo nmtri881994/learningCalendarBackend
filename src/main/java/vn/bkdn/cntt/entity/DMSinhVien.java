@@ -20,6 +20,7 @@ public class DMSinhVien {
     private Set<DMLopMonHoc_SinhVien> DMLopMonHoc_sinhViens;
     private Set<TKB_LichHocTheoNgay_SinhVienGhiChu> tkb_lichHocTheoNgay_sinhVienGhiChus;
     private Set<TKB_SinhVien_LoTrinhMonHoc> tkb_sinhVien_loTrinhMonHocs;
+    private Set<TKB_LichHocTheoNgay_DiemDanh> tkb_lichHocTheoNgay_diemDanhs;
 
     public DMSinhVien() {
     }
@@ -107,5 +108,14 @@ public class DMSinhVien {
 
     public void setTkb_sinhVien_loTrinhMonHocs(Set<TKB_SinhVien_LoTrinhMonHoc> tkb_sinhVien_loTrinhMonHocs) {
         this.tkb_sinhVien_loTrinhMonHocs = tkb_sinhVien_loTrinhMonHocs;
+    }
+
+    @OneToMany(mappedBy = "dmSinhVien")
+    public Set<TKB_LichHocTheoNgay_DiemDanh> getTkb_lichHocTheoNgay_diemDanhs() {
+        return tkb_lichHocTheoNgay_diemDanhs;
+    }
+
+    public void setTkb_lichHocTheoNgay_diemDanhs(Set<TKB_LichHocTheoNgay_DiemDanh> tkb_lichHocTheoNgay_diemDanhs) {
+        this.tkb_lichHocTheoNgay_diemDanhs = tkb_lichHocTheoNgay_diemDanhs;
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class LearningCalendarBackendApplication extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		String enviroment = System.getenv("ENV");
+		String enviroment = "local";
 		return application.sources(LearningCalendarBackendApplication.class).properties("spring.config.name:"+enviroment);
 	}
 

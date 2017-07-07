@@ -35,6 +35,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 .getRequiredWebApplicationContext(this.getServletContext())
                 .getBean(UserDetailsService.class);
 
+//        response.addHeader("Access-Control-Allow-Origin", "http://222.255.132.58:3001");
         response.addHeader("Access-Control-Allow-Origin", "http://localhost:3001");
         response.addHeader("Access-Control-Allow-Credentials", "true");
         if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
