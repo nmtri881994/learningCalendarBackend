@@ -8,12 +8,14 @@ public class SimpleSinhVien {
     private String hoDem;
     private String ten;
     private String lop;
+    private String maSinhVien;
 
-    public SimpleSinhVien(int id, String hoDem, String ten, String lop) {
+    public SimpleSinhVien(int id, String hoDem, String ten, String lop, String maSinhVien) {
         this.id = id;
         this.hoDem = hoDem;
         this.ten = ten;
         this.lop = lop;
+        this.maSinhVien = maSinhVien;
     }
 
     public int getId() {
@@ -46,5 +48,13 @@ public class SimpleSinhVien {
 
     public void setLop(String lop) {
         this.lop = lop;
+    }
+
+    public String getMaSinhVien() {
+        return maSinhVien;
+    }
+
+    public void setMaSinhVien(String maSinhVien) {
+        this.maSinhVien = maSinhVien;
     }
 }

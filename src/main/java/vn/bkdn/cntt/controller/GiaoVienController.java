@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
+import vn.bkdn.cntt.controller.APIEntity.SimpleDiemDanh;
 import vn.bkdn.cntt.controller.APIEntity.SimpleSinhVien;
 import vn.bkdn.cntt.entity.*;
 
@@ -53,6 +54,9 @@ public class GiaoVienController {
 
     @Autowired
     private SinhVienService sinhVienService;
+
+    @Autowired
+    private TKB_LichHocTheoNgay_DiemDanhService tkb_lichHocTheoNgay_diemDanhService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -113,7 +117,7 @@ public class GiaoVienController {
         for (Integer id :
                 sinhVienIds) {
             dmSinhVien = sinhVienService.findOne(id);
-            simpleSinhViens.add(new SimpleSinhVien(dmSinhVien.getId(), dmSinhVien.getHoDem(), dmSinhVien.getTen(), dmSinhVien.getDmLopHoc().getTen()));
+            simpleSinhViens.add(new SimpleSinhVien(dmSinhVien.getId(), dmSinhVien.getHoDem(), dmSinhVien.getTen(), dmSinhVien.getDmLopHoc().getTen(), dmSinhVien.getMaSinhVien()));
         }
 
         simpleSinhViens.sort(Comparator.comparing(SimpleSinhVien::getTen));
@@ -170,8 +174,25 @@ public class GiaoVienController {
         } else {
             return new ResponseEntity<>("Cấn lịch nghỉ của giáo viên", HttpStatus.OK);
         }
+    }
 
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/calendar/diem-danh/{lessonId}")
+    public ResponseEntity<List<SimpleDiemDanh>> getDiemDanhList(@PathVariable int lessonId) {
+        List<SimpleDiemDanh> simpleDiemDanhs = new ArrayList<>();
+        TKB_LichHocTheoNgay tkbLichHocTheoNgay = tkb_lichHocTheoNgayService.findOne(lessonId);
+        for (TKB_LichHocTheoNgay_DiemDanh tkb_lichHocTheoNgay_diemDanh :
+                tkbLichHocTheoNgay.getTkb_lichHocTheoNgay_diemDanhs()) {
+            simpleDiemDanhs.add(new SimpleDiemDanh(tkb_lichHocTheoNgay_diemDanh.getId(), tkb_lichHocTheoNgay_diemDanh.getDmSinhVien().getId(), tkb_lichHocTheoNgay_diemDanh.isPresented()));
+        }
+        return new ResponseEntity<List<SimpleDiemDanh>>(simpleDiemDanhs, HttpStatus.OK);
+    }
 
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/calendar/diem-danh/{lessonId}/{studentId}/{status}")
+    public ResponseEntity<?> updateDiemDanh(@PathVariable int lessonId, @PathVariable int studentId, @PathVariable boolean status){
+        tkb_lichHocTheoNgay_diemDanhService.diemDanh(lessonId, studentId, status);
+        return new ResponseEntity<Object>(HttpStatus.OK);
     }
 
     public List<TKB_Tiet> getCalendarOfRoomByDate(int roomId, String date) {

@@ -38,6 +38,7 @@ public class TKB_LichHocTheoNgay_DiemDanh {
 
     @ManyToOne
     @JoinColumn(name = "dm_sinh_vien_id")
+    @JsonIgnore
     public DMSinhVien getDmSinhVien() {
         return dmSinhVien;
     }
