@@ -1,4 +1,4 @@
-package vn.bkdn.cntt.controller.Websocket;
+package vn.bkdn.cntt.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

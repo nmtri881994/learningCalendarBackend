@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
 import vn.bkdn.cntt.controller.APIEntity.EditStudentNote;
+import vn.bkdn.cntt.controller.APIEntity.SemesterYear;
 import vn.bkdn.cntt.entity.*;
 
+import java.sql.*;
+import java.sql.Date;
 import java.text.ParseException;
 import java.util.*;
 
@@ -52,6 +55,9 @@ public class SinhVienController {
 
     @Autowired
     private LopMonHoc_SinhVienService lopMonHoc_sinhVienService;
+
+    @Autowired
+    private KiHoc_NamHocService kiHoc_namHocService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -175,9 +181,9 @@ public class SinhVienController {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
         DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(classId);
         List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByMonHocIdAndKiHoc_NamHoc(dmLopMonHoc.getDmMonHoc().getId(), dmLopMonHoc.getTkb_kiHoc_namHoc().getId());
-        if(dmLopMonHocs!=null){
-            for (DMLopMonHoc DMLopMonHoc1:
-                 dmLopMonHocs) {
+        if (dmLopMonHocs != null) {
+            for (DMLopMonHoc DMLopMonHoc1 :
+                    dmLopMonHocs) {
                 lopMonHoc_sinhVienService.studentCancelRegister(DMLopMonHoc1.getId(), sinhVienService.findByMaSinhVien(tenDangNhap).getId());
             }
         }
@@ -197,8 +203,67 @@ public class SinhVienController {
         String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
         if (lopMonHoc_sinhVienService.findByClassIdAndStudentId(classId, sinhVienService.findByMaSinhVien(tenDangNhap).getId()) != null) {
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<Boolean>(false, HttpStatus.OK);
         }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/current-week-calendar")
+    public ResponseEntity<MappingJacksonValue> getCurrentWeekCalendar() {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHocHienTai.getId());
+        List<DMLopMonHoc> dmLopMonHocsCuaSinhVien = new ArrayList<>();
+
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien :
+                    dmLopMonHoc.getDMLopMonHoc_sinhViens()) {
+                if (dmSinhVien.getId() == dmLopMonHoc_sinhVien.getDmSinhVien().getId()) {
+                    dmLopMonHocsCuaSinhVien.add(dmLopMonHoc);
+                    break;
+                }
+            }
+        }
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocsCuaSinhVien);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id", "dmNhanVien", "tkb_khoa_khoaHoc", "dmMonHoc", "tkb_lichHocTheoTuans"));
+
+        mappingJacksonValue.setFilters(filterProvider);
+
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/calendar/current-semester-year")
+    public ResponseEntity<SemesterYear> getCurrentKiHocNamHoc() {
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        return new ResponseEntity<SemesterYear>(new SemesterYear(tkb_kiHoc_namHocHienTai.getTkb_kiHoc(), tkb_kiHoc_namHocHienTai.getTkb_namHoc()), HttpStatus.OK);
     }
 }
