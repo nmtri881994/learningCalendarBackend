@@ -3,7 +3,10 @@ package vn.bkdn.cntt.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -12,10 +15,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.common.CalendarCommonUtils;
+import vn.bkdn.cntt.controller.APIEntity.SemesterYear;
 import vn.bkdn.cntt.controller.APIEntity.SimpleDiemDanh;
 import vn.bkdn.cntt.controller.APIEntity.SimpleSinhVien;
 import vn.bkdn.cntt.entity.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +45,6 @@ public class GiaoVienController {
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
-    private String role;
 
     @Autowired
     private TKB_TietService tkb_tietService;
@@ -57,6 +63,15 @@ public class GiaoVienController {
 
     @Autowired
     private TKB_LichHocTheoNgay_DiemDanhService tkb_lichHocTheoNgay_diemDanhService;
+
+    @Autowired
+    private KiHoc_NamHocService kiHoc_namHocService;
+
+    @Autowired
+    private ExcelService excelService;
+
+    @Autowired
+    public HttpServletResponse httpServletResponse;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -190,7 +205,7 @@ public class GiaoVienController {
 
     @PreAuthorize("hasRole('GIANGVIEN')")
     @GetMapping(value = "/calendar/diem-danh/{lessonId}/{studentId}/{status}")
-    public ResponseEntity<?> updateDiemDanh(@PathVariable int lessonId, @PathVariable int studentId, @PathVariable boolean status){
+    public ResponseEntity<?> updateDiemDanh(@PathVariable int lessonId, @PathVariable int studentId, @PathVariable boolean status) {
         tkb_lichHocTheoNgay_diemDanhService.diemDanh(lessonId, studentId, status);
         return new ResponseEntity<Object>(HttpStatus.OK);
     }
@@ -278,5 +293,110 @@ public class GiaoVienController {
 
         tkb_availableLessonsClone.removeAll(tkb_availableLessons);
         return tkb_availableLessonsClone;
+    }
+
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/calendar/current-week-calendar")
+    public ResponseEntity<MappingJacksonValue> getCurrentWeekCalendar() {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMNhanVien dmNhanVien = nhanVienService.findByMaNhanVien(tenDangNhap);
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHocHienTai.getId());
+        List<DMLopMonHoc> dmLopMonHocsCuaGiangVien = new ArrayList<>();
+
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            if(dmNhanVien.getId() == dmLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiangVien.add(dmLopMonHoc);
+            }
+        }
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocsCuaGiangVien);
+        FilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
+                        .filterOutAllExcept("id", "dmNhanVien", "tkb_khoa_khoaHoc", "dmMonHoc", "tkb_lichHocTheoTuans"));
+
+        mappingJacksonValue.setFilters(filterProvider);
+
+        return new ResponseEntity<MappingJacksonValue>(mappingJacksonValue, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/calendar/current-semester-year")
+    public ResponseEntity<SemesterYear> getCurrentKiHocNamHoc() {
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        return new ResponseEntity<SemesterYear>(new SemesterYear(tkb_kiHoc_namHocHienTai.getTkb_kiHoc(), tkb_kiHoc_namHocHienTai.getTkb_namHoc()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/calendar/print/{teacherId}")
+    @Procedure("application/vnd.ms-excel")
+    public ResponseEntity<InputStreamResource> printSemesterCalendar(@PathVariable int teacherId) throws IOException {
+        DMNhanVien dmNhanVien = nhanVienService.findOne(teacherId);
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHocHienTai.getId());
+        List<DMLopMonHoc> dmLopMonHocsCuaGiangVien = new ArrayList<>();
+
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            if(dmNhanVien.getId() == dmLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiangVien.add(dmLopMonHoc);
+            }
+        }
+
+        XSSFWorkbook workbook = excelService.exportSemesterCalendar(dmLopMonHocsCuaGiangVien,
+                tkb_kiHoc_namHocHienTai.getTkb_kiHoc().getTen(), tkb_kiHoc_namHocHienTai.getTkb_namHoc().getName());
+        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;filename=tkb.xlsx");
+        workbook.write(httpServletResponse.getOutputStream());
+        org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream byteArrayOutputStream = new org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream();
+        try {
+            workbook.write(byteArrayOutputStream);
+            InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+            return new ResponseEntity<InputStreamResource>(inputStreamResource, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("hasRole('GIANGVIEN')")
+    @GetMapping(value = "/get-teacher-id")
+    public int getStudentId(){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMNhanVien dmNhanVien = nhanVienService.findByMaNhanVien(tenDangNhap);
+        return dmNhanVien.getId();
     }
 }

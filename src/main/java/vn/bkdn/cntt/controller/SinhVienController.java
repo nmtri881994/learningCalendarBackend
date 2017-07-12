@@ -3,8 +3,12 @@ package vn.bkdn.cntt.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +20,13 @@ import vn.bkdn.cntt.controller.APIEntity.EditStudentNote;
 import vn.bkdn.cntt.controller.APIEntity.SemesterYear;
 import vn.bkdn.cntt.entity.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
 import java.text.ParseException;
@@ -58,6 +69,12 @@ public class SinhVienController {
 
     @Autowired
     private KiHoc_NamHocService kiHoc_namHocService;
+
+    @Autowired
+    private ExcelService excelService;
+
+    @Autowired
+    public HttpServletResponse httpServletResponse;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/calendar/week/{date}")
@@ -265,5 +282,59 @@ public class SinhVienController {
         }
 
         return new ResponseEntity<SemesterYear>(new SemesterYear(tkb_kiHoc_namHocHienTai.getTkb_kiHoc(), tkb_kiHoc_namHocHienTai.getTkb_namHoc()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/calendar/print/{studentId}")
+    @Procedure("application/vnd.ms-excel")
+    public ResponseEntity<InputStreamResource> printSemesterCalendar(@PathVariable int studentId) throws IOException {
+        DMSinhVien dmSinhVien = sinhVienService.findOne(studentId);
+        java.util.Date now = new java.util.Date();
+        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+
+        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+                tkb_kiHoc_namHocs) {
+            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+            }
+        }
+
+        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHocHienTai.getId());
+        List<DMLopMonHoc> dmLopMonHocsCuaSinhVien = new ArrayList<>();
+
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien :
+                    dmLopMonHoc.getDMLopMonHoc_sinhViens()) {
+                if (dmSinhVien.getId() == dmLopMonHoc_sinhVien.getDmSinhVien().getId()) {
+                    dmLopMonHocsCuaSinhVien.add(dmLopMonHoc);
+                    break;
+                }
+            }
+        }
+
+        XSSFWorkbook workbook = excelService.exportSemesterCalendar(dmLopMonHocsCuaSinhVien,
+                tkb_kiHoc_namHocHienTai.getTkb_kiHoc().getTen(), tkb_kiHoc_namHocHienTai.getTkb_namHoc().getName());
+        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;filename=tkb.xlsx");
+        workbook.write(httpServletResponse.getOutputStream());
+        org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream byteArrayOutputStream = new org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream();
+        try {
+            workbook.write(byteArrayOutputStream);
+            InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+            return new ResponseEntity<InputStreamResource>(inputStreamResource, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/get-student-id")
+    public int getStudentId(){
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMSinhVien dmSinhVien = sinhVienService.findByMaSinhVien(tenDangNhap);
+        return dmSinhVien.getId();
     }
 }

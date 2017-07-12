@@ -1,22 +1,26 @@
 package vn.bkdn.cntt.controller;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import vn.bkdn.cntt.Service.NhanVienService;
-import vn.bkdn.cntt.Service.TaiKhoanHeThong_VaiTroService;
-import vn.bkdn.cntt.entity.DMNhanVien;
-import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong_VaiTro;
+import vn.bkdn.cntt.Service.*;
+import vn.bkdn.cntt.entity.*;
 import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by XuanVinh on 3/13/2017.
@@ -35,6 +39,20 @@ public class test {
 
     @Autowired
     private NhanVienService nhanVienService;
+
+    @Autowired
+    private SinhVienService sinhVienService;
+
+    @Autowired
+    private KiHoc_NamHocService kiHoc_namHocService;
+
+    @Autowired
+    private LopMonHocService lopMonHocService;
+
+    @Autowired ExcelService excelService;
+
+    @Autowired
+    public HttpServletResponse httpServletResponse;
 
     @GetMapping(value = "/1")
     public void getCalendaer() throws ParseException {
@@ -73,4 +91,50 @@ public class test {
         c.setTime(d);
         return c.get(Calendar.DAY_OF_WEEK);
     }
+//
+//    @GetMapping(value = "/calendar/print")
+//    @Procedure("application/vnd.ms-excel")
+//    public ResponseEntity<InputStreamResource> printSemesterCalendar() throws IOException {
+//        DMSinhVien dmSinhVien = sinhVienService.findOne(11);
+//        java.util.Date now = new java.util.Date();
+//        List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
+//
+//        TKB_KiHoc_NamHoc tkb_kiHoc_namHocHienTai = new TKB_KiHoc_NamHoc();
+//
+//        for (TKB_KiHoc_NamHoc tkb_kiHoc_namHoc :
+//                tkb_kiHoc_namHocs) {
+//            if (!now.before(tkb_kiHoc_namHoc.getNgayBatDau()) && !now.after(tkb_kiHoc_namHoc.getNgayKetThuc())) {
+//                tkb_kiHoc_namHocHienTai = tkb_kiHoc_namHoc;
+//            }
+//        }
+//
+//        List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHocHienTai.getId());
+//        List<DMLopMonHoc> dmLopMonHocsCuaSinhVien = new ArrayList<>();
+//
+//        for (DMLopMonHoc dmLopMonHoc :
+//                dmLopMonHocs) {
+//            for (DMLopMonHoc_SinhVien dmLopMonHoc_sinhVien :
+//                    dmLopMonHoc.getDMLopMonHoc_sinhViens()) {
+//                if (dmSinhVien.getId() == dmLopMonHoc_sinhVien.getDmSinhVien().getId()) {
+//                    dmLopMonHocsCuaSinhVien.add(dmLopMonHoc);
+//                    break;
+//                }
+//            }
+//        }
+//
+//        XSSFWorkbook workbook = excelService.exportSemesterCalendar(dmLopMonHocsCuaSinhVien,
+//                tkb_kiHoc_namHocHienTai.getTkb_kiHoc().getTen(), tkb_kiHoc_namHocHienTai.getTkb_namHoc().getName());
+//        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        httpServletResponse.setHeader("Content-Disposition", "attachment;filename=tkb.xlsx");
+//        workbook.write(httpServletResponse.getOutputStream());
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        try {
+//            workbook.write(byteArrayOutputStream);
+//            InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+//            return new ResponseEntity<InputStreamResource>(inputStreamResource, HttpStatus.OK);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
+//    }
 }
