@@ -82,7 +82,8 @@ public class ExcelServiceImpl implements ExcelService {
                 value += excelTKB.getDmMonHoc().getTen() + "\n" + excelTKB.getDmNhanVien().getHoDem() + " "
                         + excelTKB.getDmNhanVien().getTen() + "\n" + excelTKB.getTkb_lichHocTheoTuan().getDmGiangDuong().getTen()
                         + "\n" + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietDauTien().getTen() + " tới "
-                        + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietCuoiCung().getTen();
+                        + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietCuoiCung().getTen() + "\n" + "Tuần "
+                        + excelTKB.getTkb_lichHocTheoTuan().getTuanBatDau() + " tới " + excelTKB.getTkb_lichHocTheoTuan().getTuanKetThuc();
 
                 value += "\n\n";
             }
@@ -98,7 +99,8 @@ public class ExcelServiceImpl implements ExcelService {
                 value += excelTKB.getDmMonHoc().getTen() + "\n" + excelTKB.getDmNhanVien().getHoDem() + " "
                         + excelTKB.getDmNhanVien().getTen() + "\n" + excelTKB.getTkb_lichHocTheoTuan().getDmGiangDuong().getTen()
                         + "\n" + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietDauTien().getTen() + " tới "
-                        + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietCuoiCung().getTen();
+                        + excelTKB.getTkb_lichHocTheoTuan().getTkb_tietCuoiCung().getTen() + "\n" + "Tuần "
+                        + excelTKB.getTkb_lichHocTheoTuan().getTuanBatDau() + " tới " + excelTKB.getTkb_lichHocTheoTuan().getTuanKetThuc();
 
                 value += "\n\n";
             }
