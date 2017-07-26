@@ -20,6 +20,12 @@ public class DMDonVi {
     public DMDonVi() {
     }
 
+    public DMDonVi(String ma, String ten, DMLoaiDonVi dmLoaiDonVi) {
+        this.ma = ma;
+        this.ten = ten;
+        this.dmLoaiDonVi = dmLoaiDonVi;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

@@ -214,7 +214,7 @@ public class CalendarController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "dmMonHoc", "dmNhanVien", "soTietLyThuyet", "soTietThucHanh", "soLuongToiDa", "soBuoiLyThuyetMotTuan", "soTietLyThuyetMotTuan", "soBuoiThucHanhMotTuan", "soTietThucHanhMotTuan", "tkb_lichHocTheoTuans"));
+                        .filterOutAllExcept("id", "dmMonHoc", "dmNhanVien", "soTietLyThuyet", "tkb_khoa_khoaHoc", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
@@ -324,7 +324,6 @@ public class CalendarController {
             TKB_LichHocTheoTuan tkb_lichHocTheoTuan = tkb_lichHocTheoTuanService.findOne(tkbTuanId);
             System.out.println(tuanBatDau + "-" + tkb_lichHocTheoTuan.getTuanBatDau() + "-" + tkb_lichHocTheoTuan.getTuanKetThuc());
             if (tuanBatDau >= tkb_lichHocTheoTuan.getTuanBatDau() && tuanBatDau <= tkb_lichHocTheoTuan.getTuanKetThuc() && thuId == tkb_lichHocTheoTuan.getTkb_thu().getId()) {
-                System.out.println("11111111");
                 List<TKB_Tiet> tietsCuaTKBHienTai = tkb_tietService.findByIdGreaterThanAndIdLessThan(tkb_lichHocTheoTuan.getTkb_tietDauTien().getId() - 1, tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getId() + 1);
                 for (TKB_Tiet tkb_tiet :
                         tietsCuaTKBHienTai) {
@@ -358,7 +357,7 @@ public class CalendarController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/tkb/{classId}")
-    public ResponseEntity<MappingJacksonValue> findClass(@PathVariable int classId){
+    public ResponseEntity<MappingJacksonValue> findClass(@PathVariable int classId) {
         DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(classId);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHoc);
         FilterProvider filterProvider = new SimpleFilterProvider()
@@ -370,7 +369,7 @@ public class CalendarController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/tkb/lesson/{lessonId}")
-    public ResponseEntity<MappingJacksonValue> findClassByLesson(@PathVariable int lessonId){
+    public ResponseEntity<MappingJacksonValue> findClassByLesson(@PathVariable int lessonId) {
         int classId = tkb_lichHocTheoNgayService.getClassId(lessonId);
 
         DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(classId);
@@ -384,11 +383,11 @@ public class CalendarController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/tkb/first-date-of-week/{yearId}/{week}")
-    public String getFirstDateOfWeek(@PathVariable int yearId,@PathVariable int week){
+    public String getFirstDateOfWeek(@PathVariable int yearId, @PathVariable int week) {
         TKB_NamHoc tkb_namHoc = namHocService.findOne(yearId);
         Date learningYearStartDate = tkb_namHoc.getNgayBatDau();
 
-        int days = 7*(week-1);
+        int days = 7 * (week - 1);
 
         Calendar c = Calendar.getInstance(Locale.GERMAN);
         c.setTime(learningYearStartDate);
