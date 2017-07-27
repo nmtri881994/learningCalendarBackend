@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public interface TaiKhoanHeThong_VaiTroRepository extends JpaRepository<TK_TaiKhoanHeThong_VaiTro, Integer>{
+public interface TK_TaiKhoanHeThong_VaiTroRepository extends JpaRepository<TK_TaiKhoanHeThong_VaiTro, Integer>{
 
     @Query(value = "select * from tk_tai_khoan_he_thong_vai_tro where tk_tai_khoan_he_thong_id = ?1 ", nativeQuery = true)
     List<TK_TaiKhoanHeThong_VaiTro> findByTK_TaiKhoanHeThong(int tk_taiKhoanHeThongId);

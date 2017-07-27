@@ -9,5 +9,5 @@ import vn.bkdn.cntt.entity.TKB_DieuKien_TuDong;
  */
 
 @Repository
-public interface DieuKienRepository extends JpaRepository<TKB_DieuKien_TuDong, Integer> {
+public interface TKB_DieuKien_TuDongRepository extends JpaRepository<TKB_DieuKien_TuDong, Integer> {
 }

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.DMNhanVien;
 import vn.bkdn.cntt.entity.DMLopMonHoc;
-import vn.bkdn.cntt.repository.LopMonHocRepository;
+import vn.bkdn.cntt.repository.DMLopMonHocRepository;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class LopMonHocServiceImpl implements LopMonHocService {
 
     @Autowired
-    private LopMonHocRepository lopMonHocRepository;
+    private DMLopMonHocRepository lopMonHocRepository;
 
     @Override
     public List<DMLopMonHoc> findByGiaoVien(DMNhanVien dmNhanVien) {

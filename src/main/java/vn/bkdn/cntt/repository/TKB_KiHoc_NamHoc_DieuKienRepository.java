@@ -9,5 +9,5 @@ import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc_DieuKien;
  */
 
 @Repository
-public interface KiHoc_NamHoc_DieuKienRepository extends JpaRepository<TKB_KiHoc_NamHoc_DieuKien, Integer> {
+public interface TKB_KiHoc_NamHoc_DieuKienRepository extends JpaRepository<TKB_KiHoc_NamHoc_DieuKien, Integer> {
 }

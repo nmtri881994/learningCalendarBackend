@@ -3,7 +3,7 @@ package vn.bkdn.cntt.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc;
-import vn.bkdn.cntt.repository.KiHoc_NamHocRepository;
+import vn.bkdn.cntt.repository.TKB_KiHoc_NamHocRepository;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class KiHoc_NamHocServiceImpl implements KiHoc_NamHocService {
 
     @Autowired
-    private KiHoc_NamHocRepository kiHoc_namHocRepository;
+    private TKB_KiHoc_NamHocRepository kiHoc_namHocRepository;
 
     @Override
     public TKB_KiHoc_NamHoc findKiHocNamHocByKyHocIdAndNamHocId(int kiHocId, int namHocId) {

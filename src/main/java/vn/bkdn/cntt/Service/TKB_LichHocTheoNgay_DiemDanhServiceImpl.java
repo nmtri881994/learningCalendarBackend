@@ -2,10 +2,8 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay;
 import vn.bkdn.cntt.entity.TKB_LichHocTheoNgay_DiemDanh;
-import vn.bkdn.cntt.repository.DMLopMonHoc_SinhVienRepository;
-import vn.bkdn.cntt.repository.SinhVienRepository;
+import vn.bkdn.cntt.repository.DMSinhVienRepository;
 import vn.bkdn.cntt.repository.TKB_LichHocTheoNgayRepository;
 import vn.bkdn.cntt.repository.TKB_LichHocTheoNgay_DiemDanhRepository;
 
@@ -23,7 +21,7 @@ public class TKB_LichHocTheoNgay_DiemDanhServiceImpl implements TKB_LichHocTheoN
     private TKB_LichHocTheoNgayRepository tkb_lichHocTheoNgayRepository;
 
     @Autowired
-    private SinhVienRepository sinhVienRepository;
+    private DMSinhVienRepository sinhVienRepository;
 
     @Override
     public void diemDanh(int lessonId, int studentId, boolean status) {

@@ -19,6 +19,11 @@ public class TKB_KhoaHoc {
     public TKB_KhoaHoc() {
     }
 
+    public TKB_KhoaHoc(int id, int nam) {
+        this.id = id;
+        this.nam = nam;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

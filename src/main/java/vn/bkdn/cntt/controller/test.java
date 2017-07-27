@@ -1,22 +1,14 @@
 package vn.bkdn.cntt.controller;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.entity.*;
-import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
+import vn.bkdn.cntt.repository.TK_TaiKhoanHeThongRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +27,7 @@ public class test {
     private TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
 
     @Autowired
-    private TaiKhoanHeThongRepository taiKhoanHeThongRepository;
+    private TK_TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
     @Autowired
     private NhanVienService nhanVienService;

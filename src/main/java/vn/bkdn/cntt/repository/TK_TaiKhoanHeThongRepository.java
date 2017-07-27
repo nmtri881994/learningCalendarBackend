@@ -9,7 +9,7 @@ import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
  */
 
 @Repository
-public interface TaiKhoanHeThongRepository extends JpaRepository<TK_TaiKhoanHeThong, Integer>{
+public interface TK_TaiKhoanHeThongRepository extends JpaRepository<TK_TaiKhoanHeThong, Integer>{
     TK_TaiKhoanHeThong findByTenDangNhapAndMatKhau(String tenDangNhap, String matKhau);
     TK_TaiKhoanHeThong findByTenDangNhap(String tenDangNhap);
 }

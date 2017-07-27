@@ -2,7 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.repository.SinhVienRepository;
+import vn.bkdn.cntt.repository.DMSinhVienRepository;
 import vn.bkdn.cntt.entity.DMSinhVien;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public class SinhVienServiceImpl implements SinhVienService{
 
     @Autowired
-    private SinhVienRepository sinhVienRepository;
+    private DMSinhVienRepository sinhVienRepository;
 
     @Override
     public List<DMSinhVien> findAll() {

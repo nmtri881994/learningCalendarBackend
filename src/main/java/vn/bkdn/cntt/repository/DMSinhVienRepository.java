@@ -9,7 +9,7 @@ import vn.bkdn.cntt.entity.DMSinhVien;
  */
 
 @Repository
-public interface SinhVienRepository extends JpaRepository<DMSinhVien, Integer> {
+public interface DMSinhVienRepository extends JpaRepository<DMSinhVien, Integer> {
     DMSinhVien findByMaSinhVien(String maSinhVien);
 
 }

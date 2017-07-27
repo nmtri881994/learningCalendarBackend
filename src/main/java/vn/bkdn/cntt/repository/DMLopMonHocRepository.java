@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public interface LopMonHocRepository extends JpaRepository<DMLopMonHoc, Integer> {
+public interface DMLopMonHocRepository extends JpaRepository<DMLopMonHoc, Integer> {
     List<DMLopMonHoc> findByDmNhanVien(DMNhanVien dmNhanVien);
 
     @Query(value = "select * from dmlop_mon_hoc where tkb_ki_hoc_nam_hoc_id = ?1 and tkb_khoa_khoa_hoc_id = ?2 and dm_nganh_id = ?3", nativeQuery = true)

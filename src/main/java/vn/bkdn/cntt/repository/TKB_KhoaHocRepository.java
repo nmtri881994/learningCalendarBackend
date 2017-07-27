@@ -4,19 +4,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import vn.bkdn.cntt.entity.TKB_ThoiGianDangKy;
+import vn.bkdn.cntt.entity.TKB_KhoaHoc;
 
 import javax.transaction.Transactional;
 
 /**
- * Created by XuanVinh on 4/20/2017.
+ * Created by Tri on 7/27/2017.
  */
 
 @Repository
-public interface ThoiGianDangKyRepository extends JpaRepository<TKB_ThoiGianDangKy, Integer> {
+public interface TKB_KhoaHocRepository extends JpaRepository<TKB_KhoaHoc, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update tkb_thoi_gian_dang_ky set status = ?2 where id = ?1", nativeQuery = true)
-    void updateRegistering(int registerTimeId, boolean status);
+    @Query(value = "update tkb_khoa_hoc set nam = ?2 where id = ?1", nativeQuery = true)
+    void editKhoaHoc(int id, int nam);
 }

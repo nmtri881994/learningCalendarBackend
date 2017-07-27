@@ -3,7 +3,7 @@ package vn.bkdn.cntt.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.TKB_ThoiGianDangKy;
-import vn.bkdn.cntt.repository.ThoiGianDangKyRepository;
+import vn.bkdn.cntt.repository.TKB_ThoiGianDangKyRepository;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class ThoiGianDangKyServiceImpl implements ThoiGianDangKyService {
 
     @Autowired
-    private ThoiGianDangKyRepository thoiGianDangKyRepository;
+    private TKB_ThoiGianDangKyRepository thoiGianDangKyRepository;
 
 
     @Override

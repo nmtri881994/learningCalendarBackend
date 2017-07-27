@@ -9,6 +9,6 @@ import vn.bkdn.cntt.entity.TK_VaiTro;
  */
 
 @Repository
-public interface VaiTroRepository extends JpaRepository<TK_VaiTro, Integer> {
+public interface TK_VaiTroRepository extends JpaRepository<TK_VaiTro, Integer> {
     TK_VaiTro findByTenVaiTro(String tenVaiTro);
 }

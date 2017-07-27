@@ -3,7 +3,7 @@ package vn.bkdn.cntt.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc_DieuKien;
-import vn.bkdn.cntt.repository.KiHoc_NamHoc_DieuKienRepository;
+import vn.bkdn.cntt.repository.TKB_KiHoc_NamHoc_DieuKienRepository;
 
 /**
  * Created by XuanVinh on 5/23/2017.
@@ -13,7 +13,7 @@ import vn.bkdn.cntt.repository.KiHoc_NamHoc_DieuKienRepository;
 public class KiHoc_NamHoc_DieuKienServiceImpl implements KiHoc_NamHoc_DieuKienService {
 
     @Autowired
-    private KiHoc_NamHoc_DieuKienRepository kiHoc_namHoc_dieuKienRepository;
+    private TKB_KiHoc_NamHoc_DieuKienRepository kiHoc_namHoc_dieuKienRepository;
 
     @Override
     public TKB_KiHoc_NamHoc_DieuKien findOne(int id) {

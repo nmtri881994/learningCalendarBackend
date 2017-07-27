@@ -3,7 +3,7 @@ package vn.bkdn.cntt.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.DMDonVi;
-import vn.bkdn.cntt.repository.KhoaRepository;
+import vn.bkdn.cntt.repository.DMKhoaRepository;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class KhoaServiceImpl implements KhoaService {
 
     @Autowired
-    private KhoaRepository khoaRepository;
+    private DMKhoaRepository khoaRepository;
 
     @Override
     public List<DMDonVi> findAll() {

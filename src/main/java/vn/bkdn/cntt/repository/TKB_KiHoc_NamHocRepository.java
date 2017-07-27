@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
  */
 
 @Repository
-public interface KiHoc_NamHocRepository extends JpaRepository<TKB_KiHoc_NamHoc, Integer> {
+public interface TKB_KiHoc_NamHocRepository extends JpaRepository<TKB_KiHoc_NamHoc, Integer> {
 
     @Query(value = "select * from tkb_ki_hoc_nam_hoc where tkb_ki_hoc_id = ?1 and tkb_nam_hoc_id = ?2", nativeQuery = true)
     TKB_KiHoc_NamHoc findKiHocNamHocByKyHocIdAndNamHocId(int kiHocId, int namHocId);

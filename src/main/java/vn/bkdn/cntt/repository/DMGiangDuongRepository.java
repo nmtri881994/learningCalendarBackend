@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
  */
 
 @Repository
-public interface GiangDuongRepository extends JpaRepository<DMGiangDuong, Integer> {
+public interface DMGiangDuongRepository extends JpaRepository<DMGiangDuong, Integer> {
 
     @Modifying
     @Transactional

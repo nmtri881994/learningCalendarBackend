@@ -9,6 +9,6 @@ import vn.bkdn.cntt.entity.DMNhanVien;
  */
 
 @Repository
-public interface NhanVienRepository extends JpaRepository<DMNhanVien, Integer>{
+public interface DMNhanVienRepository extends JpaRepository<DMNhanVien, Integer>{
     DMNhanVien findByMaNhanVien(String maNhanVien);
 }

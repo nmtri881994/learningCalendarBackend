@@ -10,7 +10,7 @@ import vn.bkdn.cntt.entity.TKB_Khoa_KhoaHoc;
  */
 
 @Repository
-public interface Khoa_KhoaHocRepository extends JpaRepository<TKB_Khoa_KhoaHoc, Integer> {
+public interface TKB_Khoa_KhoaHocRepository extends JpaRepository<TKB_Khoa_KhoaHoc, Integer> {
 
     @Query(value = "select * from tkb_khoa_khoa_hoc where dm_don_vi_id =?1 and tkb_khoa_hoc_id = ?2", nativeQuery = true)
     TKB_Khoa_KhoaHoc findByKhoaIdAndKhoaHocId(int khoaId, int khoaHocId);

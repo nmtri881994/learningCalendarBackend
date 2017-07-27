@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong_VaiTro;
 import vn.bkdn.cntt.entity.TK_VaiTro;
-import vn.bkdn.cntt.repository.TaiKhoanHeThongRepository;
+import vn.bkdn.cntt.repository.TK_TaiKhoanHeThongRepository;
 import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.List;
 public class TaiKhoanHeThongServiceImpl implements TaiKhoanHeThongService{
 
     @Autowired
-    private TaiKhoanHeThongRepository taiKhoanHeThongRepository;
+    private TK_TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
     @Autowired
     private TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
