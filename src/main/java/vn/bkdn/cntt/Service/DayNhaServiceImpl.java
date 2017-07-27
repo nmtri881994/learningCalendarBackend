@@ -21,4 +21,9 @@ public class DayNhaServiceImpl implements DayNhaService {
     public List<DMLoaiPhong> findAll() {
         return dayNhaRepository.findAll();
     }
+
+    @Override
+    public DMLoaiPhong findOne(int id) {
+        return dayNhaRepository.findOne(id);
+    }
 }

@@ -26,6 +26,15 @@ public class DMGiangDuong {
     public DMGiangDuong() {
     }
 
+    public DMGiangDuong(int id, String maGiangDuong, String ten, DMLoaiPhong dmLoaiPhong, int tang, int soLuong) {
+        this.id = id;
+        this.maGiangDuong = maGiangDuong;
+        this.ten = ten;
+        this.dmLoaiPhong = dmLoaiPhong;
+        this.tang = tang;
+        this.soLuong = soLuong;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
