@@ -337,7 +337,7 @@ public class ImputDataController {
         return new ResponseEntity<List<KiHocNamHoc>>(kiHocNamHocs, HttpStatus.OK);
     }
 
-    //nam hoc
+    //khoa - khoa hoc
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/all-khoa-khoa-hoc")
