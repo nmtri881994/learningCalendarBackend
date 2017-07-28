@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by XuanVinh on 4/10/2017.
  */
-public interface GiangDuongService {
+public interface DMGiangDuongService {
     DMGiangDuong findOne(int giangDuongId);
 
     List<DMGiangDuong> findAll();

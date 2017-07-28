@@ -35,22 +35,22 @@ public class CalendarController {
     private NamHocService namHocService;
 
     @Autowired
-    private KhoaService khoaService;
+    private DMKhoaService khoaService;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
-    private Khoa_KhoaHocService khoa_khoaHocService;
+    private TKB_Khoa_KhoaHocService khoa_khoaHocService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
     private TKB_ThuService tkb_thuService;
 
     @Autowired
-    private DayNhaService dayNhaService;
+    private DMDayNhaService dayNhaService;
 
     @Autowired
     private TKB_LichHocTheoTuanService tkb_lichHocTheoTuanService;

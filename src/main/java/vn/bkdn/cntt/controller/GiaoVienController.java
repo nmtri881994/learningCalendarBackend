@@ -38,10 +38,10 @@ import java.util.Date;
 public class GiaoVienController {
 
     @Autowired
-    private NhanVienService nhanVienService;
+    private DMNhanVienService nhanVienService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
@@ -59,13 +59,13 @@ public class GiaoVienController {
     private DMLopMonHoc_SinhVienService dmLopMonHoc_sinhVienService;
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @Autowired
     private TKB_LichHocTheoNgay_DiemDanhService tkb_lichHocTheoNgay_diemDanhService;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
     private ExcelService excelService;

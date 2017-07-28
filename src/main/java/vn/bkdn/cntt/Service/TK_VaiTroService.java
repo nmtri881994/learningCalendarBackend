@@ -5,6 +5,6 @@ import vn.bkdn.cntt.entity.TK_VaiTro;
 /**
  * Created by XuanVinh on 3/18/2017.
  */
-public interface VaiTroService {
+public interface TK_VaiTroService {
     TK_VaiTro getVaiTroByName(String tenVaiTro);
 }

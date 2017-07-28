@@ -38,4 +38,9 @@ public class TKB_NamHocServiceImpl implements TKB_NamHocService {
     public void editNamHoc(NamHoc namHoc) {
         tkb_namHocRepository.editNamHoc(namHoc.getId(), namHoc.getName(), namHoc.getNgayBatDau(), namHoc.getNgayKetThuc());
     }
+
+    @Override
+    public TKB_NamHoc findOne(int id) {
+        return tkb_namHocRepository.findOne(id);
+    }
 }

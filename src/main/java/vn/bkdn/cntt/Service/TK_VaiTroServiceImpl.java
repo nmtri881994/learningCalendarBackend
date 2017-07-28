@@ -10,7 +10,7 @@ import vn.bkdn.cntt.repository.TK_VaiTroRepository;
  */
 
 @Service
-public class VaiTroServiceImpl implements VaiTroService {
+public class TK_VaiTroServiceImpl implements TK_VaiTroService {
 
     @Autowired
     private TK_VaiTroRepository vaiTroRepository;

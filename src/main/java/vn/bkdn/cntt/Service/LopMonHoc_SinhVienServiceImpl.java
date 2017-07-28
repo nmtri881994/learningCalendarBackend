@@ -19,10 +19,10 @@ public class LopMonHoc_SinhVienServiceImpl implements LopMonHoc_SinhVienService 
     private LopMonHoc_SinhVienRepository DMLopMonHoc_sinhVienRepository;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @Override
     public int getClassCurrentQuantity(int DMLopMonHocId) {

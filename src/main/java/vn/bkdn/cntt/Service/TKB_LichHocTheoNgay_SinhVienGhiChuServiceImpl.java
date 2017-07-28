@@ -19,7 +19,7 @@ class TKB_LichHocTheoNgay_SinhVienGhiChuServiceImpl implements TKB_LichHocTheoNg
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @Override
     public TKB_LichHocTheoNgay_SinhVienGhiChu findByTkbLichHocTheoNgayAndSinhVien(int tkbLichHocTheoNgayId, int sinhVienId) {

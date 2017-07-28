@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Service
-public class SinhVienServiceImpl implements SinhVienService{
+public class DMSinhVienServiceImpl implements DMSinhVienService {
 
     @Autowired
     private DMSinhVienRepository sinhVienRepository;

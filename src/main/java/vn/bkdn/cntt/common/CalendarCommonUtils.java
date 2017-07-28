@@ -15,7 +15,7 @@ import java.util.*;
 public class CalendarCommonUtils {
 
     @Autowired
-    private NhanVienService nhanVienService;
+    private DMNhanVienService nhanVienService;
 
     @Autowired
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
@@ -24,7 +24,7 @@ public class CalendarCommonUtils {
     private TKB_TietService tkb_tietService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     public List<DMLopMonHoc> getClassCalendarByWeek(List<DMLopMonHoc> dmLopMonHocs, String date) throws ParseException {
         java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);

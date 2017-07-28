@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by XuanVinh on 4/9/2017.
  */
-public interface DayNhaService {
+public interface DMDayNhaService {
     List<DMLoaiPhong> findAll();
     DMLoaiPhong findOne(int id);
 }

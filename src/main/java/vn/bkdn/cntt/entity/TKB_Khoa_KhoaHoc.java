@@ -26,6 +26,15 @@ public class TKB_Khoa_KhoaHoc {
     public TKB_Khoa_KhoaHoc() {
     }
 
+    public TKB_Khoa_KhoaHoc(int id, DMDonVi dmDonVi, TKB_KhoaHoc tkb_khoaHoc, TKB_KiHoc_NamHoc kiPhanNganh, TKB_KiHoc_NamHoc kiBatDau, TKB_KiHoc_NamHoc kiKetThuc) {
+        this.id = id;
+        this.dmDonVi = dmDonVi;
+        this.tkb_khoaHoc = tkb_khoaHoc;
+        this.kiPhanNganh = kiPhanNganh;
+        this.kiBatDau = kiBatDau;
+        this.kiKetThuc = kiKetThuc;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

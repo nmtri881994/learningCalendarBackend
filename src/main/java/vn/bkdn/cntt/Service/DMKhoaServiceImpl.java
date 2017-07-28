@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Service
-public class KhoaServiceImpl implements KhoaService {
+public class DMKhoaServiceImpl implements DMKhoaService {
 
     @Autowired
     private DMKhoaRepository khoaRepository;

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,14 +20,8 @@ import vn.bkdn.cntt.controller.APIEntity.SemesterYear;
 import vn.bkdn.cntt.entity.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.sql.Date;
 import java.text.ParseException;
 import java.util.*;
 
@@ -41,10 +34,10 @@ import java.util.*;
 public class SinhVienController {
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
+    private TK_TaiKhoanHeThongService taiKhoanHeThongService;
 
     @Autowired
     private TKB_LichHocTheoNgay_SinhVienGhiChuService tkb_lichHocTheoNgay_sinhVienGhiChuService;
@@ -53,22 +46,22 @@ public class SinhVienController {
     private TKB_LichHocTheoNgayService tkb_lichHocTheoNgayService;
 
     @Autowired
-    private ThoiGianDangKyService thoiGianDangKyService;
+    private TKB_ThoiGianDangKyService thoiGianDangKyService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
-    private Khoa_KhoaHocService khoa_khoaHocService;
+    private TKB_Khoa_KhoaHocService khoa_khoaHocService;
 
     @Autowired
-    private KhoaService khoaService;
+    private DMKhoaService khoaService;
 
     @Autowired
     private LopMonHoc_SinhVienService lopMonHoc_sinhVienService;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
     private ExcelService excelService;

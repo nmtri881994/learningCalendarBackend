@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Service
-public class DayNhaServiceImpl implements DayNhaService {
+public class DMDayNhaServiceImpl implements DMDayNhaService {
 
     @Autowired
     private DayNhaRepository dayNhaRepository;

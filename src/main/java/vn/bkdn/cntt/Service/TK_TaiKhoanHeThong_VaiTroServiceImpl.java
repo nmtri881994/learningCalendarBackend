@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Service
-public class TaiKhoanHeThong_VaiTroServiceImpl implements TaiKhoanHeThong_VaiTroService {
+public class TK_TaiKhoanHeThong_VaiTroServiceImpl implements TK_TaiKhoanHeThong_VaiTroService {
 
     @Autowired
     private TK_TaiKhoanHeThong_VaiTroRepository taiKhoanHeThong_vaiTroRepository;

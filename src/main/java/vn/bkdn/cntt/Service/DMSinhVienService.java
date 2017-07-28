@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Tri on 3/15/2017.
  */
-public interface SinhVienService {
+public interface DMSinhVienService {
     List<DMSinhVien> findAll();
 
     DMSinhVien findOne(int sinhVienId);

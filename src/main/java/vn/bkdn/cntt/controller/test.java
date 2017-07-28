@@ -24,22 +24,22 @@ import java.util.*;
 public class test {
 
     @Autowired
-    private TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
+    private TK_TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
 
     @Autowired
     private TK_TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
     @Autowired
-    private NhanVienService nhanVienService;
+    private DMNhanVienService nhanVienService;
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired ExcelService excelService;
 

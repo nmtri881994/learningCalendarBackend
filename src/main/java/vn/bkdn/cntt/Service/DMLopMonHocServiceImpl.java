@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Service
-public class LopMonHocServiceImpl implements LopMonHocService {
+public class DMLopMonHocServiceImpl implements DMLopMonHocService {
 
     @Autowired
     private DMLopMonHocRepository lopMonHocRepository;

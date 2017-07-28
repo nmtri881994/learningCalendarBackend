@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Tri on 3/15/2017.
  */
-public interface TaiKhoanHeThongService {
+public interface TK_TaiKhoanHeThongService {
     TK_TaiKhoanHeThong findByTenDangNhapAndMatKhau(String tenDangNhap, String matKhau);
     TK_TaiKhoanHeThong findByTenDangNhap(String tenDangNhap);
 

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Tri on 4/5/2017.
  */
-public interface KhoaService {
+public interface DMKhoaService {
     List<DMDonVi> findAll();
     DMDonVi findOne(int khoaId);
 }

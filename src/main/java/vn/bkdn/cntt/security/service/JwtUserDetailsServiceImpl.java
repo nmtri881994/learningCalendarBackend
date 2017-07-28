@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
+import vn.bkdn.cntt.Service.TK_TaiKhoanHeThongService;
 import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
 import vn.bkdn.cntt.security.JwtUser;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
+    private TK_TaiKhoanHeThongService taiKhoanHeThongService;
 
     @Override
     public UserDetails loadUserByUsername(String tenDangNhap) throws UsernameNotFoundException {

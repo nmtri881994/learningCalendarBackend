@@ -12,4 +12,5 @@ public interface DMDonViService {
     List<DMDonVi> findAllFaculty();
     void delete(int id);
     Boolean editKhoa(int id, String ma, String ten);
+    DMDonVi findOne(int id);
 }

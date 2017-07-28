@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import vn.bkdn.cntt.Service.SinhVienService;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
+import vn.bkdn.cntt.Service.DMSinhVienService;
+import vn.bkdn.cntt.Service.TK_TaiKhoanHeThongService;
 import vn.bkdn.cntt.entity.TKB_ThoiGianDangKy;
 import vn.bkdn.cntt.entity.DMSinhVien;
 
@@ -24,10 +24,10 @@ import java.util.List;
 public class LoginController {
 
     @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
+    private TK_TaiKhoanHeThongService taiKhoanHeThongService;
 
     @Autowired
-    private SinhVienService sinhVienService;
+    private DMSinhVienService sinhVienService;
 
     @PreAuthorize("hasRole('SINHVIEN')")
     @GetMapping(value = "/sinhvien-authen")

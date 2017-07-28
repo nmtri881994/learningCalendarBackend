@@ -9,6 +9,6 @@ import java.util.List;
  * Created by XuanVinh on 3/19/2017.
  */
 
-public interface TaiKhoanHeThong_VaiTroService {
+public interface TK_TaiKhoanHeThong_VaiTroService {
     List<TK_TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TK_TaiKhoanHeThong tk_taiKhoanHeThong);
 }

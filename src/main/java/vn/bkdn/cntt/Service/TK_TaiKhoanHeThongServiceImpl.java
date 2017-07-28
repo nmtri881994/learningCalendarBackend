@@ -15,13 +15,13 @@ import java.util.List;
  */
 
 @Service
-public class TaiKhoanHeThongServiceImpl implements TaiKhoanHeThongService{
+public class TK_TaiKhoanHeThongServiceImpl implements TK_TaiKhoanHeThongService {
 
     @Autowired
     private TK_TaiKhoanHeThongRepository taiKhoanHeThongRepository;
 
     @Autowired
-    private TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
+    private TK_TaiKhoanHeThong_VaiTroService taiKhoanHeThong_vaiTroService;
 
     @Override
     public TK_TaiKhoanHeThong findByTenDangNhapAndMatKhau(String tenDangNhap, String matKhau) {

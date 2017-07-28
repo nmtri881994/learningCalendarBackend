@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Service
-public class GiangDuongServiceImpl implements GiangDuongService {
+public class DMGiangDuongServiceImpl implements DMGiangDuongService {
 
     @Autowired
     private DMGiangDuongRepository giangDuongRepository;

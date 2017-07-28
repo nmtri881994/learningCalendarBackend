@@ -14,4 +14,5 @@ public interface TKB_NamHocService {
     void insertNamHoc(NamHoc namHoc);
     void deleteNamHoc(int id);
     void editNamHoc(NamHoc namHoc);
+    TKB_NamHoc findOne(int id);
 }

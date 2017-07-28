@@ -41,4 +41,9 @@ public class DMDonViServiceImpl implements DMDonViService {
             return false;
         }
     }
+
+    @Override
+    public DMDonVi findOne(int id) {
+        return dmDonViRepository.findOne(id);
+    }
 }

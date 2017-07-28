@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.TaiKhoanHeThongService;
-import vn.bkdn.cntt.Service.VaiTroService;
+import vn.bkdn.cntt.Service.TK_TaiKhoanHeThongService;
+import vn.bkdn.cntt.Service.TK_VaiTroService;
 import vn.bkdn.cntt.entity.TK_TaiKhoanHeThong;
 import vn.bkdn.cntt.entity.TK_VaiTro;
 import vn.bkdn.cntt.security.JwtAuthenticationRequest;
@@ -35,10 +35,10 @@ public class AuthenticationController {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private TaiKhoanHeThongService taiKhoanHeThongService;
+    private TK_TaiKhoanHeThongService taiKhoanHeThongService;
 
     @Autowired
-    private VaiTroService vaiTroService;
+    private TK_VaiTroService vaiTroService;
 
     @PostMapping(value = "/login")
     private ResponseEntity<?> getLoginToken(@Valid @RequestBody JwtAuthenticationRequest authenticationRequest){

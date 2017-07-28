@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Service
-public class ThoiGianDangKyServiceImpl implements ThoiGianDangKyService {
+public class TKB_ThoiGianDangKyServiceImpl implements TKB_ThoiGianDangKyService {
 
     @Autowired
     private TKB_ThoiGianDangKyRepository thoiGianDangKyRepository;

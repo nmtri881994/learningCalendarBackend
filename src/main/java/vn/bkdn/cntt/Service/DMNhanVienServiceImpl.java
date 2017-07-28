@@ -10,7 +10,7 @@ import vn.bkdn.cntt.repository.DMNhanVienRepository;
  */
 
 @Service
-public class NhanVienServiceImpl implements NhanVienService {
+public class DMNhanVienServiceImpl implements DMNhanVienService {
 
     @Autowired
     private DMNhanVienRepository nhanVienRepository;

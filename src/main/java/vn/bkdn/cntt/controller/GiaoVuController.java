@@ -42,7 +42,7 @@ public class GiaoVuController {
     private TKB_LichHocTheoTuanService tkb_lichHocTheoTuanService;
 
     @Autowired
-    private GiangDuongService giangDuongService;
+    private DMGiangDuongService giangDuongService;
 
     @Autowired
     private TKB_ThuService tkb_thuService;
@@ -51,19 +51,19 @@ public class GiaoVuController {
     private TKB_TietService tkb_tietService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
-    private Khoa_KhoaHocService khoa_khoaHocService;
+    private TKB_Khoa_KhoaHocService khoa_khoaHocService;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
-    private KhoaService khoaService;
+    private DMKhoaService khoaService;
 
     @Autowired
-    private ThoiGianDangKyService thoiGianDangKyService;
+    private TKB_ThoiGianDangKyService thoiGianDangKyService;
 
     @Autowired
     private SimpMessagingTemplate template;

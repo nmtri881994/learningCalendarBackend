@@ -10,7 +10,7 @@ import vn.bkdn.cntt.repository.DMMonHocRepository;
  */
 
 @Service
-public class MonHocServiceImpl implements MonHocService{
+public class DMMonHocServiceImpl implements DMMonHocService {
 
     @Autowired
     private DMMonHocRepository monHocRepository;

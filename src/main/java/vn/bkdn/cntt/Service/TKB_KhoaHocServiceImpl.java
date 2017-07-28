@@ -37,4 +37,9 @@ public class TKB_KhoaHocServiceImpl implements TKB_KhoaHocService {
     public void editKhoaHoc(TKB_KhoaHoc tkb_khoaHoc) {
         tkb_khoaHocRepository.editKhoaHoc(tkb_khoaHoc.getId(), tkb_khoaHoc.getNam());
     }
+
+    @Override
+    public TKB_KhoaHoc findOne(int id) {
+        return tkb_khoaHocRepository.findOne(id);
+    }
 }

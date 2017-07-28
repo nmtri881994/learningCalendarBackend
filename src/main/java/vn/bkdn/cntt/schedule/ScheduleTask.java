@@ -23,16 +23,16 @@ import java.util.*;
 public class ScheduleTask {
 
     @Autowired
-    private ThoiGianDangKyService thoiGianDangKyService;
+    private TKB_ThoiGianDangKyService thoiGianDangKyService;
 
     @Autowired
     private SimpMessagingTemplate template;
 
     @Autowired
-    private KiHoc_NamHocService kiHoc_namHocService;
+    private TKB_KiHoc_NamHocService kiHoc_namHocService;
 
     @Autowired
-    private LopMonHocService lopMonHocService;
+    private DMLopMonHocService lopMonHocService;
 
     @Autowired
     private NamHocService namHocService;

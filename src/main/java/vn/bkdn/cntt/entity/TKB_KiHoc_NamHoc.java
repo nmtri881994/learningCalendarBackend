@@ -1,6 +1,7 @@
 package vn.bkdn.cntt.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import vn.bkdn.cntt.controller.APIEntity.KiHocNamHoc;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,24 @@ public class TKB_KiHoc_NamHoc {
     private Set<TKB_KiHoc_NamHoc_DieuKien> tkb_kiHoc_namHoc_dieuKiens;
 
     public TKB_KiHoc_NamHoc() {
+    }
+
+    public TKB_KiHoc_NamHoc(int id, TKB_KiHoc tkb_kiHoc, TKB_NamHoc tkb_namHoc, Date ngayBatDau, Date ngayKetThuc, boolean daSinhLich) {
+        this.id = id;
+        this.tkb_kiHoc = tkb_kiHoc;
+        this.tkb_namHoc = tkb_namHoc;
+        this.ngayBatDau = ngayBatDau;
+        this.ngayKetThuc = ngayKetThuc;
+        this.daSinhLich = daSinhLich;
+    }
+
+    public TKB_KiHoc_NamHoc(KiHocNamHoc kiHocNamHoc){
+        this.id = id;
+        this.tkb_kiHoc = tkb_kiHoc;
+        this.tkb_namHoc = tkb_namHoc;
+        this.ngayBatDau = ngayBatDau;
+        this.ngayKetThuc = ngayKetThuc;
+        this.daSinhLich = false;
     }
 
     @Id

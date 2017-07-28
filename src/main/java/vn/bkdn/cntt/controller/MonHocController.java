@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.bkdn.cntt.Service.MonHocService;
+import vn.bkdn.cntt.Service.DMMonHocService;
 import vn.bkdn.cntt.entity.DMGiangDuong;
 import vn.bkdn.cntt.entity.DMMonHoc;
 import vn.bkdn.cntt.entity.DMMonHoc_GiangDuong;
@@ -25,7 +25,7 @@ import java.util.Set;
 public class MonHocController {
 
     @Autowired
-    private MonHocService monHocService;
+    private DMMonHocService monHocService;
 
     @GetMapping(value = "/{monHocId}")
     public ResponseEntity<List<DMGiangDuong>> getGiangDuongsByMonHocId(@PathVariable int monHocId){

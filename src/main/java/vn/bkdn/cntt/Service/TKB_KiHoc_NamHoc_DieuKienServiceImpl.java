@@ -10,7 +10,7 @@ import vn.bkdn.cntt.repository.TKB_KiHoc_NamHoc_DieuKienRepository;
  */
 
 @Service
-public class KiHoc_NamHoc_DieuKienServiceImpl implements KiHoc_NamHoc_DieuKienService {
+public class TKB_KiHoc_NamHoc_DieuKienServiceImpl implements TKB_KiHoc_NamHoc_DieuKienService {
 
     @Autowired
     private TKB_KiHoc_NamHoc_DieuKienRepository kiHoc_namHoc_dieuKienRepository;
