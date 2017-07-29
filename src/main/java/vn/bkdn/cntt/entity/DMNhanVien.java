@@ -26,6 +26,14 @@ public class DMNhanVien {
     public DMNhanVien() {
     }
 
+    public DMNhanVien(int id, String maNhanVien, String hoDem, String ten, DMDonVi dmDonVi) {
+        this.id = id;
+        this.maNhanVien = maNhanVien;
+        this.hoDem = hoDem;
+        this.ten = ten;
+        this.dmDonVi = dmDonVi;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

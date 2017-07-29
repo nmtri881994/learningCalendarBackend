@@ -11,4 +11,8 @@ import java.util.List;
 
 public interface TK_TaiKhoanHeThong_VaiTroService {
     List<TK_TaiKhoanHeThong_VaiTro> getTaiKhoanHeThongVaiTrosByTaiKhoan(TK_TaiKhoanHeThong tk_taiKhoanHeThong);
+
+    List<TK_TaiKhoanHeThong_VaiTro> findAll();
+    void insertTKVT(TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro);
+    void deleteTKVT(int id);
 }

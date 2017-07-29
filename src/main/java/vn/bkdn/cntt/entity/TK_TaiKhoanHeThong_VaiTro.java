@@ -17,6 +17,12 @@ public class TK_TaiKhoanHeThong_VaiTro {
     public TK_TaiKhoanHeThong_VaiTro() {
     }
 
+    public TK_TaiKhoanHeThong_VaiTro(int id, TK_TaiKhoanHeThong tk_taiKhoanHeThong, TK_VaiTro tk_vaiTro) {
+        this.id = id;
+        this.tk_taiKhoanHeThong = tk_taiKhoanHeThong;
+        this.tk_vaiTro = tk_vaiTro;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

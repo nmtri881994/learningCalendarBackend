@@ -19,6 +19,13 @@ public class TK_TaiKhoanHeThong {
     public TK_TaiKhoanHeThong() {
     }
 
+    public TK_TaiKhoanHeThong(int id, String tenDangNhap, String matKhau, String hoVaTen) {
+        this.id = id;
+        this.tenDangNhap = tenDangNhap;
+        this.matKhau = matKhau;
+        this.hoVaTen = hoVaTen;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

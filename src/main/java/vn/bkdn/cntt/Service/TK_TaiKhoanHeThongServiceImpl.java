@@ -45,4 +45,19 @@ public class TK_TaiKhoanHeThongServiceImpl implements TK_TaiKhoanHeThongService 
         return tk_vaiTros;
     }
 
+    @Override
+    public TK_TaiKhoanHeThong insertTK(TK_TaiKhoanHeThong tk_taiKhoanHeThong) {
+        return taiKhoanHeThongRepository.save(tk_taiKhoanHeThong);
+    }
+
+    @Override
+    public void deleteTK(int id) {
+        taiKhoanHeThongRepository.delete(id);
+    }
+
+    @Override
+    public List<TK_TaiKhoanHeThong> findAll() {
+        return taiKhoanHeThongRepository.findAll();
+    }
+
 }

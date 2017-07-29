@@ -54,6 +54,18 @@ public class ImputDataController {
     @Autowired
     private DMLopHocService dmLopHocService;
 
+    @Autowired
+    private DMNhanVienService dmNhanVienService;
+
+    @Autowired
+    private TK_TaiKhoanHeThongService tk_taiKhoanHeThongService;
+
+    @Autowired
+    private TK_TaiKhoanHeThong_VaiTroService tk_taiKhoanHeThong_vaiTroService;
+
+    @Autowired
+    private TK_VaiTroService tk_vaiTroService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -74,7 +86,9 @@ public class ImputDataController {
         List<Khoa> khoas = new ArrayList<>();
         for (DMDonVi dmDonVi :
                 dmDonVis) {
-            khoas.add(new Khoa(dmDonVi.getId(), dmDonVi.getMa(), dmDonVi.getTen()));
+            if (dmDonVi.getDmLoaiDonVi().getId() == 1) {
+                khoas.add(new Khoa(dmDonVi.getId(), dmDonVi.getMa(), dmDonVi.getTen()));
+            }
         }
 
         khoas.sort(Comparator.comparing(Khoa::getMa));
@@ -538,5 +552,202 @@ public class ImputDataController {
 
         lopHocs.sort(Comparator.comparing(LopHoc::getMa));
         return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
+    }
+
+    //Nhan vien
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-nhan-vien")
+    public ResponseEntity<List<NhanVien>> getAllNhanVien() {
+        List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
+        List<NhanVien> nhanViens = new ArrayList<>();
+        for (DMNhanVien dmNhanVien :
+                dmNhanViens) {
+            nhanViens.add(new NhanVien(dmNhanVien));
+        }
+        nhanViens.sort(Comparator.comparing(NhanVien::getTen));
+        return new ResponseEntity<List<NhanVien>>(nhanViens, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/nhan-vien")
+    public ResponseEntity<List<NhanVien>> insertNhanVien(@RequestBody NhanVien nhanVien) {
+
+        DMNhanVien dmNhanVien1 = dmNhanVienService.findByMaNhanVien(nhanVien.getMaNhanVien());
+        if (dmNhanVien1 != null) {
+            return new ResponseEntity<List<NhanVien>>(HttpStatus.CONFLICT);
+
+        } else {
+            DMDonVi dmDonVi = dmDonViService.findOne(nhanVien.getDmDonVi().getId());
+            dmNhanVienService.insertNhanVien(new DMNhanVien(nhanVien.getId(), nhanVien.getMaNhanVien(), nhanVien.getHoDem(), nhanVien.getTen(), dmDonVi));
+
+            tk_taiKhoanHeThongService.insertTK(new TK_TaiKhoanHeThong(nhanVien.getId(), nhanVien.getMaNhanVien(),
+                    nhanVien.getMaNhanVien(), nhanVien.getHoDem() + " " + nhanVien.getTen()));
+
+            List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
+            List<NhanVien> nhanViens = new ArrayList<>();
+            for (DMNhanVien dmNhanVien :
+                    dmNhanViens) {
+                nhanViens.add(new NhanVien(dmNhanVien));
+            }
+            nhanViens.sort(Comparator.comparing(NhanVien::getTen));
+            return new ResponseEntity<List<NhanVien>>(nhanViens, HttpStatus.OK);
+        }
+
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/nhan-vien/edit")
+    public ResponseEntity<List<NhanVien>> editNhanVien(@RequestBody NhanVien nhanVien) {
+        DMNhanVien dmNhanVien1 = dmNhanVienService.findByMaNhanVien(nhanVien.getMaNhanVien());
+        if (dmNhanVien1 != null) {
+            return new ResponseEntity<List<NhanVien>>(HttpStatus.CONFLICT);
+        } else {
+            dmNhanVienService.editNhanVien(nhanVien);
+
+            List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
+            List<NhanVien> nhanViens = new ArrayList<>();
+            for (DMNhanVien dmNhanVien :
+                    dmNhanViens) {
+                nhanViens.add(new NhanVien(dmNhanVien));
+            }
+            nhanViens.sort(Comparator.comparing(NhanVien::getTen));
+            return new ResponseEntity<List<NhanVien>>(nhanViens, HttpStatus.OK);
+        }
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhan-vien/delete/{nhanVienId}")
+    public ResponseEntity<List<NhanVien>> deleteNhanVien(@PathVariable int nhanVienId) {
+
+        dmNhanVienService.deleteNhanVien(nhanVienId);
+
+        DMNhanVien dmNhanVien = dmNhanVienService.findOne(nhanVienId);
+        TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(dmNhanVien.getMaNhanVien());
+        tk_taiKhoanHeThongService.deleteTK(tk_taiKhoanHeThong.getId());
+
+        List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
+        List<NhanVien> nhanViens = new ArrayList<>();
+        for (DMNhanVien dmNhanVien1 :
+                dmNhanViens) {
+            nhanViens.add(new NhanVien(dmNhanVien1));
+        }
+        nhanViens.sort(Comparator.comparing(NhanVien::getTen));
+        return new ResponseEntity<List<NhanVien>>(nhanViens, HttpStatus.OK);
+    }
+
+    //Nhan vien - vai tro
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-nhan-vien-vai-tro")
+    public ResponseEntity<List<TaiKhoanVaiTro>> getAllNhanVienVaiTro() {
+        List<TK_TaiKhoanHeThong_VaiTro> tk_taiKhoanHeThong_vaiTros = tk_taiKhoanHeThong_vaiTroService.findAll();
+        List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
+        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
+                tk_taiKhoanHeThong_vaiTros) {
+            if(checkNotSinhVien(tk_taiKhoanHeThong_vaiTro.getTk_taiKhoanHeThong())){
+                taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+            }
+        }
+        return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-vai-tro")
+    public ResponseEntity<List<VaiTro>> getAllVaiTro() {
+        List<TK_VaiTro> tk_vaiTros = tk_vaiTroService.findAll();
+        List<VaiTro> vaiTros = new ArrayList<>();
+        for (TK_VaiTro tk_vaiTro:
+             tk_vaiTros) {
+            //Bo vai tro sinh vien
+            if(tk_vaiTro.getId() != 1){
+                vaiTros.add(new VaiTro(tk_vaiTro));
+            }
+        }
+
+        vaiTros.sort(Comparator.comparing(VaiTro::getTenVaiTro));
+        return new ResponseEntity<List<VaiTro>>(vaiTros, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-tai-khoan-nhan-vien")
+    public ResponseEntity<List<TaiKhoan>> getAllTaiKhoanNhanVien() {
+        List<TK_TaiKhoanHeThong> tk_taiKhoanHeThongs = tk_taiKhoanHeThongService.findAll();
+        List<TaiKhoan> taiKhoans = new ArrayList<>();
+        for (TK_TaiKhoanHeThong tk_taiKhoanHeThong:
+             tk_taiKhoanHeThongs) {
+            if(this.checkNotSinhVien(tk_taiKhoanHeThong)){
+                taiKhoans.add(new TaiKhoan(tk_taiKhoanHeThong));
+            }
+        }
+
+        return new ResponseEntity<List<TaiKhoan>>(taiKhoans, HttpStatus.OK);
+    }
+
+    boolean checkNotSinhVien(TK_TaiKhoanHeThong tk_taiKhoanHeThong){
+        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro:
+             tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
+            if(tk_taiKhoanHeThong_vaiTro.getTk_vaiTro().getId() == 1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/nhan-vien-vai-tro")
+    public ResponseEntity<List<TaiKhoanVaiTro>> insertNhanVienVaiTro(@RequestBody TaiKhoanVaiTro taiKhoanVaiTro) {
+
+        TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(taiKhoanVaiTro.getTaiKhoan().getTenDangNhap());
+        List<TK_VaiTro> tk_vaiTrosCuaNhanVien = new ArrayList<>();
+        for (TK_TaiKhoanHeThong_VaiTro taiKhoanHeThong_vaiTro :
+                tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
+            tk_vaiTrosCuaNhanVien.add(taiKhoanHeThong_vaiTro.getTk_vaiTro());
+        }
+
+        boolean vaiTroDaTonTai = false;
+        for (TK_VaiTro aTk_vaiTrosCuaNhanVien : tk_vaiTrosCuaNhanVien) {
+            if (aTk_vaiTrosCuaNhanVien.getId() == taiKhoanVaiTro.getVaiTro().getId()) {
+                vaiTroDaTonTai = true;
+                break;
+            }
+        }
+
+        if(vaiTroDaTonTai){
+            return new ResponseEntity<List<TaiKhoanVaiTro>>(HttpStatus.CONFLICT);
+        }else{
+            TK_VaiTro tk_vaiTro = tk_vaiTroService.findOne(taiKhoanVaiTro.getVaiTro().getId());
+            tk_taiKhoanHeThong_vaiTroService.insertTKVT(new TK_TaiKhoanHeThong_VaiTro(taiKhoanVaiTro.getId(), tk_taiKhoanHeThong, tk_vaiTro));
+
+            List<TK_TaiKhoanHeThong_VaiTro> tk_taiKhoanHeThong_vaiTros = tk_taiKhoanHeThong_vaiTroService.findAll();
+            List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
+            for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
+                    tk_taiKhoanHeThong_vaiTros) {
+                taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+            }
+            return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
+
+        }
+
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhan-vien-vai-tro/delete/{nhanVienVaiTroId}")
+    public ResponseEntity<List<TaiKhoanVaiTro>> deleteNhanVienVaiTro(@PathVariable int nhanVienVaiTroId) {
+
+        tk_taiKhoanHeThong_vaiTroService.deleteTKVT(nhanVienVaiTroId);
+
+        List<TK_TaiKhoanHeThong_VaiTro> tk_taiKhoanHeThong_vaiTros = tk_taiKhoanHeThong_vaiTroService.findAll();
+        List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
+        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
+                tk_taiKhoanHeThong_vaiTros) {
+            taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+        }
+        return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
     }
 }
