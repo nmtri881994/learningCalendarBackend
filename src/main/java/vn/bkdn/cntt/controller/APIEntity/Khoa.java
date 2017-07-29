@@ -1,5 +1,7 @@
 package vn.bkdn.cntt.controller.APIEntity;
 
+import vn.bkdn.cntt.entity.DMDonVi;
+
 /**
  * Created by Tri on 7/26/2017.
  */
@@ -15,6 +17,12 @@ public class Khoa {
         this.id = id;
         this.ma = ma;
         this.ten = ten;
+    }
+
+    public Khoa(DMDonVi dmDonVi){
+        this.id = dmDonVi.getId();
+        this.ma = dmDonVi.getMa();
+        this.ten = dmDonVi.getTen();
     }
 
     public int getId() {

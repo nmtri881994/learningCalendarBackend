@@ -48,4 +48,9 @@ public class TKB_Khoa_KhoaHocServiceImpl implements TKB_Khoa_KhoaHocService {
     public void deleteKhoaKhoaHoc(int id) {
         khoa_khoaHocRepository.delete(id);
     }
+
+    @Override
+    public TKB_Khoa_KhoaHoc findOne(int id) {
+        return khoa_khoaHocRepository.findOne(id);
+    }
 }

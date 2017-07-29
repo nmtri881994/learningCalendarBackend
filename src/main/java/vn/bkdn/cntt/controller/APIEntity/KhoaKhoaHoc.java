@@ -2,6 +2,7 @@ package vn.bkdn.cntt.controller.APIEntity;
 
 import vn.bkdn.cntt.entity.DMDonVi;
 import vn.bkdn.cntt.entity.TKB_KhoaHoc;
+import vn.bkdn.cntt.entity.TKB_Khoa_KhoaHoc;
 import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc;
 
 /**
@@ -34,6 +35,15 @@ public class KhoaKhoaHoc {
         this.kiPhanNganh = khoaKhoaHoc.getKiPhanNganh();
         this.kiBatDau = khoaKhoaHoc.getKiBatDau();
         this.kiKetThuc = khoaKhoaHoc.getKiKetThuc();
+    }
+
+    public KhoaKhoaHoc(TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc){
+        this.id = tkb_khoa_khoaHoc.getId();
+        this.khoa = new Khoa(tkb_khoa_khoaHoc.getDmDonVi());
+        this.tkb_khoaHoc = tkb_khoa_khoaHoc.getTkb_khoaHoc();
+        this.kiPhanNganh = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh());
+        this.kiBatDau = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau());
+        this.kiKetThuc = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc());
     }
 
     public int getId() {

@@ -1,6 +1,7 @@
 package vn.bkdn.cntt.controller.APIEntity;
 
 import vn.bkdn.cntt.entity.TKB_KiHoc;
+import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc;
 import vn.bkdn.cntt.entity.TKB_NamHoc;
 
 import java.sql.Date;
@@ -24,6 +25,14 @@ public class KiHocNamHoc {
         this.namHoc = namHoc;
         this.ngayBatDau = ngayBatDau;
         this.ngayKetThuc = ngayKetThuc;
+    }
+
+    public KiHocNamHoc(TKB_KiHoc_NamHoc tkb_kiHoc_namHoc){
+        this.id = tkb_kiHoc_namHoc.getId();
+        this.kiHoc = new KiHoc(tkb_kiHoc_namHoc.getTkb_kiHoc());
+        this.namHoc = new NamHoc(tkb_kiHoc_namHoc.getTkb_namHoc());
+        this.ngayBatDau = tkb_kiHoc_namHoc.getNgayBatDau();
+        this.ngayKetThuc = tkb_kiHoc_namHoc.getNgayKetThuc();
     }
 
     public int getId() {

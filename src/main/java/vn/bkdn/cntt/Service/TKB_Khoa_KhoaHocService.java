@@ -16,4 +16,5 @@ public interface TKB_Khoa_KhoaHocService {
     void insertKhoaKhoaHoc(TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc);
     void editKhoaKhoaHoc(KhoaKhoaHoc khoaKhoaHoc);
     void deleteKhoaKhoaHoc(int id);
+    TKB_Khoa_KhoaHoc findOne(int id);
 }

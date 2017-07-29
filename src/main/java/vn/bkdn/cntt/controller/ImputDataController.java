@@ -51,6 +51,9 @@ public class ImputDataController {
     @Autowired
     private TKB_Khoa_KhoaHocService tkb_khoa_khoaHocService;
 
+    @Autowired
+    private DMLopHocService dmLopHocService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -353,8 +356,8 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
-            for (int j = i+1; j < khoaKhoaHocs.size(); j++) {
-                if(khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa())>0){
+            for (int j = i + 1; j < khoaKhoaHocs.size(); j++) {
+                if (khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa()) > 0) {
                     KhoaKhoaHoc khoaKhoaHoc = new KhoaKhoaHoc(khoaKhoaHocs.get(i));
                     khoaKhoaHocs.set(i, khoaKhoaHocs.get(j));
                     khoaKhoaHocs.set(j, khoaKhoaHoc);
@@ -394,8 +397,8 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
-            for (int j = i+1; j < khoaKhoaHocs.size(); j++) {
-                if(khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa())>0){
+            for (int j = i + 1; j < khoaKhoaHocs.size(); j++) {
+                if (khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa()) > 0) {
                     KhoaKhoaHoc khoaKhoaHoc1 = new KhoaKhoaHoc(khoaKhoaHocs.get(i));
                     khoaKhoaHocs.set(i, khoaKhoaHocs.get(j));
                     khoaKhoaHocs.set(j, khoaKhoaHoc1);
@@ -423,8 +426,8 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
-            for (int j = i+1; j < khoaKhoaHocs.size(); j++) {
-                if(khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa())>0){
+            for (int j = i + 1; j < khoaKhoaHocs.size(); j++) {
+                if (khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa()) > 0) {
                     KhoaKhoaHoc khoaKhoaHoc1 = new KhoaKhoaHoc(khoaKhoaHocs.get(i));
                     khoaKhoaHocs.set(i, khoaKhoaHocs.get(j));
                     khoaKhoaHocs.set(j, khoaKhoaHoc1);
@@ -437,7 +440,7 @@ public class ImputDataController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/khoa-khoa-hoc/delete/{khoaKhoaHocId}")
-    public ResponseEntity<List<KhoaKhoaHoc>> KhoaKhoaNamHoc(@PathVariable int khoaKhoaHocId) {
+    public ResponseEntity<List<KhoaKhoaHoc>> deleteKhoaKhoaHoc(@PathVariable int khoaKhoaHocId) {
 
         tkb_khoa_khoaHocService.deleteKhoaKhoaHoc(khoaKhoaHocId);
 
@@ -452,8 +455,8 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
-            for (int j = i+1; j < khoaKhoaHocs.size(); j++) {
-                if(khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa())>0){
+            for (int j = i + 1; j < khoaKhoaHocs.size(); j++) {
+                if (khoaKhoaHocs.get(i).getKhoa().getMa().compareTo(khoaKhoaHocs.get(j).getKhoa().getMa()) > 0) {
                     KhoaKhoaHoc khoaKhoaHoc1 = new KhoaKhoaHoc(khoaKhoaHocs.get(i));
                     khoaKhoaHocs.set(i, khoaKhoaHocs.get(j));
                     khoaKhoaHocs.set(j, khoaKhoaHoc1);
@@ -462,5 +465,78 @@ public class ImputDataController {
         }
 
         return new ResponseEntity<List<KhoaKhoaHoc>>(khoaKhoaHocs, HttpStatus.OK);
+    }
+
+    //Lop hoc
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-lop-hoc")
+    public ResponseEntity<List<LopHoc>> getAllLopHoc() {
+        List<DMLopHoc> dmLopHocs = dmLopHocService.findAll();
+        List<LopHoc> lopHocs = new ArrayList<>();
+
+        for (DMLopHoc dmLopHoc :
+                dmLopHocs) {
+            lopHocs.add(new LopHoc(dmLopHoc));
+        }
+
+        lopHocs.sort(Comparator.comparing(LopHoc::getMa));
+        return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/lop-hoc")
+    public ResponseEntity<List<LopHoc>> insertLopHoc(@RequestBody LopHoc lopHoc) {
+
+        dmLopHocService.insertLopHoc(new DMLopHoc(lopHoc.getId(), lopHoc.getMa(), lopHoc.getTen(),
+                tkb_khoa_khoaHocService.findOne(lopHoc.getKhoaKhoaHoc().getId())));
+
+        List<DMLopHoc> dmLopHocs = dmLopHocService.findAll();
+        List<LopHoc> lopHocs = new ArrayList<>();
+
+        for (DMLopHoc dmLopHoc :
+                dmLopHocs) {
+            lopHocs.add(new LopHoc(dmLopHoc));
+        }
+
+        lopHocs.sort(Comparator.comparing(LopHoc::getMa));
+        return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/lop-hoc/edit")
+    public ResponseEntity<List<LopHoc>> editLopHoc(@RequestBody LopHoc lopHoc) {
+
+        dmLopHocService.editLopHoc(lopHoc);
+
+        List<DMLopHoc> dmLopHocs = dmLopHocService.findAll();
+        List<LopHoc> lopHocs = new ArrayList<>();
+
+        for (DMLopHoc dmLopHoc :
+                dmLopHocs) {
+            lopHocs.add(new LopHoc(dmLopHoc));
+        }
+
+        lopHocs.sort(Comparator.comparing(LopHoc::getMa));
+        return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/lop-hoc/delete/{lopHocId}")
+    public ResponseEntity<List<LopHoc>> deleteLopHoc(@PathVariable int lopHocId) {
+
+        dmLopHocService.deleteLopHoc(lopHocId);
+
+        List<DMLopHoc> dmLopHocs = dmLopHocService.findAll();
+        List<LopHoc> lopHocs = new ArrayList<>();
+
+        for (DMLopHoc dmLopHoc :
+                dmLopHocs) {
+            lopHocs.add(new LopHoc(dmLopHoc));
+        }
+
+        lopHocs.sort(Comparator.comparing(LopHoc::getMa));
+        return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
     }
 }

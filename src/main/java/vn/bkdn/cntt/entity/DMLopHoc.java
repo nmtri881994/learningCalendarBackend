@@ -21,6 +21,13 @@ public class DMLopHoc {
     public DMLopHoc() {
     }
 
+    public DMLopHoc(int id, String ma, String ten, TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc) {
+        this.id = id;
+        this.ma = ma;
+        this.ten = ten;
+        this.tkb_khoa_khoaHoc = tkb_khoa_khoaHoc;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
