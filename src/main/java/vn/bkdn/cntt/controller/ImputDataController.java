@@ -66,6 +66,12 @@ public class ImputDataController {
     @Autowired
     private TK_VaiTroService tk_vaiTroService;
 
+    @Autowired
+    private DMNganhService dmNganhService;
+
+    @Autowired
+    private TKB_Khoa_KhoaHoc_NganhService tkb_khoa_khoaHoc_nganhService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -749,5 +755,144 @@ public class ImputDataController {
             }
         }
         return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
+    }
+
+    //nganh
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-nganh")
+    public ResponseEntity<List<DMNganh>> getAllNganh() {
+        List<DMNganh> dmNganhs = dmNganhService.findAll();
+        dmNganhs.sort(Comparator.comparing(DMNganh::getTen));
+        return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/nganh")
+    public ResponseEntity<List<DMNganh>> insertNganh(@RequestBody DMNganh dmNganh) {
+        dmNganhService.insertNganh(dmNganh);
+
+        List<DMNganh> dmNganhs = dmNganhService.findAll();
+        dmNganhs.sort(Comparator.comparing(DMNganh::getTen));
+        return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/nganh/edit")
+    public ResponseEntity<List<DMNganh>> editNganh(@RequestBody DMNganh dmNganh) {
+        dmNganhService.editNganh(dmNganh);
+        List<DMNganh> dmNganhs = dmNganhService.findAll();
+        dmNganhs.sort(Comparator.comparing(DMNganh::getTen));
+        return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nganh/delete/{nganhId}")
+    public ResponseEntity<List<DMNganh>> deleteNganh(@PathVariable int nganhId) {
+        dmNganhService.deleteNganh(nganhId);
+        List<DMNganh> dmNganhs = dmNganhService.findAll();
+        dmNganhs.sort(Comparator.comparing(DMNganh::getTen));
+        return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
+
+    //khoa - khoa hoc - nganh
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-khoa-khoa-hoc-nganh")
+    public ResponseEntity<List<KhoaKhoaHocNganh>> getAllKhoaKhoaHocNganh() {
+        List<TKB_Khoa_KhoaHoc_Nganh> tkb_khoa_khoaHoc_nganhs = tkb_khoa_khoaHoc_nganhService.findAll();
+        List<KhoaKhoaHocNganh> khoaKhoaHocNganhs = new ArrayList<>();
+        for (TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh :
+                tkb_khoa_khoaHoc_nganhs) {
+            khoaKhoaHocNganhs.add(new KhoaKhoaHocNganh(tkb_khoa_khoaHoc_nganh));
+        }
+
+        for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
+            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+                if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
+                    KhoaKhoaHocNganh khoaKhoaHocNganh = khoaKhoaHocNganhs.get(i);
+                    khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
+                    khoaKhoaHocNganhs.set(j, khoaKhoaHocNganh);
+                }
+            }
+        }
+
+        return new ResponseEntity<List<KhoaKhoaHocNganh>>(khoaKhoaHocNganhs, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/khoa-khoa-hoc-nganh")
+    public ResponseEntity<List<KhoaKhoaHocNganh>> insertKhoaKhoaHocNganh(@RequestBody KhoaKhoaHocNganh khoaKhoaHocNganh) {
+
+        TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc = tkb_khoa_khoaHocService.findOne(khoaKhoaHocNganh.getKhoaKhoaHoc().getId());
+        List<DMNganh> nganhsCuaKhoaKhoaHoc = new ArrayList<>();
+        for (TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh :
+                tkb_khoa_khoaHoc.getTKB_khoa_khoaHoc_nganhs()) {
+            nganhsCuaKhoaKhoaHoc.add(tkb_khoa_khoaHoc_nganh.getDmNganh());
+        }
+
+        boolean nganhDaTonTai = false;
+        for (DMNganh aNganhsCuaKhoaKhoaHoc : nganhsCuaKhoaKhoaHoc) {
+            if (aNganhsCuaKhoaKhoaHoc.getId() == khoaKhoaHocNganh.getDmNganh().getId()) {
+                nganhDaTonTai = true;
+                break;
+            }
+        }
+
+        if(nganhDaTonTai){
+            return new ResponseEntity<List<KhoaKhoaHocNganh>>(HttpStatus.CONFLICT);
+        }else{
+            tkb_khoa_khoaHoc_nganhService.insertKhoaKhoaHocNganh(new TKB_Khoa_KhoaHoc_Nganh(khoaKhoaHocNganh.getId(),
+                    tkb_khoa_khoaHoc, khoaKhoaHocNganh.getDmNganh()));
+
+            List<TKB_Khoa_KhoaHoc_Nganh> tkb_khoa_khoaHoc_nganhs = tkb_khoa_khoaHoc_nganhService.findAll();
+            List<KhoaKhoaHocNganh> khoaKhoaHocNganhs = new ArrayList<>();
+            for (TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh :
+                    tkb_khoa_khoaHoc_nganhs) {
+                khoaKhoaHocNganhs.add(new KhoaKhoaHocNganh(tkb_khoa_khoaHoc_nganh));
+            }
+
+            for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
+                for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+                    if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
+                        KhoaKhoaHocNganh khoaKhoaHocNganh1 = khoaKhoaHocNganhs.get(i);
+                        khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
+                        khoaKhoaHocNganhs.set(j, khoaKhoaHocNganh1);
+                    }
+                }
+            }
+
+            return new ResponseEntity<List<KhoaKhoaHocNganh>>(khoaKhoaHocNganhs, HttpStatus.OK);
+        }
+
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/khoa-khoa-hoc-nganh/delete/{khoaKhoaHocNganhId}")
+    public ResponseEntity<List<KhoaKhoaHocNganh>> deleteKhoaKhoaHocNganh(@PathVariable int khoaKhoaHocNganhId) {
+
+        tkb_khoa_khoaHoc_nganhService.deleteKhoaKhoaHocNganh(khoaKhoaHocNganhId);
+
+        List<TKB_Khoa_KhoaHoc_Nganh> tkb_khoa_khoaHoc_nganhs = tkb_khoa_khoaHoc_nganhService.findAll();
+        List<KhoaKhoaHocNganh> khoaKhoaHocNganhs = new ArrayList<>();
+        for (TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh :
+                tkb_khoa_khoaHoc_nganhs) {
+            khoaKhoaHocNganhs.add(new KhoaKhoaHocNganh(tkb_khoa_khoaHoc_nganh));
+        }
+
+        for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
+            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+                if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
+                    KhoaKhoaHocNganh khoaKhoaHocNganh = khoaKhoaHocNganhs.get(i);
+                    khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
+                    khoaKhoaHocNganhs.set(j, khoaKhoaHocNganh);
+                }
+            }
+        }
+
+        return new ResponseEntity<List<KhoaKhoaHocNganh>>(khoaKhoaHocNganhs, HttpStatus.OK);
     }
 }

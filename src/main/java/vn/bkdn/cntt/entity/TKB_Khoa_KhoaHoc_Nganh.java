@@ -17,6 +17,12 @@ public class TKB_Khoa_KhoaHoc_Nganh {
     public TKB_Khoa_KhoaHoc_Nganh() {
     }
 
+    public TKB_Khoa_KhoaHoc_Nganh(int id, TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc, DMNganh dmNganh) {
+        this.id = id;
+        this.tkb_khoa_khoaHoc = tkb_khoa_khoaHoc;
+        this.dmNganh = dmNganh;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
