@@ -60,4 +60,9 @@ public class TK_TaiKhoanHeThongServiceImpl implements TK_TaiKhoanHeThongService 
         return taiKhoanHeThongRepository.findAll();
     }
 
+    @Override
+    public TK_TaiKhoanHeThong findOne(int id) {
+        return taiKhoanHeThongRepository.findOne(id);
+    }
+
 }

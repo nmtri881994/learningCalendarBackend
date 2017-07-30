@@ -622,10 +622,10 @@ public class ImputDataController {
     @PreAuthorize("hasRole('GIAOVU')")
     @GetMapping(value = "/nhan-vien/delete/{nhanVienId}")
     public ResponseEntity<List<NhanVien>> deleteNhanVien(@PathVariable int nhanVienId) {
+        DMNhanVien dmNhanVien = dmNhanVienService.findOne(nhanVienId);
 
         dmNhanVienService.deleteNhanVien(nhanVienId);
 
-        DMNhanVien dmNhanVien = dmNhanVienService.findOne(nhanVienId);
         TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(dmNhanVien.getMaNhanVien());
         tk_taiKhoanHeThongService.deleteTK(tk_taiKhoanHeThong.getId());
 
@@ -648,7 +648,7 @@ public class ImputDataController {
         List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
         for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
                 tk_taiKhoanHeThong_vaiTros) {
-            if(checkNotSinhVien(tk_taiKhoanHeThong_vaiTro.getTk_taiKhoanHeThong())){
+            if (checkNotSinhVien(tk_taiKhoanHeThong_vaiTro.getTk_taiKhoanHeThong())) {
                 taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
             }
         }
@@ -660,10 +660,10 @@ public class ImputDataController {
     public ResponseEntity<List<VaiTro>> getAllVaiTro() {
         List<TK_VaiTro> tk_vaiTros = tk_vaiTroService.findAll();
         List<VaiTro> vaiTros = new ArrayList<>();
-        for (TK_VaiTro tk_vaiTro:
-             tk_vaiTros) {
+        for (TK_VaiTro tk_vaiTro :
+                tk_vaiTros) {
             //Bo vai tro sinh vien
-            if(tk_vaiTro.getId() != 1){
+            if (tk_vaiTro.getId() != 1) {
                 vaiTros.add(new VaiTro(tk_vaiTro));
             }
         }
@@ -677,9 +677,9 @@ public class ImputDataController {
     public ResponseEntity<List<TaiKhoan>> getAllTaiKhoanNhanVien() {
         List<TK_TaiKhoanHeThong> tk_taiKhoanHeThongs = tk_taiKhoanHeThongService.findAll();
         List<TaiKhoan> taiKhoans = new ArrayList<>();
-        for (TK_TaiKhoanHeThong tk_taiKhoanHeThong:
-             tk_taiKhoanHeThongs) {
-            if(this.checkNotSinhVien(tk_taiKhoanHeThong)){
+        for (TK_TaiKhoanHeThong tk_taiKhoanHeThong :
+                tk_taiKhoanHeThongs) {
+            if (this.checkNotSinhVien(tk_taiKhoanHeThong)) {
                 taiKhoans.add(new TaiKhoan(tk_taiKhoanHeThong));
             }
         }
@@ -687,10 +687,10 @@ public class ImputDataController {
         return new ResponseEntity<List<TaiKhoan>>(taiKhoans, HttpStatus.OK);
     }
 
-    boolean checkNotSinhVien(TK_TaiKhoanHeThong tk_taiKhoanHeThong){
-        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro:
-             tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
-            if(tk_taiKhoanHeThong_vaiTro.getTk_vaiTro().getId() == 1){
+    boolean checkNotSinhVien(TK_TaiKhoanHeThong tk_taiKhoanHeThong) {
+        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
+                tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
+            if (tk_taiKhoanHeThong_vaiTro.getTk_vaiTro().getId() == 1) {
                 return false;
             }
         }
@@ -702,12 +702,8 @@ public class ImputDataController {
     @PostMapping(value = "/nhan-vien-vai-tro")
     public ResponseEntity<List<TaiKhoanVaiTro>> insertNhanVienVaiTro(@RequestBody TaiKhoanVaiTro taiKhoanVaiTro) {
 
-        TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(taiKhoanVaiTro.getTaiKhoan().getTenDangNhap());
-        List<TK_VaiTro> tk_vaiTrosCuaNhanVien = new ArrayList<>();
-        for (TK_TaiKhoanHeThong_VaiTro taiKhoanHeThong_vaiTro :
-                tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
-            tk_vaiTrosCuaNhanVien.add(taiKhoanHeThong_vaiTro.getTk_vaiTro());
-        }
+        TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findOne(taiKhoanVaiTro.getTaiKhoan().getId());
+        List<TK_VaiTro> tk_vaiTrosCuaNhanVien = tk_taiKhoanHeThongService.getAllVaiTroByTaiKhoanId(tk_taiKhoanHeThong.getId());
 
         boolean vaiTroDaTonTai = false;
         for (TK_VaiTro aTk_vaiTrosCuaNhanVien : tk_vaiTrosCuaNhanVien) {
@@ -717,9 +713,9 @@ public class ImputDataController {
             }
         }
 
-        if(vaiTroDaTonTai){
+        if (vaiTroDaTonTai) {
             return new ResponseEntity<List<TaiKhoanVaiTro>>(HttpStatus.CONFLICT);
-        }else{
+        } else {
             TK_VaiTro tk_vaiTro = tk_vaiTroService.findOne(taiKhoanVaiTro.getVaiTro().getId());
             tk_taiKhoanHeThong_vaiTroService.insertTKVT(new TK_TaiKhoanHeThong_VaiTro(taiKhoanVaiTro.getId(), tk_taiKhoanHeThong, tk_vaiTro));
 
@@ -727,7 +723,9 @@ public class ImputDataController {
             List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
             for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
                     tk_taiKhoanHeThong_vaiTros) {
-                taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+                if (checkNotSinhVien(tk_taiKhoanHeThong_vaiTro.getTk_taiKhoanHeThong())) {
+                    taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+                }
             }
             return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
 
@@ -746,7 +744,9 @@ public class ImputDataController {
         List<TaiKhoanVaiTro> taiKhoanVaiTros = new ArrayList<>();
         for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
                 tk_taiKhoanHeThong_vaiTros) {
-            taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+            if (checkNotSinhVien(tk_taiKhoanHeThong_vaiTro.getTk_taiKhoanHeThong())) {
+                taiKhoanVaiTros.add(new TaiKhoanVaiTro(tk_taiKhoanHeThong_vaiTro));
+            }
         }
         return new ResponseEntity<List<TaiKhoanVaiTro>>(taiKhoanVaiTros, HttpStatus.OK);
     }

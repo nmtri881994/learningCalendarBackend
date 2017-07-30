@@ -17,4 +17,5 @@ public interface TK_TaiKhoanHeThongService {
     TK_TaiKhoanHeThong insertTK(TK_TaiKhoanHeThong tk_taiKhoanHeThong);
     void deleteTK(int id);
     List<TK_TaiKhoanHeThong> findAll();
+    TK_TaiKhoanHeThong findOne(int id);
 }
