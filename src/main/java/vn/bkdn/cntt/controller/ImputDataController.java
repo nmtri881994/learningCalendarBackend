@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 import vn.bkdn.cntt.controller.APIEntity.*;
@@ -71,6 +72,9 @@ public class ImputDataController {
 
     @Autowired
     private TKB_Khoa_KhoaHoc_NganhService tkb_khoa_khoaHoc_nganhService;
+
+    @Autowired
+    private DMSinhVienService dmSinhVienService;
 
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
@@ -608,10 +612,15 @@ public class ImputDataController {
     @PostMapping(value = "/nhan-vien/edit")
     public ResponseEntity<List<NhanVien>> editNhanVien(@RequestBody NhanVien nhanVien) {
         DMNhanVien dmNhanVien1 = dmNhanVienService.findByMaNhanVien(nhanVien.getMaNhanVien());
-        if (dmNhanVien1 != null) {
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMNhanVien dmNhanVien2 = dmNhanVienService.findByMaNhanVien(tenDangNhap);
+        if (dmNhanVien1 != null && dmNhanVien1.getId() != dmNhanVien2.getId()) {
             return new ResponseEntity<List<NhanVien>>(HttpStatus.CONFLICT);
         } else {
             dmNhanVienService.editNhanVien(nhanVien);
+
+            TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(nhanVien.getMaNhanVien());
+            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), nhanVien.getMaNhanVien(), nhanVien.getHoDem()+" "+nhanVien.getTen());
 
             List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
             List<NhanVien> nhanViens = new ArrayList<>();
@@ -809,7 +818,7 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
-            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); j++) {
                 if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
                     KhoaKhoaHocNganh khoaKhoaHocNganh = khoaKhoaHocNganhs.get(i);
                     khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
@@ -841,9 +850,9 @@ public class ImputDataController {
             }
         }
 
-        if(nganhDaTonTai){
+        if (nganhDaTonTai) {
             return new ResponseEntity<List<KhoaKhoaHocNganh>>(HttpStatus.CONFLICT);
-        }else{
+        } else {
             tkb_khoa_khoaHoc_nganhService.insertKhoaKhoaHocNganh(new TKB_Khoa_KhoaHoc_Nganh(khoaKhoaHocNganh.getId(),
                     tkb_khoa_khoaHoc, khoaKhoaHocNganh.getDmNganh()));
 
@@ -855,7 +864,7 @@ public class ImputDataController {
             }
 
             for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
-                for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+                for (int j = i + 1; j < khoaKhoaHocNganhs.size(); j++) {
                     if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
                         KhoaKhoaHocNganh khoaKhoaHocNganh1 = khoaKhoaHocNganhs.get(i);
                         khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
@@ -884,7 +893,7 @@ public class ImputDataController {
         }
 
         for (int i = 0; i < khoaKhoaHocNganhs.size() - 1; i++) {
-            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); i++) {
+            for (int j = i + 1; j < khoaKhoaHocNganhs.size(); j++) {
                 if (khoaKhoaHocNganhs.get(i).getKhoaKhoaHoc().getKhoa().getTen().compareTo(khoaKhoaHocNganhs.get(j).getKhoaKhoaHoc().getKhoa().getTen()) > 0) {
                     KhoaKhoaHocNganh khoaKhoaHocNganh = khoaKhoaHocNganhs.get(i);
                     khoaKhoaHocNganhs.set(i, khoaKhoaHocNganhs.get(j));
@@ -894,5 +903,97 @@ public class ImputDataController {
         }
 
         return new ResponseEntity<List<KhoaKhoaHocNganh>>(khoaKhoaHocNganhs, HttpStatus.OK);
+    }
+
+    //Sinh vien
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-sinh-vien")
+    public ResponseEntity<List<SinhVien>> getAllSinhVien() {
+        List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+        List<SinhVien> sinhViens = new ArrayList<>();
+        for (DMSinhVien dmSinhVien :
+                dmSinhViens) {
+            sinhViens.add(new SinhVien(dmSinhVien));
+        }
+
+        sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+        return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/sinh-vien")
+    public ResponseEntity<List<SinhVien>> insertSinhVien(@RequestBody SinhVien sinhVien) {
+
+        DMSinhVien dmSinhVien1 = dmSinhVienService.findByMaSinhVien(sinhVien.getMaSinhVien());
+        if (dmSinhVien1 != null) {
+            return new ResponseEntity<List<SinhVien>>(HttpStatus.CONFLICT);
+        } else {
+            dmSinhVienService.insertSinhVien(new DMSinhVien(sinhVien.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem(),
+                    sinhVien.getTen(), dmLopHocService.findOne(sinhVien.getLopHoc().getId()), sinhVien.getDmNganh()));
+            List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+            List<SinhVien> sinhViens = new ArrayList<>();
+            for (DMSinhVien dmSinhVien :
+                    dmSinhViens) {
+                sinhViens.add(new SinhVien(dmSinhVien));
+            }
+
+            sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+            return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
+        }
+
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/sinh-vien/edit")
+    public ResponseEntity<List<SinhVien>> editSinhVien(@RequestBody SinhVien sinhVien) {
+
+        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
+        DMSinhVien dmSinhVien1 = dmSinhVienService.findByMaSinhVien(tenDangNhap);
+
+        DMSinhVien dmSinhVien2 = dmSinhVienService.findByMaSinhVien(sinhVien.getMaSinhVien());
+        if(dmSinhVien2!=null&&dmSinhVien1.getId()!=dmSinhVien2.getId()){
+            return new ResponseEntity<List<SinhVien>>(HttpStatus.CONFLICT);
+        }else{
+
+            dmSinhVienService.editSinhVien(sinhVien);
+
+            TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(sinhVien.getMaSinhVien());
+            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem()+" "+sinhVien.getTen());
+
+            List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+            List<SinhVien> sinhViens = new ArrayList<>();
+            for (DMSinhVien dmSinhVien :
+                    dmSinhViens) {
+                sinhViens.add(new SinhVien(dmSinhVien));
+            }
+
+            sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+            return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
+        }
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/sinh-vien/delete/{sinhVienId}")
+    public ResponseEntity<List<SinhVien>> deleteSinhVien(@PathVariable int sinhVienId) {
+
+        dmSinhVienService.deleteSinhVien(sinhVienId);
+
+        List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+        List<SinhVien> sinhViens = new ArrayList<>();
+        for (DMSinhVien dmSinhVien :
+                dmSinhViens) {
+            sinhViens.add(new SinhVien(dmSinhVien));
+        }
+
+        sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+        return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
     }
 }

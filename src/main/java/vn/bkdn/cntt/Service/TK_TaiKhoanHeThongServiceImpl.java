@@ -56,6 +56,11 @@ public class TK_TaiKhoanHeThongServiceImpl implements TK_TaiKhoanHeThongService 
     }
 
     @Override
+    public void editTK(int id, String tenDangNhap, String hoVaTen) {
+        taiKhoanHeThongRepository.editTK(id, tenDangNhap, hoVaTen);
+    }
+
+    @Override
     public List<TK_TaiKhoanHeThong> findAll() {
         return taiKhoanHeThongRepository.findAll();
     }

@@ -27,6 +27,15 @@ public class DMSinhVien {
     public DMSinhVien() {
     }
 
+    public DMSinhVien(int id, String maSinhVien, String hoDem, String ten, DMLopHoc dmLopHoc, DMNganh dmNganh) {
+        this.id = id;
+        this.maSinhVien = maSinhVien;
+        this.hoDem = hoDem;
+        this.ten = ten;
+        this.dmLopHoc = dmLopHoc;
+        this.dmNganh = dmNganh;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

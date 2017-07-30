@@ -2,6 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.bkdn.cntt.controller.APIEntity.SinhVien;
 import vn.bkdn.cntt.repository.DMSinhVienRepository;
 import vn.bkdn.cntt.entity.DMSinhVien;
 
@@ -31,5 +32,21 @@ public class DMSinhVienServiceImpl implements DMSinhVienService {
     @Override
     public DMSinhVien findByMaSinhVien(String maSinhVien) {
         return sinhVienRepository.findByMaSinhVien(maSinhVien);
+    }
+
+    @Override
+    public void insertSinhVien(DMSinhVien dmSinhVien) {
+        sinhVienRepository.save(dmSinhVien);
+    }
+
+    @Override
+    public void editSinhVien(SinhVien sinhVien) {
+        sinhVienRepository.editNhanVien(sinhVien.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem(), sinhVien.getTen(),
+                sinhVien.getLopHoc().getId(), sinhVien.getDmNganh().getId());
+    }
+
+    @Override
+    public void deleteSinhVien(int id) {
+        sinhVienRepository.delete(id);
     }
 }
