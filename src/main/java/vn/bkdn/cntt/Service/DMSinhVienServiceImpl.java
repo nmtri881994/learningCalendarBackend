@@ -24,6 +24,11 @@ public class DMSinhVienServiceImpl implements DMSinhVienService {
     }
 
     @Override
+    public List<DMSinhVien> findAll2() {
+        return sinhVienRepository.findAll2();
+    }
+
+    @Override
     public DMSinhVien findOne(int sinhVienId) {
 //        return sinhVienRepository.findById(sinhVienId);
         return sinhVienRepository.findOne(sinhVienId);
@@ -42,7 +47,7 @@ public class DMSinhVienServiceImpl implements DMSinhVienService {
     @Override
     public void editSinhVien(SinhVien sinhVien) {
         sinhVienRepository.editNhanVien(sinhVien.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem(), sinhVien.getTen(),
-                sinhVien.getLopHoc().getId(), sinhVien.getDmNganh().getId());
+                sinhVien.getLopHoc().getId());
     }
 
     @Override

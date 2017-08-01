@@ -76,6 +76,9 @@ public class ImputDataController {
     @Autowired
     private DMSinhVienService dmSinhVienService;
 
+    @Autowired
+    private DMMonHocService dmMonHocService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -612,15 +615,14 @@ public class ImputDataController {
     @PostMapping(value = "/nhan-vien/edit")
     public ResponseEntity<List<NhanVien>> editNhanVien(@RequestBody NhanVien nhanVien) {
         DMNhanVien dmNhanVien1 = dmNhanVienService.findByMaNhanVien(nhanVien.getMaNhanVien());
-        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        DMNhanVien dmNhanVien2 = dmNhanVienService.findByMaNhanVien(tenDangNhap);
+        DMNhanVien dmNhanVien2 = dmNhanVienService.findOne(nhanVien.getId());
         if (dmNhanVien1 != null && dmNhanVien1.getId() != dmNhanVien2.getId()) {
             return new ResponseEntity<List<NhanVien>>(HttpStatus.CONFLICT);
         } else {
             dmNhanVienService.editNhanVien(nhanVien);
 
             TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(nhanVien.getMaNhanVien());
-            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), nhanVien.getMaNhanVien(), nhanVien.getHoDem()+" "+nhanVien.getTen());
+            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), nhanVien.getMaNhanVien(), nhanVien.getHoDem() + " " + nhanVien.getTen());
 
             List<DMNhanVien> dmNhanViens = dmNhanVienService.findAll();
             List<NhanVien> nhanViens = new ArrayList<>();
@@ -932,7 +934,12 @@ public class ImputDataController {
             return new ResponseEntity<List<SinhVien>>(HttpStatus.CONFLICT);
         } else {
             dmSinhVienService.insertSinhVien(new DMSinhVien(sinhVien.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem(),
-                    sinhVien.getTen(), dmLopHocService.findOne(sinhVien.getLopHoc().getId()), sinhVien.getDmNganh()));
+                    sinhVien.getTen(), dmLopHocService.findOne(sinhVien.getLopHoc().getId()), null));
+
+            TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.insertTK(new TK_TaiKhoanHeThong(sinhVien.getId(),
+                    sinhVien.getMaSinhVien(), sinhVien.getMaSinhVien(), sinhVien.getHoDem() + " " + sinhVien.getTen()));
+            tk_taiKhoanHeThong_vaiTroService.insertTKVT(new TK_TaiKhoanHeThong_VaiTro(0, tk_taiKhoanHeThong, tk_vaiTroService.findOne(1)));
+
             List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
             List<SinhVien> sinhViens = new ArrayList<>();
             for (DMSinhVien dmSinhVien :
@@ -950,22 +957,18 @@ public class ImputDataController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/sinh-vien/edit")
-    public ResponseEntity<List<SinhVien>> editSinhVien(@RequestBody SinhVien sinhVien) {
-
-        String tenDangNhap = SecurityContextHolder.getContext().getAuthentication().getName();
-        DMSinhVien dmSinhVien1 = dmSinhVienService.findByMaSinhVien(tenDangNhap);
-
+    public ResponseEntity<List<SinhVien>> editSinhVien(@RequestBody SinhVien sinhVien) throws InterruptedException {
+        DMSinhVien dmSinhVien1 = dmSinhVienService.findOne(sinhVien.getId());
         DMSinhVien dmSinhVien2 = dmSinhVienService.findByMaSinhVien(sinhVien.getMaSinhVien());
-        if(dmSinhVien2!=null&&dmSinhVien1.getId()!=dmSinhVien2.getId()){
+        if (dmSinhVien2 != null && dmSinhVien1.getId() != dmSinhVien2.getId()) {
             return new ResponseEntity<List<SinhVien>>(HttpStatus.CONFLICT);
-        }else{
+        } else {
 
             dmSinhVienService.editSinhVien(sinhVien);
 
             TK_TaiKhoanHeThong tk_taiKhoanHeThong = tk_taiKhoanHeThongService.findByTenDangNhap(sinhVien.getMaSinhVien());
-            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem()+" "+sinhVien.getTen());
-
-            List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+            tk_taiKhoanHeThongService.editTK(tk_taiKhoanHeThong.getId(), sinhVien.getMaSinhVien(), sinhVien.getHoDem() + " " + sinhVien.getTen());
+            List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll2();
             List<SinhVien> sinhViens = new ArrayList<>();
             for (DMSinhVien dmSinhVien :
                     dmSinhViens) {
@@ -996,4 +999,138 @@ public class ImputDataController {
 
         return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-lop-hoc/{khoaId}/{khoaHocId}")
+    public ResponseEntity<List<LopHoc>> deleteSinhVien(@PathVariable int khoaId, @PathVariable int khoaHocId) {
+        TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc = tkb_khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
+        List<LopHoc> lopHocs = new ArrayList<>();
+        if (tkb_khoa_khoaHoc != null) {
+            for (DMLopHoc dmLopHoc :
+                    tkb_khoa_khoaHoc.getDmLopHocs()) {
+                lopHocs.add(new LopHoc(dmLopHoc));
+            }
+        }
+
+
+        lopHocs.sort(Comparator.comparing(LopHoc::getMa));
+        return new ResponseEntity<List<LopHoc>>(lopHocs, HttpStatus.OK);
+    }
+
+    //Môn học
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-mon-hoc")
+    public ResponseEntity<List<MonHoc>> getAllMonHoc() {
+        List<DMMonHoc> dmMonHocs = dmMonHocService.findAll();
+        List<MonHoc> monHocs = new ArrayList<>();
+        for (DMMonHoc dmMonHoc :
+                dmMonHocs) {
+            monHocs.add(new MonHoc(dmMonHoc));
+        }
+        monHocs.sort(Comparator.comparing(MonHoc::getMaMonHoc));
+        return new ResponseEntity<List<MonHoc>>(monHocs, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/mon-hoc")
+    public ResponseEntity<List<MonHoc>> insertMonHoc(@RequestBody MonHoc monHoc) {
+        dmMonHocService.insertMonHoc(new DMMonHoc(monHoc.getId(), monHoc.getMaMonHoc(), monHoc.getTen(), monHoc.getSoTinChi()));
+        List<DMMonHoc> dmMonHocs = dmMonHocService.findAll();
+        List<MonHoc> monHocs = new ArrayList<>();
+        for (DMMonHoc dmMonHoc :
+                dmMonHocs) {
+            monHocs.add(new MonHoc(dmMonHoc));
+        }
+        monHocs.sort(Comparator.comparing(MonHoc::getMaMonHoc));
+        return new ResponseEntity<List<MonHoc>>(monHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/mon-hoc/edit")
+    public ResponseEntity<List<MonHoc>> editMonHoc(@RequestBody MonHoc monHoc) {
+        dmMonHocService.editMonHoc(monHoc);
+        List<DMMonHoc> dmMonHocs = dmMonHocService.findAll();
+        List<MonHoc> monHocs = new ArrayList<>();
+        for (DMMonHoc dmMonHoc :
+                dmMonHocs) {
+            monHocs.add(new MonHoc(dmMonHoc));
+        }
+        monHocs.sort(Comparator.comparing(MonHoc::getMaMonHoc));
+        return new ResponseEntity<List<MonHoc>>(monHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/mon-hoc/delete/{monHocId}")
+    public ResponseEntity<List<MonHoc>> deleteMonHoc(@PathVariable int monHocId) {
+        dmMonHocService.deleteMonHoc(monHocId);
+        List<DMMonHoc> dmMonHocs = dmMonHocService.findAll();
+        List<MonHoc> monHocs = new ArrayList<>();
+        for (DMMonHoc dmMonHoc :
+                dmMonHocs) {
+            monHocs.add(new MonHoc(dmMonHoc));
+        }
+        monHocs.sort(Comparator.comparing(MonHoc::getMaMonHoc));
+        return new ResponseEntity<List<MonHoc>>(monHocs, HttpStatus.OK);
+    }
+
+    //Sinh vien - nganh
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/sinh-vien-nganh/edit/{sinhVienId}/{nganhId}")
+    public ResponseEntity<List<SinhVien>> editSinhVienNganh(@PathVariable int sinhVienId, @PathVariable int nganhId) {
+
+        DMSinhVien dmSinhVien1 = dmSinhVienService.findOne(sinhVienId);
+        DMNganh dmNganh = dmNganhService.findOne(nganhId);
+        dmSinhVien1.setDmNganh(dmNganh);
+
+        dmSinhVienService.editSinhVien(new SinhVien(dmSinhVien1));
+
+        List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+        List<SinhVien> sinhViens = new ArrayList<>();
+        for (DMSinhVien dmSinhVien :
+                dmSinhViens) {
+            sinhViens.add(new SinhVien(dmSinhVien));
+        }
+
+        sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+        return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/sinh-vien-nganh/delete-nganh/{sinhVienId}")
+    public ResponseEntity<List<SinhVien>> deleteSinhVienNganh(@PathVariable int sinhVienId) {
+        DMSinhVien dmSinhVien1 = dmSinhVienService.findOne(sinhVienId);
+        dmSinhVien1.setDmNganh(null);
+
+        dmSinhVienService.editSinhVien(new SinhVien(dmSinhVien1));
+
+        List<DMSinhVien> dmSinhViens = dmSinhVienService.findAll();
+        List<SinhVien> sinhViens = new ArrayList<>();
+        for (DMSinhVien dmSinhVien :
+                dmSinhViens) {
+            sinhViens.add(new SinhVien(dmSinhVien));
+        }
+
+        sinhViens.sort(Comparator.comparing(SinhVien::getTen));
+
+        return new ResponseEntity<List<SinhVien>>(sinhViens, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/sinh-vien-nganh/get-all-nganh-of-sinh-vien/{sinhVienId}")
+    public ResponseEntity<List<DMNganh>> getAllNganhOfSinhVien(@PathVariable int sinhVienId) {
+        DMSinhVien dmSinhVien = dmSinhVienService.findOne(sinhVienId);
+        DMLopHoc dmLopHoc = dmSinhVien.getDmLopHoc();
+        TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc = dmLopHoc.getTkb_khoa_khoaHoc();
+        List<DMNganh> dmNganhs = new ArrayList<>();
+        for (TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh :
+                tkb_khoa_khoaHoc.getTKB_khoa_khoaHoc_nganhs()) {
+            dmNganhs.add(tkb_khoa_khoaHoc_nganh.getDmNganh());
+        }
+
+        return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
 }
+

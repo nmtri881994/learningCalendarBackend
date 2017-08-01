@@ -23,6 +23,13 @@ public class DMMonHoc {
     public DMMonHoc() {
     }
 
+    public DMMonHoc(int id, String maMonHoc, String ten, float soTinChi) {
+        this.id = id;
+        this.maMonHoc = maMonHoc;
+        this.ten = ten;
+        this.soTinChi = soTinChi;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

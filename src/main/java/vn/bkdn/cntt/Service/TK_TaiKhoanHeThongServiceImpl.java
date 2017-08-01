@@ -52,6 +52,11 @@ public class TK_TaiKhoanHeThongServiceImpl implements TK_TaiKhoanHeThongService 
 
     @Override
     public void deleteTK(int id) {
+        TK_TaiKhoanHeThong tk_taiKhoanHeThong = taiKhoanHeThongRepository.findOne(id);
+        for (TK_TaiKhoanHeThong_VaiTro tk_taiKhoanHeThong_vaiTro :
+                tk_taiKhoanHeThong.getTk_taiKhoanHeThong_vaiTros()) {
+            taiKhoanHeThong_vaiTroService.deleteTKVT(tk_taiKhoanHeThong_vaiTro.getId());
+        }
         taiKhoanHeThongRepository.delete(id);
     }
 

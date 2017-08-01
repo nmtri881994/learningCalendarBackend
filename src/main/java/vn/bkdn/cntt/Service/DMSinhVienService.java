@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface DMSinhVienService {
     List<DMSinhVien> findAll();
+    List<DMSinhVien> findAll2();
 
     DMSinhVien findOne(int sinhVienId);
     DMSinhVien findByMaSinhVien(String maSinhVien);
