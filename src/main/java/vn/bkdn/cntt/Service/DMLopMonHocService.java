@@ -1,5 +1,6 @@
 package vn.bkdn.cntt.Service;
 
+import vn.bkdn.cntt.controller.APIEntity.LopMonHoc;
 import vn.bkdn.cntt.entity.DMNhanVien;
 import vn.bkdn.cntt.entity.DMLopMonHoc;
 
@@ -17,4 +18,8 @@ public interface DMLopMonHocService {
     List<DMLopMonHoc> findByKhoa_KhoaHoc(int khoa_KhoaHocId);
     List<DMLopMonHoc> findByKiHoc_NamHocId(int ki_namHocId);
     List<DMLopMonHoc> findByMonHocIdAndKiHoc_NamHoc(int monHocId, int kiHoc_namHocId);
+
+    void insertLopMonHoc(DMLopMonHoc dmLopMonHoc);
+    void editLopMonHoc(LopMonHoc lopMonHoc);
+    void deleteLopMonHoc(int id);
 }

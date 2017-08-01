@@ -1,11 +1,13 @@
 package vn.bkdn.cntt.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.bkdn.cntt.entity.DMNhanVien;
 import vn.bkdn.cntt.entity.DMLopMonHoc;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -33,4 +35,12 @@ public interface DMLopMonHocRepository extends JpaRepository<DMLopMonHoc, Intege
 
     @Query(value = "select * from dmlop_mon_hoc where dm_mon_hoc_id=?1 and tkb_ki_hoc_nam_hoc_id = ?2", nativeQuery = true)
     List<DMLopMonHoc> findByMonHocIdAndKiHoc_NamHocId(int monHocId, int ki_namHocId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update dmlop_mon_hoc set dm_mon_hoc_id = ?2, dm_nhan_vien_id = ?3, tkb_ki_hoc_nam_hoc_id = ?4, " +
+            "tkb_khoa_khoa_hoc_id=?5, dm_nganh_id=?6, so_tiet_ly_thuyet=?7, so_tiet_thuc_hanh=?8, so_luong_toi_da=?9, " +
+            "gioi_han_tuan_bat_dau=?10, gioi_han_tuan_ket_thuc=?11 where id = ?1", nativeQuery = true)
+    void editLopMonHoc(int id, int monHocId, int nhanVienId, int kiHocNamHocId, int khoaKhoaHocId, int nganhId, int soTietLyThuyet,
+                    int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc);
 }

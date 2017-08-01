@@ -2,6 +2,7 @@ package vn.bkdn.cntt.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.bkdn.cntt.controller.APIEntity.LopMonHoc;
 import vn.bkdn.cntt.entity.DMNhanVien;
 import vn.bkdn.cntt.entity.DMLopMonHoc;
 import vn.bkdn.cntt.repository.DMLopMonHocRepository;
@@ -56,5 +57,23 @@ public class DMLopMonHocServiceImpl implements DMLopMonHocService {
     @Override
     public List<DMLopMonHoc> findByMonHocIdAndKiHoc_NamHoc(int monHocId, int kiHoc_namHocId) {
         return lopMonHocRepository.findByMonHocIdAndKiHoc_NamHocId(monHocId, kiHoc_namHocId);
+    }
+
+    @Override
+    public void insertLopMonHoc(DMLopMonHoc dmLopMonHoc) {
+        lopMonHocRepository.save(dmLopMonHoc);
+    }
+
+    @Override
+    public void editLopMonHoc(LopMonHoc lopMonHoc) {
+        lopMonHocRepository.editLopMonHoc(lopMonHoc.getId(), lopMonHoc.getDmMonHoc().getId(), lopMonHoc.getDmNhanVien().getId(),
+                lopMonHoc.getTkb_kiHoc_namHoc().getId(), lopMonHoc.getTkb_khoa_khoaHoc().getId(), lopMonHoc.getDmNganh().getId(),
+                lopMonHoc.getSoTietLyThuyet(), lopMonHoc.getSoTietThucHanh(), lopMonHoc.getSoLuongToiDa(), lopMonHoc.getGioiHanTuanBatDau(),
+                lopMonHoc.getGioiHanTuanKetThuc());
+    }
+
+    @Override
+    public void deleteLopMonHoc(int id) {
+        lopMonHocRepository.delete(id);
     }
 }
