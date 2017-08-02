@@ -79,6 +79,9 @@ public class ImputDataController {
     @Autowired
     private DMMonHocService dmMonHocService;
 
+    @Autowired
+    private DMMonHoc_GiangDuongService dmMonHoc_giangDuongService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -1131,6 +1134,97 @@ public class ImputDataController {
         }
 
         return new ResponseEntity<List<DMNganh>>(dmNganhs, HttpStatus.OK);
+    }
+
+    //Mon hoc - giang duong
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-mon-hoc-giang-duong")
+    public ResponseEntity<List<MonHocGiangDuong>> getAllMonHocGiangDuong() {
+        List<DMMonHoc_GiangDuong> dmMonHoc_giangDuongs = dmMonHoc_giangDuongService.findAll();
+        List<MonHocGiangDuong> monHocGiangDuongs = new ArrayList<>();
+        for (DMMonHoc_GiangDuong dmMonHoc_giangDuong :
+                dmMonHoc_giangDuongs) {
+            monHocGiangDuongs.add(new MonHocGiangDuong(dmMonHoc_giangDuong));
+        }
+
+        for (int i = 0; i < monHocGiangDuongs.size() - 1; i++) {
+            for (int j = i + 1; j < monHocGiangDuongs.size(); j++) {
+                if (monHocGiangDuongs.get(i).getDmMonHoc().getMaMonHoc().compareTo(monHocGiangDuongs.get(j).getDmMonHoc().getMaMonHoc()) > 0) {
+                    MonHocGiangDuong monHocGiangDuong = new MonHocGiangDuong(monHocGiangDuongs.get(i));
+                    monHocGiangDuongs.set(i, monHocGiangDuongs.get(j));
+                    monHocGiangDuongs.set(j, monHocGiangDuong);
+                }
+            }
+        }
+
+        return new ResponseEntity<List<MonHocGiangDuong>>(monHocGiangDuongs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/mon-hoc-giang-duong/{monHocId}/{giangDuongId}")
+    public ResponseEntity<List<MonHocGiangDuong>> insertMonHocGiangDuong(@PathVariable int monHocId, @PathVariable int giangDuongId) {
+
+        DMMonHoc dmMonHoc = dmMonHocService.findOne(monHocId);
+        List<DMGiangDuong> dmGiangDuongsCuaMonHoc = new ArrayList<>();
+        for (DMMonHoc_GiangDuong dmMonHoc_giangDuong :
+                dmMonHoc.getDm_monHoc_giangDuong()) {
+            dmGiangDuongsCuaMonHoc.add(dmMonHoc_giangDuong.getDmGiangDuong());
+        }
+        DMGiangDuong dmGiangDuong = giangDuongService.findOne(giangDuongId);
+
+        if (dmGiangDuongsCuaMonHoc.contains(dmGiangDuong)) {
+            return new ResponseEntity<List<MonHocGiangDuong>>(HttpStatus.CONFLICT);
+        } else {
+
+            dmMonHoc_giangDuongService.insertMHGD(new DMMonHoc_GiangDuong(0, dmMonHoc, dmGiangDuong));
+
+            List<DMMonHoc_GiangDuong> dmMonHoc_giangDuongs = dmMonHoc_giangDuongService.findAll();
+            List<MonHocGiangDuong> monHocGiangDuongs = new ArrayList<>();
+            for (DMMonHoc_GiangDuong dmMonHoc_giangDuong :
+                    dmMonHoc_giangDuongs) {
+                monHocGiangDuongs.add(new MonHocGiangDuong(dmMonHoc_giangDuong));
+            }
+
+            for (int i = 0; i < monHocGiangDuongs.size() - 1; i++) {
+                for (int j = i + 1; j < monHocGiangDuongs.size(); j++) {
+                    if (monHocGiangDuongs.get(i).getDmMonHoc().getMaMonHoc().compareTo(monHocGiangDuongs.get(j).getDmMonHoc().getMaMonHoc()) > 0) {
+                        MonHocGiangDuong monHocGiangDuong = new MonHocGiangDuong(monHocGiangDuongs.get(i));
+                        monHocGiangDuongs.set(i, monHocGiangDuongs.get(j));
+                        monHocGiangDuongs.set(j, monHocGiangDuong);
+                    }
+                }
+            }
+
+            return new ResponseEntity<List<MonHocGiangDuong>>(monHocGiangDuongs, HttpStatus.OK);
+        }
+
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/mon-hoc-giang-duong/delete/{monHocGiangDuongId}")
+    public ResponseEntity<List<MonHocGiangDuong>> deleteMonHocGiangDuong(@PathVariable int monHocGiangDuongId) {
+
+        dmMonHoc_giangDuongService.deleteMHGD(monHocGiangDuongId);
+
+        List<DMMonHoc_GiangDuong> dmMonHoc_giangDuongs = dmMonHoc_giangDuongService.findAll();
+        List<MonHocGiangDuong> monHocGiangDuongs = new ArrayList<>();
+        for (DMMonHoc_GiangDuong dmMonHoc_giangDuong :
+                dmMonHoc_giangDuongs) {
+            monHocGiangDuongs.add(new MonHocGiangDuong(dmMonHoc_giangDuong));
+        }
+
+        for (int i = 0; i < monHocGiangDuongs.size() - 1; i++) {
+            for (int j = i + 1; j < monHocGiangDuongs.size(); j++) {
+                if (monHocGiangDuongs.get(i).getDmMonHoc().getMaMonHoc().compareTo(monHocGiangDuongs.get(j).getDmMonHoc().getMaMonHoc()) > 0) {
+                    MonHocGiangDuong monHocGiangDuong = new MonHocGiangDuong(monHocGiangDuongs.get(i));
+                    monHocGiangDuongs.set(i, monHocGiangDuongs.get(j));
+                    monHocGiangDuongs.set(j, monHocGiangDuong);
+                }
+            }
+        }
+
+        return new ResponseEntity<List<MonHocGiangDuong>>(monHocGiangDuongs, HttpStatus.OK);
     }
 }
 

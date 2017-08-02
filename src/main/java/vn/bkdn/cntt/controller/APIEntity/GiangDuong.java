@@ -1,5 +1,6 @@
 package vn.bkdn.cntt.controller.APIEntity;
 
+import vn.bkdn.cntt.entity.DMGiangDuong;
 import vn.bkdn.cntt.entity.DMLoaiPhong;
 
 /**
@@ -23,6 +24,15 @@ public class GiangDuong {
     }
 
     public GiangDuong() {
+    }
+
+    public GiangDuong(DMGiangDuong dmGiangDuong) {
+        this.id = dmGiangDuong.getId();
+        this.maGiangDuong = dmGiangDuong.getMaGiangDuong();
+        this.ten = dmGiangDuong.getTen();
+        this.loaiPhongId = dmGiangDuong.getDmLoaiPhong().getId();
+        this.tang = dmGiangDuong.getTang();
+        this.soLuong = dmGiangDuong.getSoLuong();
     }
 
     public int getId() {

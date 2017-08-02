@@ -18,6 +18,12 @@ public class DMMonHoc_GiangDuong {
     public DMMonHoc_GiangDuong() {
     }
 
+    public DMMonHoc_GiangDuong(int id, DMMonHoc dmMonHoc, DMGiangDuong dmGiangDuong) {
+        this.id = id;
+        this.dmMonHoc = dmMonHoc;
+        this.dmGiangDuong = dmGiangDuong;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
