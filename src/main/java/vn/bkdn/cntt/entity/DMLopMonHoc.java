@@ -50,6 +50,20 @@ public class DMLopMonHoc {
         this.tkb_lichHocTheoTuans = dmLopMonHoc.getTkb_lichHocTheoTuans();
     }
 
+    public DMLopMonHoc(int id, DMMonHoc dmMonHoc, DMNhanVien dmNhanVien, TKB_KiHoc_NamHoc tkb_kiHoc_namHoc, TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc, DMNganh dmNganh, int soTietLyThuyet, int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc) {
+        this.id = id;
+        this.dmMonHoc = dmMonHoc;
+        this.dmNhanVien = dmNhanVien;
+        this.tkb_kiHoc_namHoc = tkb_kiHoc_namHoc;
+        this.tkb_khoa_khoaHoc = tkb_khoa_khoaHoc;
+        this.dmNganh = dmNganh;
+        this.soTietLyThuyet = soTietLyThuyet;
+        this.soTietThucHanh = soTietThucHanh;
+        this.soLuongToiDa = soLuongToiDa;
+        this.gioiHanTuanBatDau = gioiHanTuanBatDau;
+        this.gioiHanTuanKetThuc = gioiHanTuanKetThuc;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {

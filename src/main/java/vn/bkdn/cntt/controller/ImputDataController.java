@@ -82,6 +82,9 @@ public class ImputDataController {
     @Autowired
     private DMMonHoc_GiangDuongService dmMonHoc_giangDuongService;
 
+    @Autowired
+    private DMLopMonHocService dmLopMonHocService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -1225,6 +1228,118 @@ public class ImputDataController {
         }
 
         return new ResponseEntity<List<MonHocGiangDuong>>(monHocGiangDuongs, HttpStatus.OK);
+    }
+
+    //Lop mon hoc
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/all-lop-mon-hoc/{namHocId}/{kiHocId}/{khoaId}/{khoaHocId}/{nganhId}")
+    public ResponseEntity<List<LopMonHoc>> getAllLopMonHoc(@PathVariable int namHocId, @PathVariable int kiHocId,
+                                                           @PathVariable int khoaId, @PathVariable int khoaHocId,
+                                                           @PathVariable int nganhId) {
+        TKB_Khoa_KhoaHoc khoa_khoaHoc = tkb_khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = tkb_kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
+        List<DMLopMonHoc> dmLopMonHocs;
+        if (nganhId != 0) {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), nganhId);
+        } else {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
+        }
+
+        dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
+
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            lopMonHocs.add(new LopMonHoc(dmLopMonHoc));
+        }
+
+        return new ResponseEntity<List<LopMonHoc>>(lopMonHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/lop-mon-hoc/")
+    public ResponseEntity<List<LopMonHoc>> insertLopMonHoc(@RequestBody LopMonHoc lopMonHoc) {
+
+        TKB_Khoa_KhoaHoc khoa_khoaHoc = tkb_khoa_khoaHocService.findByKhoaIdAndKhoaHocId(lopMonHoc.getTkb_khoa_khoaHoc().getKhoa().getId(),
+                lopMonHoc.getTkb_khoa_khoaHoc().getTkb_khoaHoc().getId());
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = tkb_kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(
+                lopMonHoc.getTkb_kiHoc_namHoc().getKiHoc().getId(), lopMonHoc.getTkb_kiHoc_namHoc().getNamHoc().getId());
+        DMNganh dmNganh = dmNganhService.findOne(lopMonHoc.getDmNganh().getId());
+        DMNhanVien dmNhanVien = dmNhanVienService.findOne(lopMonHoc.getDmNhanVien().getId());
+        DMMonHoc dmMonHoc = dmMonHocService.findOne(lopMonHoc.getDmMonHoc().getId());
+        dmLopMonHocService.insertLopMonHoc(new DMLopMonHoc(lopMonHoc.getId(), dmMonHoc, dmNhanVien, tkb_kiHoc_namHoc, khoa_khoaHoc, dmNganh,
+                lopMonHoc.getSoTietLyThuyet(), lopMonHoc.getSoTietThucHanh(), lopMonHoc.getSoLuongToiDa(), lopMonHoc.getGioiHanTuanBatDau(),
+                lopMonHoc.getGioiHanTuanKetThuc()));
+
+        List<DMLopMonHoc> dmLopMonHocs;
+        if (lopMonHoc.getDmNganh().getId() != 0) {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), lopMonHoc.getDmNganh().getId());
+        } else {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
+        }
+
+        dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
+
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            lopMonHocs.add(new LopMonHoc(dmLopMonHoc));
+        }
+
+        return new ResponseEntity<List<LopMonHoc>>(lopMonHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @PostMapping(value = "/lop-mon-hoc/edit")
+    public ResponseEntity<List<LopMonHoc>> editLopMonHoc(@RequestBody LopMonHoc lopMonHoc) {
+
+        dmLopMonHocService.editLopMonHoc(lopMonHoc);
+
+        List<DMLopMonHoc> dmLopMonHocs;
+        if (lopMonHoc.getDmNganh().getId() != 0) {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(lopMonHoc.getTkb_kiHoc_namHoc().getId(), lopMonHoc.getTkb_khoa_khoaHoc().getId(), lopMonHoc.getDmNganh().getId());
+        } else {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(lopMonHoc.getTkb_kiHoc_namHoc().getId(), lopMonHoc.getTkb_khoa_khoaHoc().getId());
+        }
+
+        dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
+
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocs) {
+            lopMonHocs.add(new LopMonHoc(dmLopMonHoc));
+        }
+
+        return new ResponseEntity<List<LopMonHoc>>(lopMonHocs, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/lop-mon-hoc/delete/{lopMonHocId}")
+    public ResponseEntity<List<LopMonHoc>> deleteLopMonHoc(@PathVariable int lopMonHocId) {
+
+        DMLopMonHoc dmLopMonHoc = dmLopMonHocService.findOne(lopMonHocId);
+
+        dmLopMonHocService.deleteLopMonHoc(lopMonHocId);
+
+        TKB_Khoa_KhoaHoc khoa_khoaHoc = dmLopMonHoc.getTkb_khoa_khoaHoc();
+        TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = dmLopMonHoc.getTkb_kiHoc_namHoc();
+        List<DMLopMonHoc> dmLopMonHocs;
+        if (dmLopMonHoc.getDmNganh() != null) {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocIdAndNganhId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId(), dmLopMonHoc.getDmNganh().getId());
+        } else {
+            dmLopMonHocs = dmLopMonHocService.findByKiHoc_NamHocIdAndKhoa_KhoaHocId(tkb_kiHoc_namHoc.getId(), khoa_khoaHoc.getId());
+        }
+
+        dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
+
+        List<LopMonHoc> lopMonHocs = new ArrayList<>();
+        for (DMLopMonHoc dmLopMonHoc1 :
+                dmLopMonHocs) {
+            lopMonHocs.add(new LopMonHoc(dmLopMonHoc1));
+        }
+
+        return new ResponseEntity<List<LopMonHoc>>(lopMonHocs, HttpStatus.OK);
     }
 }
 
