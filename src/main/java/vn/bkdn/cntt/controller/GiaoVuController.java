@@ -1033,10 +1033,10 @@ public class GiaoVuController {
         List<DMGiangDuong> dmGiangDuongThucHanhs = new ArrayList<>();
         for (DMGiangDuong dmGiangDuong :
                 dmGiangDuongs) {
-            if (dmGiangDuong.getSoLuong() >= 1.2 * DMLopMonHoc.getSoLuongToiDa()) {
-                if ("Dãy nhà lý thuyết".equals(dmGiangDuong.getDmLoaiPhong().getTen())) {
+            if (dmGiangDuong.getSoLuong() >= DMLopMonHoc.getSoLuongToiDa()) {
+                if (dmGiangDuong.getDmLoaiPhong().getId() == 1) {
                     dmGiangDuongLyThuyets.add(dmGiangDuong);
-                } else {
+                } else if(dmGiangDuong.getDmLoaiPhong().getId() == 2) {
                     dmGiangDuongThucHanhs.add(dmGiangDuong);
                 }
             }
@@ -1107,7 +1107,7 @@ public class GiaoVuController {
 
             //Set tuan
             tkb_lichHocTheoTuan.setTuanBatDau(DMLopMonHoc.getGioiHanTuanBatDau());
-            tkb_lichHocTheoTuan.setTuanKetThuc(DMLopMonHoc.getGioiHanTuanBatDau() + theoryWeeksNeeded - 1);
+            tkb_lichHocTheoTuan.setTuanKetThuc(DMLopMonHoc.getGioiHanTuanBatDau() + practiceWeeksNeeded - 1);
         }
 
         danhSachBuoiHocLyThuyet.addAll(danhSachBuoiHocThucHanh);

@@ -174,6 +174,7 @@ public class CalendarController {
         TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(kiHocId, namHocId);
 
         List<DMNganh> dmNganhs = new ArrayList<>();
+
         if (khoa_khoaHoc.getKiPhanNganh().getNgayBatDau().compareTo(tkb_kiHoc_namHoc.getNgayBatDau()) <= 0) {
             for (TKB_Khoa_KhoaHoc_Nganh TKB_khoa_khoaHoc_nganh :
                     khoa_khoaHoc.getTKB_khoa_khoaHoc_nganhs()) {
@@ -254,7 +255,7 @@ public class CalendarController {
             dmGiangDuongs.add(dm_monHoc_giangDuong.getDmGiangDuong());
         }
 
-        dmGiangDuongs.removeIf(giangDuong -> giangDuong.getSoLuong() < 0.7 * dmLopMonHoc.getSoLuongToiDa());
+        dmGiangDuongs.removeIf(giangDuong -> giangDuong.getSoLuong() < dmLopMonHoc.getSoLuongToiDa());
         dmGiangDuongs.removeIf(giangDuong -> giangDuong.getDmLoaiPhong().getId() != dayNhaId);
         dmGiangDuongs.sort(Comparator.comparing(DMGiangDuong::getMaGiangDuong));
 

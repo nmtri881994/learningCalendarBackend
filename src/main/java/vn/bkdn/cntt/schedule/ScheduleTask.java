@@ -76,7 +76,6 @@ public class ScheduleTask {
     @Scheduled(cron = "0 0 0 * * *")
 //    @Scheduled(fixedRate = 10000)
     public void translateWeekCalendarToDayCalendar() {
-        System.out.println(111111111);
         List<TKB_KiHoc_NamHoc> tkb_kiHoc_namHocs = kiHoc_namHocService.findAll();
         Date today = new Date();
         Calendar c = Calendar.getInstance(Locale.GERMAN);
@@ -87,7 +86,6 @@ public class ScheduleTask {
             if (today.before(startDate)) {
                 int days = Days.daysBetween(new DateTime(today), new DateTime(startDate)).getDays();
                 if (days >= 1 && days <= 7 && !tkb_kiHoc_namHoc.isDaSinhLich()) {
-                    System.out.println(222222);
                     List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHoc.getId());
                     TKB_NamHoc tkb_namHoc = namHocService.findOne(kiHoc_namHocService.getNamHocId(tkb_kiHoc_namHoc.getId()));
                     Date learningYearStartDate = tkb_namHoc.getNgayBatDau();
