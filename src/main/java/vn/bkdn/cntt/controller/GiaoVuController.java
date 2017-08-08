@@ -10,6 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.bkdn.cntt.Service.*;
 //import vn.bkdn.cntt.common.GeneticAlgorithmUtils;
+import vn.bkdn.cntt.controller.APIEntity.LopMonHoc;
+import vn.bkdn.cntt.controller.APIEntity.LopMonHoc_ViPham;
+import vn.bkdn.cntt.controller.APIEntity.ViPham;
 import vn.bkdn.cntt.entity.*;
 import vn.bkdn.cntt.entity.geneticAlgorithm.CaThe;
 import vn.bkdn.cntt.entity.geneticAlgorithm.ChosenCondition;
@@ -34,6 +37,7 @@ public class GiaoVuController {
     private int tkbtuan_index;
     private int theHe;
 
+    private List<LopMonHoc_ViPham> lopMonHoc_viPhams = new ArrayList<>();
 
     @Autowired
     private NamHocService namHocService;
@@ -285,7 +289,7 @@ public class GiaoVuController {
 
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/generate-random-calendar")
-    public ResponseEntity<String> generateRandomCalendarForSemester(@RequestBody Setting setting) throws JsonProcessingException {
+    public ResponseEntity<Object> generateRandomCalendarForSemester(@RequestBody Setting setting) throws JsonProcessingException {
         TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(setting.getKyHocId(), setting.getNamHocId());
         List<DMLopMonHoc> dmLopMonHocs = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHoc.getId());
         dmLopMonHocs.sort(Comparator.comparing(DMLopMonHoc::getId));
@@ -307,14 +311,14 @@ public class GiaoVuController {
                         caThe.getDMLopMonHocList()) {
                     String result = randomCalendarForClass(DMLopMonHoc);
                     if (result != "Thành công") {
-                        return new ResponseEntity<String>(result, HttpStatus.OK);
+                        return new ResponseEntity<>(result, HttpStatus.OK);
                     }
                 }
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting,false, false));
             }
             this.danhSoTKB_TuanId(quanThe);
             for (CaThe caThe : quanThe) {
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting,false, false));
             }
 
             quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
@@ -330,7 +334,7 @@ public class GiaoVuController {
                         tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
                     }
                 }
-                return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+                return new ResponseEntity<>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
             }
 //            Tien hanh tien hoa
             int numberOfParents = this.numberOfInviduals * this.parentsPercentage / 100;
@@ -345,15 +349,15 @@ public class GiaoVuController {
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> parents = this.chooseParents(quanThe, numberOfParents);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting));
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> crossOvers = this.crossOverGeneration(parents, numberOfCrossOver);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting));
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> mutations = this.mutateGeneration(parents, numberOfMutation, setting);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting));
+                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 quanTheTemp.addAll(parents);
@@ -362,7 +366,7 @@ public class GiaoVuController {
 
                 this.danhSoTKB_TuanId(quanTheTemp);
                 for (CaThe caThe : quanTheTemp) {
-                    caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting));
+                    caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting, false, false));
                 }
 
                 quanTheTemp.sort(Comparator.comparing(CaThe::getDiemThichNghi));
@@ -378,15 +382,16 @@ public class GiaoVuController {
                             tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
                         }
                     }
-                    return new ResponseEntity<String>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
+                    return new ResponseEntity<>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
                 } else {
                     quanThe.clear();
                     quanThe.addAll(quanTheTemp);
                 }
             }
-            return new ResponseEntity<String>("Sinh thời khóa biểu tự động thất bại", HttpStatus.OK);
+            this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, true, true);
+            return new ResponseEntity<>(lopMonHoc_viPhams, HttpStatus.OK);
         } else {
-            return new ResponseEntity<String>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
+            return new ResponseEntity<>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
         }
     }
 
@@ -502,50 +507,113 @@ public class GiaoVuController {
         return false;
     }
 
-    public int getDiemThichNghiCuaCaThe(List<DMLopMonHoc> dmLopMonHocs, Setting setting) {
+    public int getDiemThichNghiCuaCaThe(List<DMLopMonHoc> dmLopMonHocs, Setting setting, boolean theHeCuoiCung, boolean caTheDauTien) {
         int diem = 0;
+        lopMonHoc_viPhams.clear();
         for (DMLopMonHoc DMLopMonHoc :
                 dmLopMonHocs) {
-            diem += this.getDiemThichNghiCuaDMLopMonHoc(DMLopMonHoc, dmLopMonHocs, setting);
+            LopMonHoc_ViPham lopMonHoc_viPham = new LopMonHoc_ViPham();
+            diem += this.getDiemThichNghiCuaDMLopMonHoc(DMLopMonHoc, dmLopMonHocs, setting, theHeCuoiCung, caTheDauTien, lopMonHoc_viPham);
+            if(theHeCuoiCung&&caTheDauTien){
+                lopMonHoc_viPham.setLopMonHoc(new LopMonHoc(DMLopMonHoc));
+                lopMonHoc_viPham.setTkb_lichHocTheoTuans(new ArrayList<>(DMLopMonHoc.getTkb_lichHocTheoTuans()));
+                lopMonHoc_viPhams.add(lopMonHoc_viPham);
+            }
         }
 
         return diem;
     }
 
 
-    public int getDiemThichNghiCuaDMLopMonHoc(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, Setting setting) {
+    public int getDiemThichNghiCuaDMLopMonHoc(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, Setting setting, boolean theHeCuoiCung, boolean caTheDauTien, LopMonHoc_ViPham lopMonHoc_viPham) {
 //        System.out.println("----**Size: " + dmLopMonHocs.size() + "**----");
         int diem = 0;
 
         for (ChosenCondition chosenCondition :
                 setting.getChosenConditions()) {
+            ViPham viPham = new ViPham();
+            int diemTemp;
             switch (chosenCondition.getId()) {
                 case 1:
-                    diem += this.dk1(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk1(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(1);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem+=diemTemp;
                     break;
                 case 2:
-                    diem += this.dk2(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk2(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(2);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 case 3:
-                    diem += this.dk3(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk3(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(3);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
                     break;
                 case 4:
-                    diem += this.dk4(DMLopMonHoc, chosenCondition.getValue());
+                    diemTemp= this.dk4(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(4);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 case 5:
-                    diem += this.dk5(DMLopMonHoc, chosenCondition.getValue());
+                    diemTemp= this.dk5(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(5);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 case 6:
-                    diem += this.dk6(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk6(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(6);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 case 7:
-                    diem += this.dk7(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk7(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(7);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 case 8:
-                    diem += this.dk8(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk8(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(8);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
+                    diem += diemTemp;
                     break;
                 case 9:
-                    diem += this.dk9(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue());
+                    diemTemp= this.dk9(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if(theHeCuoiCung&&caTheDauTien){
+                        viPham.setDkNumber(9);
+                        viPham.setDiem(diemTemp);
+                        lopMonHoc_viPham.getViPhams().add(viPham);
+                    }
+                    diem += diemTemp;
                     break;
                 default:
                     diem += 0;
@@ -564,7 +632,7 @@ public class GiaoVuController {
         return clone;
     }
 
-    public int dk1(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk1(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
 //        System.out.println(dmLopMonHocs.size());
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
@@ -595,7 +663,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk2(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk2(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
 //        System.out.println(dmLopMonHocs.size());
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
@@ -626,7 +694,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk3(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk3(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
 //        System.out.println(dmLopMonHocs.size());
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
@@ -656,7 +724,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk4(DMLopMonHoc DMLopMonHoc, int dkValue) {
+    public int dk4(DMLopMonHoc DMLopMonHoc, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
 
         Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = DMLopMonHoc.getTkb_lichHocTheoTuans();
@@ -674,7 +742,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk5(DMLopMonHoc DMLopMonHoc, int dkValue) {
+    public int dk5(DMLopMonHoc DMLopMonHoc, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
 
         Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = DMLopMonHoc.getTkb_lichHocTheoTuans();
@@ -692,7 +760,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk6(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien, int dkValue) {
+    public int dk6(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != DMLopMonHoc.getDmNhanVien().getId());
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
@@ -717,7 +785,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk7(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk7(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         if (dmLopMonHoc.getDmNganh() == null) {
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
@@ -746,7 +814,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk8(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk8(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHoc1 :
@@ -767,7 +835,7 @@ public class GiaoVuController {
         return diem * dkValue;
     }
 
-    public int dk9(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue) {
+    public int dk9(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         if (dmLopMonHoc.getDmNganh() == null) {
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
