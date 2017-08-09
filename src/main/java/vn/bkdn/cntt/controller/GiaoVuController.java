@@ -314,11 +314,11 @@ public class GiaoVuController {
                         return new ResponseEntity<>(result, HttpStatus.OK);
                     }
                 }
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting,false, false));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting, false, false));
             }
             this.danhSoTKB_TuanId(quanThe);
             for (CaThe caThe : quanThe) {
-                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting,false, false));
+                caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting, false, false));
             }
 
             quanThe.sort(Comparator.comparing(CaThe::getDiemThichNghi));
@@ -374,8 +374,9 @@ public class GiaoVuController {
                 printQuanThe(quanTheTemp);
 
                 if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanTheTemp, setting.getDiemThichNghiToiUu())) {
+                    this.getDiemThichNghiCuaCaThe(quanTheTemp.get(0).getDMLopMonHocList(), setting, true, false);
                     for (DMLopMonHoc DMLopMonHoc :
-                            quanThe.get(0).getDMLopMonHocList()) {
+                            quanTheTemp.get(0).getDMLopMonHocList()) {
                         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                                 DMLopMonHoc.getTkb_lichHocTheoTuans()) {
                             tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(DMLopMonHoc.getId()));
@@ -514,7 +515,7 @@ public class GiaoVuController {
                 dmLopMonHocs) {
             LopMonHoc_ViPham lopMonHoc_viPham = new LopMonHoc_ViPham();
             diem += this.getDiemThichNghiCuaDMLopMonHoc(DMLopMonHoc, dmLopMonHocs, setting, theHeCuoiCung, caTheDauTien, lopMonHoc_viPham);
-            if(theHeCuoiCung&&caTheDauTien){
+            if (theHeCuoiCung && caTheDauTien) {
                 lopMonHoc_viPham.setLopMonHoc(new LopMonHoc(DMLopMonHoc));
                 lopMonHoc_viPham.setTkb_lichHocTheoTuans(new ArrayList<>(DMLopMonHoc.getTkb_lichHocTheoTuans()));
                 lopMonHoc_viPhams.add(lopMonHoc_viPham);
@@ -535,17 +536,17 @@ public class GiaoVuController {
             int diemTemp;
             switch (chosenCondition.getId()) {
                 case 1:
-                    diemTemp= this.dk1(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk1(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(1);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
                     }
-                    diem+=diemTemp;
+                    diem += diemTemp;
                     break;
                 case 2:
-                    diemTemp= this.dk2(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk2(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(2);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -553,16 +554,16 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 3:
-                    diemTemp= this.dk3(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk3(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(3);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
                     }
                     break;
                 case 4:
-                    diemTemp= this.dk4(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk4(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(4);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -570,8 +571,8 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 5:
-                    diemTemp= this.dk5(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk5(DMLopMonHoc, chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(5);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -579,8 +580,8 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 6:
-                    diemTemp= this.dk6(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk6(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(6);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -588,8 +589,8 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 7:
-                    diemTemp= this.dk7(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk7(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(7);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -597,8 +598,8 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 8:
-                    diemTemp= this.dk8(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk8(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(8);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -607,8 +608,8 @@ public class GiaoVuController {
                     diem += diemTemp;
                     break;
                 case 9:
-                    diemTemp= this.dk9(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
-                    if(theHeCuoiCung&&caTheDauTien){
+                    diemTemp = this.dk9(DMLopMonHoc, this.cloneListDMLopMonHoc(dmLopMonHocs), chosenCondition.getValue(), theHeCuoiCung);
+                    if (theHeCuoiCung && caTheDauTien) {
                         viPham.setDkNumber(9);
                         viPham.setDiem(diemTemp);
                         lopMonHoc_viPham.getViPhams().add(viPham);
@@ -787,13 +788,12 @@ public class GiaoVuController {
 
     public int dk7(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
-        if (dmLopMonHoc.getDmNganh() == null) {
-            dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
-        } else {
+        dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
+        if (dmLopMonHoc.getDmNganh() != null) {
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh() == null);
-            dmLopMonHocs.removeIf(DMLopMonHoc1 -> (DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId()) && (dmLopMonHoc.getDmNganh().getId() != DMLopMonHoc1.getDmNganh().getId()));
-//            dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getKhoa_khoaHoc().getId() != DMLopMonHoc.getKhoa_khoaHoc().getId() && DMLopMonHoc1.getNganh().getId() != DMLopMonHoc.getNganh().getId());
+            dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh().getId() != dmLopMonHoc.getDmNganh().getId());
         }
+
 
         List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHoc1 :
@@ -806,7 +806,7 @@ public class GiaoVuController {
             List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganhTemp = this.cloneTKBTuan(lichHocCuaKhoaKhoaHocNganh);
             lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
             lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> (tkb_lichHocTheoTuan1.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (tkb_lichHocTheoTuan1.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
-            if (this.checkTrungLichKhoaKhoaHocNganh(tkb_lichHocTheoTuan, lichHocCuaKhoaKhoaHocNganhTemp)) {
+            if (this.checkTrungLichKhoaKhoaHocNganh(tkb_lichHocTheoTuan, lichHocCuaKhoaKhoaHocNganhTemp, theHeCuoiCung)) {
                 diem++;
             }
         }
@@ -982,9 +982,20 @@ public class GiaoVuController {
         return this.checkTrungLich(tietBanCuaKhoaPhong, tkb_lichHocTheoTuan);
     }
 
-    public boolean checkTrungLichKhoaKhoaHocNganh(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh) {
+    public boolean checkTrungLichKhoaKhoaHocNganh(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh, boolean theHeCuoiCung) {
         lichHocCuaKhoaKhoaHocNganh.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
         List<TKB_Tiet> tietBanCuaKhoaKhoaHocNganh = this.getTietNotFree(lichHocCuaKhoaKhoaHocNganh);
+        if(theHeCuoiCung){
+            System.out.println("---Check trùng lịch---");
+            System.out.println(tkb_lichHocTheoTuan.getDmGiangDuong().getTen()+"-"+tkb_lichHocTheoTuan.getTkb_thu().getTen()+"-"+tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + "-" + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
+            System.out.println("Tiết bận: ");
+            for (TKB_Tiet tkb_tiet :
+                    tietBanCuaKhoaKhoaHocNganh) {
+                System.out.println(tkb_tiet.getThuTu());
+            }
+            System.out.println(this.checkTrungLich(tietBanCuaKhoaKhoaHocNganh, tkb_lichHocTheoTuan));
+        }
+
         return this.checkTrungLich(tietBanCuaKhoaKhoaHocNganh, tkb_lichHocTheoTuan);
     }
 
@@ -1104,7 +1115,7 @@ public class GiaoVuController {
             if (dmGiangDuong.getSoLuong() >= DMLopMonHoc.getSoLuongToiDa()) {
                 if (dmGiangDuong.getDmLoaiPhong().getId() == 1) {
                     dmGiangDuongLyThuyets.add(dmGiangDuong);
-                } else if(dmGiangDuong.getDmLoaiPhong().getId() == 2) {
+                } else if (dmGiangDuong.getDmLoaiPhong().getId() == 2) {
                     dmGiangDuongThucHanhs.add(dmGiangDuong);
                 }
             }
