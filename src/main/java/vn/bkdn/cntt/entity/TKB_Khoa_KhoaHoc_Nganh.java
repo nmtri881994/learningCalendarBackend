@@ -3,6 +3,7 @@ package vn.bkdn.cntt.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by Tri on 4/4/2017.
@@ -13,6 +14,7 @@ public class TKB_Khoa_KhoaHoc_Nganh {
     private int id;
     private TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc;
     private DMNganh dmNganh;
+    private Set<TKB_Khoa_KhoaHoc_Nganh_Nhom>  tkb_khoa_khoaHoc_nganh_nhoms;
 
     public TKB_Khoa_KhoaHoc_Nganh() {
     }
@@ -52,5 +54,14 @@ public class TKB_Khoa_KhoaHoc_Nganh {
 
     public void setDmNganh(DMNganh dmNganh) {
         this.dmNganh = dmNganh;
+    }
+
+    @OneToMany(mappedBy = "tkb_khoa_khoaHoc_nganh")
+    public Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> getTkb_khoa_khoaHoc_nganh_nhoms() {
+        return tkb_khoa_khoaHoc_nganh_nhoms;
+    }
+
+    public void setTkb_khoa_khoaHoc_nganh_nhoms(Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms) {
+        this.tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhoms;
     }
 }

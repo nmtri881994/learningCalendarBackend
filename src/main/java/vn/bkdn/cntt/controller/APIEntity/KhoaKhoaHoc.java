@@ -1,9 +1,8 @@
 package vn.bkdn.cntt.controller.APIEntity;
 
-import vn.bkdn.cntt.entity.DMDonVi;
-import vn.bkdn.cntt.entity.TKB_KhoaHoc;
-import vn.bkdn.cntt.entity.TKB_Khoa_KhoaHoc;
-import vn.bkdn.cntt.entity.TKB_KiHoc_NamHoc;
+import vn.bkdn.cntt.entity.*;
+
+import java.util.Set;
 
 /**
  * Created by Tri on 7/28/2017.
@@ -16,16 +15,19 @@ public class KhoaKhoaHoc {
     private KiHocNamHoc kiBatDau;
     private KiHocNamHoc kiKetThuc;
 
+    private Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms;
+
     public KhoaKhoaHoc() {
     }
 
-    public KhoaKhoaHoc(int id, Khoa khoa, TKB_KhoaHoc tkb_khoaHoc, KiHocNamHoc kiPhanNganh, KiHocNamHoc kiBatDau, KiHocNamHoc kiKetThuc) {
+    public KhoaKhoaHoc(int id, Khoa khoa, TKB_KhoaHoc tkb_khoaHoc, KiHocNamHoc kiPhanNganh, KiHocNamHoc kiBatDau, KiHocNamHoc kiKetThuc, Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms) {
         this.id = id;
         this.khoa = khoa;
         this.tkb_khoaHoc = tkb_khoaHoc;
         this.kiPhanNganh = kiPhanNganh;
         this.kiBatDau = kiBatDau;
         this.kiKetThuc = kiKetThuc;
+        this.tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhoms;
     }
 
     public KhoaKhoaHoc(KhoaKhoaHoc khoaKhoaHoc){
@@ -35,6 +37,7 @@ public class KhoaKhoaHoc {
         this.kiPhanNganh = khoaKhoaHoc.getKiPhanNganh();
         this.kiBatDau = khoaKhoaHoc.getKiBatDau();
         this.kiKetThuc = khoaKhoaHoc.getKiKetThuc();
+        this.tkb_khoa_khoaHoc_nganh_nhoms = khoaKhoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms();
     }
 
     public KhoaKhoaHoc(TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc){
@@ -44,6 +47,7 @@ public class KhoaKhoaHoc {
         this.kiPhanNganh = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh());
         this.kiBatDau = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau());
         this.kiKetThuc = new KiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc());
+        this.tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms();
     }
 
     public int getId() {
@@ -92,5 +96,13 @@ public class KhoaKhoaHoc {
 
     public void setKiKetThuc(KiHocNamHoc kiKetThuc) {
         this.kiKetThuc = kiKetThuc;
+    }
+
+    public Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> getTkb_khoa_khoaHoc_nganh_nhoms() {
+        return tkb_khoa_khoaHoc_nganh_nhoms;
+    }
+
+    public void setTkb_khoa_khoaHoc_nganh_nhoms(Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms) {
+        this.tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhoms;
     }
 }

@@ -85,6 +85,9 @@ public class ImputDataController {
     @Autowired
     private DMLopMonHocService dmLopMonHocService;
 
+    @Autowired
+    private TKB_Khoa_KhoaHoc_Nganh_NhomService tkb_khoa_khoaHoc_nganh_nhomService;
+
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/khoa")
     public ResponseEntity<Khoa> inputKhoa(@RequestBody Khoa khoa) {
@@ -385,7 +388,7 @@ public class ImputDataController {
             khoaKhoaHocs.add(new KhoaKhoaHoc(tkb_khoa_khoaHoc.getId(), new Khoa(tkb_khoa_khoaHoc.getDmDonVi().getId(),
                     tkb_khoa_khoaHoc.getDmDonVi().getMa(), tkb_khoa_khoaHoc.getDmDonVi().getTen()),
                     tkb_khoa_khoaHoc.getTkb_khoaHoc(), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh()),
-                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc())));
+                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc()), tkb_khoa_khoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms()));
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
@@ -426,7 +429,7 @@ public class ImputDataController {
             khoaKhoaHocs.add(new KhoaKhoaHoc(tkb_khoa_khoaHoc.getId(), new Khoa(tkb_khoa_khoaHoc.getDmDonVi().getId(),
                     tkb_khoa_khoaHoc.getDmDonVi().getMa(), tkb_khoa_khoaHoc.getDmDonVi().getTen()),
                     tkb_khoa_khoaHoc.getTkb_khoaHoc(), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh()),
-                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc())));
+                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc()), tkb_khoa_khoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms()));
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
@@ -455,7 +458,7 @@ public class ImputDataController {
             khoaKhoaHocs.add(new KhoaKhoaHoc(tkb_khoa_khoaHoc.getId(), new Khoa(tkb_khoa_khoaHoc.getDmDonVi().getId(),
                     tkb_khoa_khoaHoc.getDmDonVi().getMa(), tkb_khoa_khoaHoc.getDmDonVi().getTen()),
                     tkb_khoa_khoaHoc.getTkb_khoaHoc(), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh()),
-                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc())));
+                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc()), tkb_khoa_khoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms()));
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
@@ -484,7 +487,7 @@ public class ImputDataController {
             khoaKhoaHocs.add(new KhoaKhoaHoc(tkb_khoa_khoaHoc.getId(), new Khoa(tkb_khoa_khoaHoc.getDmDonVi().getId(),
                     tkb_khoa_khoaHoc.getDmDonVi().getMa(), tkb_khoa_khoaHoc.getDmDonVi().getTen()),
                     tkb_khoa_khoaHoc.getTkb_khoaHoc(), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiPhanNganh()),
-                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc())));
+                    newKiHocNamHoc(tkb_khoa_khoaHoc.getKiBatDau()), newKiHocNamHoc(tkb_khoa_khoaHoc.getKiKetThuc()), tkb_khoa_khoaHoc.getTkb_khoa_khoaHoc_nganh_nhoms()));
         }
 
         for (int i = 0; i < khoaKhoaHocs.size() - 1; i++) {
@@ -499,7 +502,6 @@ public class ImputDataController {
 
         return new ResponseEntity<List<KhoaKhoaHoc>>(khoaKhoaHocs, HttpStatus.OK);
     }
-
     //Lop hoc
 
     @PreAuthorize("hasRole('GIAOVU')")
@@ -912,7 +914,6 @@ public class ImputDataController {
 
         return new ResponseEntity<List<KhoaKhoaHocNganh>>(khoaKhoaHocNganhs, HttpStatus.OK);
     }
-
     //Sinh vien
 
     @PreAuthorize("hasRole('GIAOVU')")
@@ -1340,6 +1341,73 @@ public class ImputDataController {
         }
 
         return new ResponseEntity<List<LopMonHoc>>(lopMonHocs, HttpStatus.OK);
+    }
+
+    //khoa-khoaHoc-nganh-nhom
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/khoa-khoa-hoc/add-group/{khoaKhoaHocId}/{groupNumber}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> khoaKhoaHocAddGroup(@PathVariable int khoaKhoaHocId, @PathVariable int groupNumber) {
+
+        TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc1 = tkb_khoa_khoaHocService.findOne(khoaKhoaHocId);
+        tkb_khoa_khoaHoc_nganh_nhomService.insertKhoaKhoaHocNganhNhom(new TKB_Khoa_KhoaHoc_Nganh_Nhom(tkb_khoa_khoaHoc1, null, groupNumber));
+
+        List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(khoaKhoaHocId);
+        tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+        return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/khoa-khoa-hoc-nganh/add-group/{khoaKhoaHocNganhId}/{groupNumber}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> khoaKhoaHocNganhAddGroup(@PathVariable int khoaKhoaHocNganhId, @PathVariable int groupNumber) {
+
+        TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh1 = tkb_khoa_khoaHoc_nganhService.findOne(khoaKhoaHocNganhId);
+        tkb_khoa_khoaHoc_nganh_nhomService.insertKhoaKhoaHocNganhNhom(new TKB_Khoa_KhoaHoc_Nganh_Nhom(null, tkb_khoa_khoaHoc_nganh1, groupNumber));
+
+        List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(khoaKhoaHocNganhId);
+        tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+        return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhom/delete/{khoaKhoaHocId}/{khoaKhoaHocNganhId}/{groupId}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> deleteNhom(@PathVariable int groupId, @PathVariable int khoaKhoaHocId, @PathVariable int khoaKhoaHocNganhId) {
+        tkb_khoa_khoaHoc_nganh_nhomService.deleteNhom(groupId);
+        List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms;
+        if (khoaKhoaHocId != 0) {
+            tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(khoaKhoaHocId);
+            if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+                tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+            }
+            return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+        } else {
+            tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(khoaKhoaHocNganhId);
+            if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+                tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+            }
+            return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+        }
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhom/get-nhom-cua-khoa-khoa-hoc/{khoaKhoaHocId}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> getNhomCuaKhoaKhoaHoc(@PathVariable int khoaKhoaHocId) {
+        List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(khoaKhoaHocId);
+        if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+            tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+        }
+        return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhom/get-nhom-cua-khoa-khoa-hoc-nganh/{khoaKhoaHocNganhId}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> getNhomCuaKhoaKhoaHocNganh(@PathVariable int khoaKhoaHocNganhId) {
+        List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(khoaKhoaHocNganhId);
+        if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+            tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+        }
+        return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
     }
 }
 

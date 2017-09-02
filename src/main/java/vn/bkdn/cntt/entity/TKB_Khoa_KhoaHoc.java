@@ -22,6 +22,7 @@ public class TKB_Khoa_KhoaHoc {
     private Set<DMLopMonHoc> dmLopMonHocs;
     private Set<TKB_ThoiGianDangKy> tkbThoiGianDangKies;
     private Set<DMLopHoc> dmLopHocs;
+    private Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms;
 
     public TKB_Khoa_KhoaHoc() {
     }
@@ -132,5 +133,14 @@ public class TKB_Khoa_KhoaHoc {
 
     public void setDmLopHocs(Set<DMLopHoc> dmLopHocs) {
         this.dmLopHocs = dmLopHocs;
+    }
+
+    @OneToMany(mappedBy = "tkb_khoa_khoaHoc")
+    public Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> getTkb_khoa_khoaHoc_nganh_nhoms() {
+        return tkb_khoa_khoaHoc_nganh_nhoms;
+    }
+
+    public void setTkb_khoa_khoaHoc_nganh_nhoms(Set<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms) {
+        this.tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhoms;
     }
 }

@@ -31,7 +31,7 @@ public class GiaoVuController {
 
     private int numberOfInviduals = 20;
     private int parentsPercentage = 40;
-    private int crossOverPercentage = 50;
+    private int crossOverPercentage = 30;
     private int mutatePercentage = 50;
 
     private int tkbtuan_index;
@@ -837,12 +837,13 @@ public class GiaoVuController {
 
     public int dk9(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
-        if (dmLopMonHoc.getDmNganh() == null) {
-            dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
-        } else {
+
+        dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId());
+        if (dmLopMonHoc.getDmNganh() != null) {
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh() == null);
-            dmLopMonHocs.removeIf(DMLopMonHoc1 -> (DMLopMonHoc1.getTkb_khoa_khoaHoc().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc().getId()) && (dmLopMonHoc.getDmNganh().getId() != DMLopMonHoc1.getDmNganh().getId()));
+            dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh().getId() != dmLopMonHoc.getDmNganh().getId());
         }
+
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 dmLopMonHoc.getTkb_lichHocTheoTuans()) {
             if (this.checkQuaNhieuBuoiHocTrongCungKhoangThoiGian(tkb_lichHocTheoTuan, dmLopMonHocs)) {
