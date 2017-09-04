@@ -1269,9 +1269,10 @@ public class ImputDataController {
         DMNganh dmNganh = dmNganhService.findOne(lopMonHoc.getDmNganh().getId());
         DMNhanVien dmNhanVien = dmNhanVienService.findOne(lopMonHoc.getDmNhanVien().getId());
         DMMonHoc dmMonHoc = dmMonHocService.findOne(lopMonHoc.getDmMonHoc().getId());
+        TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom = tkb_khoa_khoaHoc_nganh_nhomService.findOne(lopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
         dmLopMonHocService.insertLopMonHoc(new DMLopMonHoc(lopMonHoc.getId(), dmMonHoc, dmNhanVien, tkb_kiHoc_namHoc, khoa_khoaHoc, dmNganh,
                 lopMonHoc.getSoTietLyThuyet(), lopMonHoc.getSoTietThucHanh(), lopMonHoc.getSoLuongToiDa(), lopMonHoc.getGioiHanTuanBatDau(),
-                lopMonHoc.getGioiHanTuanKetThuc()));
+                lopMonHoc.getGioiHanTuanKetThuc(), tkb_khoa_khoaHoc_nganh_nhom));
 
         List<DMLopMonHoc> dmLopMonHocs;
         if (lopMonHoc.getDmNganh().getId() != 0) {
@@ -1377,13 +1378,13 @@ public class ImputDataController {
         List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms;
         if (khoaKhoaHocId != 0) {
             tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(khoaKhoaHocId);
-            if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+            if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
                 tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
             }
             return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
         } else {
             tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(khoaKhoaHocNganhId);
-            if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+            if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
                 tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
             }
             return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
@@ -1394,7 +1395,7 @@ public class ImputDataController {
     @GetMapping(value = "/nhom/get-nhom-cua-khoa-khoa-hoc/{khoaKhoaHocId}")
     public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> getNhomCuaKhoaKhoaHoc(@PathVariable int khoaKhoaHocId) {
         List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(khoaKhoaHocId);
-        if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+        if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
             tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
         }
         return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
@@ -1404,10 +1405,30 @@ public class ImputDataController {
     @GetMapping(value = "/nhom/get-nhom-cua-khoa-khoa-hoc-nganh/{khoaKhoaHocNganhId}")
     public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> getNhomCuaKhoaKhoaHocNganh(@PathVariable int khoaKhoaHocNganhId) {
         List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(khoaKhoaHocNganhId);
-        if(tkb_khoa_khoaHoc_nganh_nhoms != null){
+        if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
             tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
         }
         return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('GIAOVU')")
+    @GetMapping(value = "/nhom/get-nhom-cua-khoa-khoa-hoc-nganh2/{khoaId}/{khoaHocId}/{nganhId}")
+    public ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>> getNhomCuaKhoaKhoaHocNganh2(@PathVariable int khoaId, @PathVariable int khoaHocId, @PathVariable int nganhId) {
+        TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc = tkb_khoa_khoaHocService.findByKhoaIdAndKhoaHocId(khoaId, khoaHocId);
+        if (nganhId == 0) {
+            List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHoc(tkb_khoa_khoaHoc.getId());
+            if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
+                tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+            }
+            return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+        } else {
+            TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh = tkb_khoa_khoaHoc_nganhService.findByKhoaKhoaHocIdAndNganhId(tkb_khoa_khoaHoc.getId(), nganhId);
+            List<TKB_Khoa_KhoaHoc_Nganh_Nhom> tkb_khoa_khoaHoc_nganh_nhoms = tkb_khoa_khoaHoc_nganh_nhomService.findByKhoaKhoaHocNganh(tkb_khoa_khoaHoc_nganh.getId());
+            if (tkb_khoa_khoaHoc_nganh_nhoms != null) {
+                tkb_khoa_khoaHoc_nganh_nhoms.sort(Comparator.comparing(TKB_Khoa_KhoaHoc_Nganh_Nhom::getNhom));
+            }
+            return new ResponseEntity<List<TKB_Khoa_KhoaHoc_Nganh_Nhom>>(tkb_khoa_khoaHoc_nganh_nhoms, HttpStatus.OK);
+        }
     }
 }
 

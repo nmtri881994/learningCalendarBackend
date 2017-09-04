@@ -18,4 +18,7 @@ public interface TKB_Khoa_KhoaHoc_NganhRepository extends JpaRepository<TKB_Khoa
     @Transactional
     @Query(value = "update tkb_khoa_khoa_hoc_nganh set tkb_khoa_khoa_hoc_id = ?2, dm_nganh_id = ?3 where id = ?1", nativeQuery = true)
     void editKhoaHoc(int id, int khoaKhoaHocId, int nganhId);
+
+    @Query(value = "select * from tkb_khoa_khoa_hoc_nganh where tkb_khoa_khoa_hoc_id = ?1 and dm_nganh_id = ?2", nativeQuery = true)
+    TKB_Khoa_KhoaHoc_Nganh findByKhoaKhoaHocIdAndNganhId(int khoaKhoaHocId, int nganhId);
 }

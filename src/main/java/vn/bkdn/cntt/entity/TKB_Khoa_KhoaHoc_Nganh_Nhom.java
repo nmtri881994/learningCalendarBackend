@@ -8,6 +8,7 @@ import vn.bkdn.cntt.entity.TKB_KhoaHoc;
 import vn.bkdn.cntt.entity.TKB_Khoa_KhoaHoc;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by XuanVinh on 9/2/2017.
@@ -19,6 +20,8 @@ public class TKB_Khoa_KhoaHoc_Nganh_Nhom {
     private TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc;
     private TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh;
     private int nhom;
+
+    private Set<DMLopMonHoc> lopMonHocs;
 
     public TKB_Khoa_KhoaHoc_Nganh_Nhom() {
     }
@@ -67,5 +70,15 @@ public class TKB_Khoa_KhoaHoc_Nganh_Nhom {
 
     public void setNhom(int nhom) {
         this.nhom = nhom;
+    }
+
+    @OneToMany(mappedBy = "tkb_khoa_khoaHoc_nganh_nhom")
+    @JsonIgnore
+    public Set<DMLopMonHoc> getLopMonHocs() {
+        return lopMonHocs;
+    }
+
+    public void setLopMonHocs(Set<DMLopMonHoc> lopMonHocs) {
+        this.lopMonHocs = lopMonHocs;
     }
 }

@@ -40,15 +40,15 @@ public interface DMLopMonHocRepository extends JpaRepository<DMLopMonHoc, Intege
     @Transactional
     @Query(value = "update dmlop_mon_hoc set dm_mon_hoc_id = ?2, dm_nhan_vien_id = ?3, tkb_ki_hoc_nam_hoc_id = ?4, " +
             "tkb_khoa_khoa_hoc_id=?5, dm_nganh_id=?6, so_tiet_ly_thuyet=?7, so_tiet_thuc_hanh=?8, so_luong_toi_da=?9, " +
-            "gioi_han_tuan_bat_dau=?10, gioi_han_tuan_ket_thuc=?11 where id = ?1", nativeQuery = true)
+            "gioi_han_tuan_bat_dau=?10, gioi_han_tuan_ket_thuc=?11, tkb_khoa_khoa_hoc_nganh_nhom_id=?12 where id = ?1", nativeQuery = true)
     void editLopMonHoc1(int id, int monHocId, int nhanVienId, int kiHocNamHocId, int khoaKhoaHocId, int nganhId, int soTietLyThuyet,
-                    int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc);
+                    int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc, int nhomId);
 
     @Modifying
     @Transactional
     @Query(value = "update dmlop_mon_hoc set dm_mon_hoc_id = ?2, dm_nhan_vien_id = ?3, tkb_ki_hoc_nam_hoc_id = ?4, " +
             "tkb_khoa_khoa_hoc_id=?5, so_tiet_ly_thuyet=?6, so_tiet_thuc_hanh=?7, so_luong_toi_da=?8, " +
-            "gioi_han_tuan_bat_dau=?9, gioi_han_tuan_ket_thuc=?10 where id = ?1", nativeQuery = true)
+            "gioi_han_tuan_bat_dau=?9, gioi_han_tuan_ket_thuc=?10, tkb_khoa_khoa_hoc_nganh_nhom_id=?11 where id = ?1", nativeQuery = true)
     void editLopMonHoc2(int id, int monHocId, int nhanVienId, int kiHocNamHocId, int khoaKhoaHocId, int soTietLyThuyet,
-                        int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc);
+                        int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc, int nhomId);
 }

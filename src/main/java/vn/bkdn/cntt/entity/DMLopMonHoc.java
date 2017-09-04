@@ -25,6 +25,7 @@ public class DMLopMonHoc {
     private int soLuongToiDa;
     private int gioiHanTuanBatDau;
     private int gioiHanTuanKetThuc;
+    private TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom;
 
     private Set<TKB_LichHocTheoNgay> tkb_lichHocTheoNgays;
     private Set<DMLopMonHoc_SinhVien> DMLopMonHoc_sinhViens;
@@ -48,9 +49,10 @@ public class DMLopMonHoc {
         this.tkb_lichHocTheoNgays = dmLopMonHoc.getTkb_lichHocTheoNgays();
         this.DMLopMonHoc_sinhViens = dmLopMonHoc.getDMLopMonHoc_sinhViens();
         this.tkb_lichHocTheoTuans = dmLopMonHoc.getTkb_lichHocTheoTuans();
+        this.tkb_khoa_khoaHoc_nganh_nhom = dmLopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom();
     }
 
-    public DMLopMonHoc(int id, DMMonHoc dmMonHoc, DMNhanVien dmNhanVien, TKB_KiHoc_NamHoc tkb_kiHoc_namHoc, TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc, DMNganh dmNganh, int soTietLyThuyet, int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc) {
+    public DMLopMonHoc(int id, DMMonHoc dmMonHoc, DMNhanVien dmNhanVien, TKB_KiHoc_NamHoc tkb_kiHoc_namHoc, TKB_Khoa_KhoaHoc tkb_khoa_khoaHoc, DMNganh dmNganh, int soTietLyThuyet, int soTietThucHanh, int soLuongToiDa, int gioiHanTuanBatDau, int gioiHanTuanKetThuc, TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom) {
         this.id = id;
         this.dmMonHoc = dmMonHoc;
         this.dmNhanVien = dmNhanVien;
@@ -62,6 +64,7 @@ public class DMLopMonHoc {
         this.soLuongToiDa = soLuongToiDa;
         this.gioiHanTuanBatDau = gioiHanTuanBatDau;
         this.gioiHanTuanKetThuc = gioiHanTuanKetThuc;
+        this.tkb_khoa_khoaHoc_nganh_nhom = tkb_khoa_khoaHoc_nganh_nhom;
     }
 
     @Id
@@ -195,5 +198,15 @@ public class DMLopMonHoc {
 
     public void setTkb_lichHocTheoTuans(Set<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans) {
         this.tkb_lichHocTheoTuans = tkb_lichHocTheoTuans;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tkb_khoa_khoaHoc_nganh_nhomId")
+    public TKB_Khoa_KhoaHoc_Nganh_Nhom getTkb_khoa_khoaHoc_nganh_nhom() {
+        return tkb_khoa_khoaHoc_nganh_nhom;
+    }
+
+    public void setTkb_khoa_khoaHoc_nganh_nhom(TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom) {
+        this.tkb_khoa_khoaHoc_nganh_nhom = tkb_khoa_khoaHoc_nganh_nhom;
     }
 }

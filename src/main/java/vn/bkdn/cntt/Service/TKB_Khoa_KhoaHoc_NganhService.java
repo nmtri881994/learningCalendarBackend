@@ -14,4 +14,6 @@ public interface TKB_Khoa_KhoaHoc_NganhService {
     void insertKhoaKhoaHocNganh(TKB_Khoa_KhoaHoc_Nganh tkb_khoa_khoaHoc_nganh);
     void editKhoaKhoaHocNganh(KhoaKhoaHocNganh khoaKhoaHocNganh);
     void deleteKhoaKhoaHocNganh(int id);
+
+    TKB_Khoa_KhoaHoc_Nganh findByKhoaKhoaHocIdAndNganhId(int khoaKhoaHocId, int nganhId);
 }

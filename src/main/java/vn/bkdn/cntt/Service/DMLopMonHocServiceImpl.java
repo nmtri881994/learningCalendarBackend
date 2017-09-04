@@ -66,29 +66,18 @@ public class DMLopMonHocServiceImpl implements DMLopMonHocService {
 
     @Override
     public void editLopMonHoc(LopMonHoc lopMonHoc) {
-//        System.out.println(1 + "-" + lopMonHoc.getId());
-//        System.out.println(2 + "-" + lopMonHoc.getDmMonHoc().getId());
-//        System.out.println(3 + "-" + lopMonHoc.getDmNhanVien().getId());
-//        System.out.println(4 + "-" + lopMonHoc.getTkb_kiHoc_namHoc().getId());
-//        System.out.println(5 + "-" + lopMonHoc.getTkb_khoa_khoaHoc().getId());
-//        System.out.println(6 + "-" + lopMonHoc.getDmNganh().getId() == 0 ? lopMonHoc.getDmNganh().getId() : null);
-//        System.out.println(7 + "-" + lopMonHoc.getSoTietLyThuyet());
-//        System.out.println(8 + "-" + lopMonHoc.getSoTietThucHanh());
-//        System.out.println(9 + "-" + lopMonHoc.getSoLuongToiDa());
-//        System.out.println(10 + "-" + lopMonHoc.getGioiHanTuanBatDau());
-//        System.out.println(11 + "-" + lopMonHoc.getGioiHanTuanKetThuc());
 
         int nganhId = lopMonHoc.getDmNganh().getId();
         if(nganhId == 0){
             lopMonHocRepository.editLopMonHoc2(lopMonHoc.getId(), lopMonHoc.getDmMonHoc().getId(), lopMonHoc.getDmNhanVien().getId(),
                     lopMonHoc.getTkb_kiHoc_namHoc().getId(), lopMonHoc.getTkb_khoa_khoaHoc().getId(),
                     lopMonHoc.getSoTietLyThuyet(), lopMonHoc.getSoTietThucHanh(), lopMonHoc.getSoLuongToiDa(), lopMonHoc.getGioiHanTuanBatDau(),
-                    lopMonHoc.getGioiHanTuanKetThuc());
+                    lopMonHoc.getGioiHanTuanKetThuc(), lopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
         }else{
             lopMonHocRepository.editLopMonHoc1(lopMonHoc.getId(), lopMonHoc.getDmMonHoc().getId(), lopMonHoc.getDmNhanVien().getId(),
                     lopMonHoc.getTkb_kiHoc_namHoc().getId(), lopMonHoc.getTkb_khoa_khoaHoc().getId(), nganhId,
                     lopMonHoc.getSoTietLyThuyet(), lopMonHoc.getSoTietThucHanh(), lopMonHoc.getSoLuongToiDa(), lopMonHoc.getGioiHanTuanBatDau(),
-                    lopMonHoc.getGioiHanTuanKetThuc());
+                    lopMonHoc.getGioiHanTuanKetThuc(), lopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
         }
 
     }

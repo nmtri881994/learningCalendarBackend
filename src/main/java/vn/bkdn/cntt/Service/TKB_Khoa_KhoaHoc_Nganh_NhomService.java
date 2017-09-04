@@ -13,4 +13,6 @@ public interface TKB_Khoa_KhoaHoc_Nganh_NhomService {
 
      List<TKB_Khoa_KhoaHoc_Nganh_Nhom> findByKhoaKhoaHoc(int khoaKhoaHocId);
      List<TKB_Khoa_KhoaHoc_Nganh_Nhom> findByKhoaKhoaHocNganh(int khoaKhoaHocNganhId);
+
+     TKB_Khoa_KhoaHoc_Nganh_Nhom findOne(int id);
 }

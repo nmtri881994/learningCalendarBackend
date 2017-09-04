@@ -42,4 +42,9 @@ public class TKB_Khoa_KhoaHoc_NganhServiceImpl implements TKB_Khoa_KhoaHoc_Nganh
     public void deleteKhoaKhoaHocNganh(int id) {
         tkb_khoa_khoaHoc_nganhRepository.delete(id);
     }
+
+    @Override
+    public TKB_Khoa_KhoaHoc_Nganh findByKhoaKhoaHocIdAndNganhId(int khoaKhoaHocId, int nganhId) {
+        return tkb_khoa_khoaHoc_nganhRepository.findByKhoaKhoaHocIdAndNganhId(khoaKhoaHocId, nganhId);
+    }
 }

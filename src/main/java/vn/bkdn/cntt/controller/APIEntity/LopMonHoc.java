@@ -18,6 +18,8 @@ public class LopMonHoc {
     private int gioiHanTuanBatDau;
     private int gioiHanTuanKetThuc;
 
+    private TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom;
+
     public LopMonHoc() {
     }
 
@@ -49,6 +51,7 @@ public class LopMonHoc {
         this.soLuongToiDa = dmLopMonHoc.getSoLuongToiDa();
         this.gioiHanTuanBatDau = dmLopMonHoc.getGioiHanTuanBatDau();
         this.gioiHanTuanKetThuc = dmLopMonHoc.getGioiHanTuanKetThuc();
+        this.tkb_khoa_khoaHoc_nganh_nhom = dmLopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom();
     }
 
     public int getId() {
@@ -137,5 +140,13 @@ public class LopMonHoc {
 
     public void setGioiHanTuanKetThuc(int gioiHanTuanKetThuc) {
         this.gioiHanTuanKetThuc = gioiHanTuanKetThuc;
+    }
+
+    public TKB_Khoa_KhoaHoc_Nganh_Nhom getTkb_khoa_khoaHoc_nganh_nhom() {
+        return tkb_khoa_khoaHoc_nganh_nhom;
+    }
+
+    public void setTkb_khoa_khoaHoc_nganh_nhom(TKB_Khoa_KhoaHoc_Nganh_Nhom tkb_khoa_khoaHoc_nganh_nhom) {
+        this.tkb_khoa_khoaHoc_nganh_nhom = tkb_khoa_khoaHoc_nganh_nhom;
     }
 }
