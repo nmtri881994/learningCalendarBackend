@@ -215,7 +215,7 @@ public class CalendarController {
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(dmLopMonHocs);
         FilterProvider filterProvider = new SimpleFilterProvider()
                 .addFilter("filter.DMLopMonHoc", SimpleBeanPropertyFilter
-                        .filterOutAllExcept("id", "dmMonHoc", "dmNhanVien", "soTietLyThuyet", "tkb_khoa_khoaHoc", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans"));
+                        .filterOutAllExcept("id", "dmMonHoc", "dmNhanVien", "soTietLyThuyet", "tkb_khoa_khoaHoc", "soTietThucHanh", "soLuongToiDa", "tkb_lichHocTheoTuans", "tkb_khoa_khoaHoc_nganh_nhom"));
 
         mappingJacksonValue.setFilters(filterProvider);
 
@@ -291,6 +291,7 @@ public class CalendarController {
 
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = tkb_lichHocTheoTuanService.findLichHocTheoTuanByThuIdAndGiangDuongId(thuId, giangDuongId);
         DMLopMonHoc dmLopMonHoc = lopMonHocService.findOne(DMLopMonHocId);
+        tkb_lichHocTheoTuans.removeIf(tkb_lichHocTheoTuan -> tkb_lichHocTheoTuan.getDmLopMonHoc().getTkb_khoa_khoaHoc_nganh_nhom().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
         for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                 dmLopMonHoc.getTkb_lichHocTheoTuans()) {
             if (tkb_lichHocTheoTuan.getTkb_thu().getId() == thuId) {

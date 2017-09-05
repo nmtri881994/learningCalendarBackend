@@ -38,6 +38,11 @@ public class TKB_Khoa_KhoaHoc_Nganh_NhomServiceImpl implements TKB_Khoa_KhoaHoc_
     }
 
     @Override
+    public List<TKB_Khoa_KhoaHoc_Nganh_Nhom> findAll() {
+        return tkb_khoa_khoaHoc_nganh_nhomRepository.findAll();
+    }
+
+    @Override
     public TKB_Khoa_KhoaHoc_Nganh_Nhom findOne(int id) {
         return tkb_khoa_khoaHoc_nganh_nhomRepository.findOne(id);
     }
