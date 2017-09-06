@@ -319,6 +319,7 @@ public class GiaoVuController {
         List<DMLopMonHoc> dmLopMonHocs1 = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHoc.getId());
         System.out.println("Dsadsa: " + dmLopMonHocs1.size());
         List<List<DMLopMonHoc>> lopMonHocGroups = this.devideToSmallLopMonHocGroup(dmLopMonHocs1);
+        List<DMLopMonHoc> dmLopMonHocsSucceed = new ArrayList<>();
         for (List<DMLopMonHoc> dmLopMonHocs : lopMonHocGroups
                 ) {
             String khoa = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getDmDonVi().getTen();
@@ -340,9 +341,25 @@ public class GiaoVuController {
 //            this.template.convertAndSend("/socket/calendar/auto-generate", mess);
             GenerateCalendarForClassResult generateCalendarForClassResult = this.generateCalendarForClassGroup(dmLopMonHocs, setting);
             if (!generateCalendarForClassResult.isSucceed()) {
-                return new ResponseEntity<>(lopMonHoc_viPhams, HttpStatus.OK);
+                if (!lopMonHoc_viPhams.isEmpty()) {
+                    return new ResponseEntity<>(lopMonHoc_viPhams, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(generateCalendarForClassResult.getMess(), HttpStatus.OK);
+                }
+            } else {
+                dmLopMonHocsSucceed.addAll(generateCalendarForClassResult.getDmLopMonHocs());
             }
         }
+
+        for (DMLopMonHoc dmLopMonHoc :
+                dmLopMonHocsSucceed) {
+            for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+                    dmLopMonHoc.getTkb_lichHocTheoTuans()) {
+                tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(dmLopMonHoc.getId()));
+                tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+            }
+        }
+
         return new ResponseEntity<>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
     }
 
@@ -366,7 +383,7 @@ public class GiaoVuController {
                     String result = randomCalendarForClass(DMLopMonHoc);
                     if (result != "Thành công") {
 //                        return new ResponseEntity<>(result, HttpStatus.OK);
-                        return new GenerateCalendarForClassResult(false, result);
+                        return new GenerateCalendarForClassResult(false, result, null);
                     }
                 }
                 caThe.setDiemThichNghi(this.getDiemThichNghiCuaCaThe(caThe.getDMLopMonHocList(), setting, false, false));
@@ -381,14 +398,14 @@ public class GiaoVuController {
             printQuanThe(quanThe);
 
             if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanThe, setting.getDiemThichNghiToiUu())) {
-                for (DMLopMonHoc DMLopMonHoc :
-                        quanThe.get(0).getDMLopMonHocList()) {
-                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
-                            DMLopMonHoc.getTkb_lichHocTheoTuans()) {
-                        tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(DMLopMonHoc.getId()));
-                        tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
-                    }
-                }
+//                for (DMLopMonHoc DMLopMonHoc :
+//                        quanThe.get(0).getDMLopMonHocList()) {
+//                    for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+//                            DMLopMonHoc.getTkb_lichHocTheoTuans()) {
+//                        tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(DMLopMonHoc.getId()));
+//                        tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+//                    }
+//                }
 //                return new ResponseEntity<>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
                 String khoa = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getDmDonVi().getTen();
                 int khoaHoc = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getTkb_khoaHoc().getNam();
@@ -403,7 +420,7 @@ public class GiaoVuController {
                 } else {
                     additionalMess = khoa + "-khóa học " + khoaHoc + "-nhóm " + nhom;
                 }
-                return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess);
+                return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess, quanThe.get(0).getDMLopMonHocList());
             }
 //            Tien hanh tien hoa
             int numberOfParents = this.numberOfInviduals * this.parentsPercentage / 100;
@@ -443,15 +460,14 @@ public class GiaoVuController {
                 printQuanThe(quanTheTemp);
 
                 if (checkSuccess(setting.getKyHocId(), setting.getNamHocId(), quanTheTemp, setting.getDiemThichNghiToiUu())) {
-                    this.getDiemThichNghiCuaCaThe(quanTheTemp.get(0).getDMLopMonHocList(), setting, true, false);
-                    for (DMLopMonHoc DMLopMonHoc :
-                            quanTheTemp.get(0).getDMLopMonHocList()) {
-                        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
-                                DMLopMonHoc.getTkb_lichHocTheoTuans()) {
-                            tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(DMLopMonHoc.getId()));
-                            tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
-                        }
-                    }
+//                    for (DMLopMonHoc DMLopMonHoc :
+//                            quanTheTemp.get(0).getDMLopMonHocList()) {
+//                        for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
+//                                DMLopMonHoc.getTkb_lichHocTheoTuans()) {
+//                            tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(DMLopMonHoc.getId()));
+//                            tkb_lichHocTheoTuanService.addWeekCalendar(tkb_lichHocTheoTuan);
+//                        }
+//                    }
 //                    return new ResponseEntity<>("Sinh thời khóa biểu tự động thành công", HttpStatus.OK);
                     String khoa = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getDmDonVi().getTen();
                     int khoaHoc = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getTkb_khoaHoc().getNam();
@@ -466,7 +482,7 @@ public class GiaoVuController {
                     } else {
                         additionalMess = khoa + "-khóa học " + khoaHoc + "-nhóm " + nhom;
                     }
-                    return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess);
+                    return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess, quanThe.get(0).getDMLopMonHocList());
                 } else {
                     quanThe.clear();
                     quanThe.addAll(quanTheTemp);
@@ -474,10 +490,10 @@ public class GiaoVuController {
             }
             this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, true, true);
 //            return new ResponseEntity<>(lopMonHoc_viPhams, HttpStatus.OK);
-            return new GenerateCalendarForClassResult(false, "Sinh thời khóa biểu tự động thất bại");
+            return new GenerateCalendarForClassResult(false, "Sinh thời khóa biểu tự động thất bại", null);
         } else {
 //            return new ResponseEntity<>("Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", HttpStatus.OK);
-            return new GenerateCalendarForClassResult(false, "Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động");
+            return new GenerateCalendarForClassResult(false, "Có ít nhất một lớp đã có thời khóa biểu, hãy xóa hết thời khóa biểu để có thể tiến hành sinh thời khóa biểu tự động", null);
 
         }
     }
@@ -892,7 +908,7 @@ public class GiaoVuController {
 
     public int dk7(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
-        dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc_nganh_nhom().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
+//        dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getTkb_khoa_khoaHoc_nganh_nhom().getId() != dmLopMonHoc.getTkb_khoa_khoaHoc_nganh_nhom().getId());
         if (dmLopMonHoc.getDmNganh() != null) {
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh() == null);
             dmLopMonHocs.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNganh().getId() != dmLopMonHoc.getDmNganh().getId());
@@ -1238,7 +1254,7 @@ public class GiaoVuController {
         Random random = new Random();
         //random weekday
         List<TKB_Thu> tkb_thus = tkb_thuService.findAll();
-        tkb_thus.removeIf(tkb_thu -> "Thứ 7".equals(tkb_thu.getTen()) || "Chủ nhật".equals(tkb_thu.getTen()));
+        tkb_thus.removeIf(tkb_thu -> "Chủ nhật".equals(tkb_thu.getTen()));
 
         int index;
 
