@@ -5,7 +5,7 @@ This repository contains back-end of the web application, the front-tend is avai
 In this back-end project, I use Java Spring Boot, Hibernate, Spring Security, Spring Websocket, Spring Schedule to write services serve the processes of application.
  
 The most special function of this application is automatically generating learing calendar for university/college using Genetic Algorithm.  
-You can find the fully explanation of the way I apply Genetic Algorithm at [here](ttps://google.com )
+You can find the fully explanation of the way I apply Genetic Algorithm at [here](https://google.com )
 
 ## Deployment
 1. Create a database 'danavtc' in MySQL server.
