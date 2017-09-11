@@ -7,7 +7,7 @@
 *[Note](#note)
 
 ## Description
-This repository contains back-end of the web application, the front-tend is available at [learningCalendar](http://example.com).  
+This repository contains back-end of the learning calendar management application, the front-tend is available at [learningCalendar](http://example.com).  
 
 In this back-end project, I use Java Spring Boot, Hibernate, Spring Security, Spring Websocket, Spring Schedule to program services serve the processes of application.
  
