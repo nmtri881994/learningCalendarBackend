@@ -4,7 +4,7 @@ This repository contains back-end of the web application, the front-tend is avai
 
 In this back-end project, I use Java Spring Boot, Hibernate, Spring Security, Spring Websocket, Spring Schedule to write services serve the processes of application.
  
-The most special function of this application is automatically generating learing calendar for university/college using Genetic Algorithm.  
+The most special function of this application is automatically generating learing calendar for university/college using Genetic Algorithm.
 You can find the fully explanation of the way I apply Genetic Algorithm at [here](https://google.com )
 
 ## Deployment
@@ -15,7 +15,7 @@ You can find the fully explanation of the way I apply Genetic Algorithm at [here
 5. Deploy the war file ./target/learning_calendar_backend-0.0.1-SNAPSHOT.war on Tomcat Server version 8 or later, set HTTP port: 8080.
 **If you want to edit, research or reuse the code, you can open project by IntelliJ IDEA version 2016.3 or above. Configure Tomcat server, 
 
-Now you can look over the application's APIS through Swagger UI at http://localhost:8080/swagger-ui.html
+Now you can look over the application's APIs through Swagger UI at http://localhost:8080/swagger-ui.html
 
 ## Note
 This is my graduate project at university and according to the real requirements of Danang Vocational Training College,
