@@ -36,6 +36,7 @@ public class GiaoVuController {
     private int theHe;
 
     private List<LopMonHoc_ViPham> lopMonHoc_viPhams = new ArrayList<>();
+    private List<DMLopMonHoc> dmLopMonHocsGenerated = new ArrayList<>();
 
     @Autowired
     private NamHocService namHocService;
@@ -314,12 +315,10 @@ public class GiaoVuController {
     @PreAuthorize("hasRole('GIAOVU')")
     @PostMapping(value = "/generate-random-calendar")
     public ResponseEntity<Object> generateRandomCalendarForSemester(@RequestBody Setting setting) throws JsonProcessingException {
-
+        this.dmLopMonHocsGenerated = new ArrayList<>();
         TKB_KiHoc_NamHoc tkb_kiHoc_namHoc = kiHoc_namHocService.findKiHocNamHocByKyHocIdAndNamHocId(setting.getKyHocId(), setting.getNamHocId());
         List<DMLopMonHoc> dmLopMonHocs1 = lopMonHocService.findByKiHoc_NamHocId(tkb_kiHoc_namHoc.getId());
-        System.out.println("Dsadsa: " + dmLopMonHocs1.size());
         List<List<DMLopMonHoc>> lopMonHocGroups = this.devideToSmallLopMonHocGroup(dmLopMonHocs1);
-        List<DMLopMonHoc> dmLopMonHocsSucceed = new ArrayList<>();
         for (List<DMLopMonHoc> dmLopMonHocs : lopMonHocGroups
                 ) {
             String khoa = dmLopMonHocs.get(0).getTkb_khoa_khoaHoc().getDmDonVi().getTen();
@@ -347,12 +346,12 @@ public class GiaoVuController {
                     return new ResponseEntity<>(generateCalendarForClassResult.getMess(), HttpStatus.OK);
                 }
             } else {
-                dmLopMonHocsSucceed.addAll(generateCalendarForClassResult.getDmLopMonHocs());
+                this.dmLopMonHocsGenerated.addAll(generateCalendarForClassResult.getDmLopMonHocs());
             }
         }
 
         for (DMLopMonHoc dmLopMonHoc :
-                dmLopMonHocsSucceed) {
+                this.dmLopMonHocsGenerated) {
             for (TKB_LichHocTheoTuan tkb_lichHocTheoTuan :
                     dmLopMonHoc.getTkb_lichHocTheoTuans()) {
                 tkb_lichHocTheoTuan.setDmLopMonHoc(lopMonHocService.findOne(dmLopMonHoc.getId()));
@@ -580,7 +579,7 @@ public class GiaoVuController {
         String mess = this.mapper.writeValueAsString(generationSocketMessage);
         this.template.convertAndSend("/socket/calendar/auto-generate", mess);
         this.theHe++;
-        if (quanThe.get(0).getDiemThichNghi() <= diemThichNghiToiUu) {
+        if (quanThe.get(0).getDiemThichNghi() < diemThichNghiToiUu) {
             return true;
         } else {
             return false;
@@ -759,6 +758,14 @@ public class GiaoVuController {
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != DMLopMonHoc.getDmNhanVien()
                 .getId());
+
+        for (DMLopMonHoc dmLopMonHoc1:
+             this.dmLopMonHocsGenerated) {
+            if(dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
+            }
+        }
+
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHocCuaGiaoVien :
                 dmLopMonHocsCuaGiaoVien) {
@@ -789,6 +796,14 @@ public class GiaoVuController {
 //        System.out.println(dmLopMonHocs.size());
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != dmLopMonHoc.getDmNhanVien().getId());
+
+        for (DMLopMonHoc dmLopMonHoc1:
+                this.dmLopMonHocsGenerated) {
+            if(dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
+            }
+        }
+
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHocCuaGiaoVien :
                 dmLopMonHocsCuaGiaoVien) {
@@ -820,6 +835,14 @@ public class GiaoVuController {
 //        System.out.println(dmLopMonHocs.size());
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != dmLopMonHoc.getDmNhanVien().getId());
+
+        for (DMLopMonHoc dmLopMonHoc1:
+                this.dmLopMonHocsGenerated) {
+            if(dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
+            }
+        }
+
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHocCuaGiaoVien :
                 dmLopMonHocsCuaGiaoVien) {
@@ -884,6 +907,12 @@ public class GiaoVuController {
     public int dk6(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != DMLopMonHoc.getDmNhanVien().getId());
+        for (DMLopMonHoc dmLopMonHoc1:
+                this.dmLopMonHocsGenerated) {
+            if(dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()){
+                dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
+            }
+        }
         List<TKB_LichHocTheoTuan> lichDaysCuaGiaoVien = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHocCuaGiaoVien :
                 dmLopMonHocsCuaGiaoVien) {
@@ -936,6 +965,7 @@ public class GiaoVuController {
 
     public int dk8(DMLopMonHoc dmLopMonHoc, List<DMLopMonHoc> dmLopMonHocs, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
+        dmLopMonHocs.addAll(this.dmLopMonHocsGenerated);
         List<TKB_LichHocTheoTuan> tkb_lichHocTheoTuans = new ArrayList<>();
         for (DMLopMonHoc DMLopMonHoc1 :
                 dmLopMonHocs) {
