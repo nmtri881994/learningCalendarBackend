@@ -1,7 +1,7 @@
 # LEARNING CALENDAR APPLICATION BACK-END
 > A university learning calendar management application back-end
 
-[![Build Status Images](https://i.imgur.com/UR7vnmm.jpg)]
+![Images](https://i.imgur.com/UR7vnmm.jpg)
 
 ## Description
 This repository contains back-end of the web application, the front-tend is available at [learningCalendar](http://example.com).  
