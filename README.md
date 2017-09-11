@@ -30,6 +30,4 @@ This is my graduate project at university and according to the real requirements
 I have to make the database by Vietnamese and the code is mixed by Vietnamese and English as well.
 I'm so sorry if that give you confusion, specially for those who don't know Vietnamese.
 
-If you have any question, email me at nmtri881994@gmail.com.
-
 [⬆ back to top](#table-of-contents)
