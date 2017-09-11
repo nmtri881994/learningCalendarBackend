@@ -2,9 +2,9 @@
 > A university learning calendar management application back-end
 
 ## Table of contents
-*[Description](##Description)
-*[Deployment](##Deployment)
-*[Note](##Note)
+*[Description](#description)  
+*[Deployment](#deployment)  
+*[Note](#note)
 
 ## Description
 This repository contains back-end of the web application, the front-tend is available at [learningCalendar](http://example.com).  
@@ -32,4 +32,4 @@ I'm so sorry if that give you confusion, specially for those who don't know Viet
 
 If you have any question, email me at nmtri881994@gmail.com.
 
-[⬆ back to top](#Table of contents)
+[⬆ back to top](#table-of-contents)
