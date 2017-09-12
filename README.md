@@ -2,9 +2,9 @@
 > A university learning calendar management application back-end
 
 ## Table of contents
-*[Description](#description)  
-*[Deployment](#deployment)  
-*[Note](#note)
+* [Description](#description)  
+* [Deployment](#deployment)  
+* [Note](#note)
 
 ## Description
 This repository contains back-end of the learning calendar management application, the front-tend is available at [learningCalendar](https://github.com/nmtri881994/learningCalendar).  
