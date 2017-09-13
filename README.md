@@ -21,7 +21,7 @@ You can find the fully explanation and result of the way I apply Genetic Algorit
 4. Open command line under project folder and type `maven package`.
 5. Deploy the war file /target/learning_calendar_backend-0.0.1-SNAPSHOT.war on Tomcat Server version 8 or later, set HTTP port: 8080(recommended).
 
-**If you want to edit, research or reuse the code, you can open project by IntelliJ IDEA version 2016.3 or above. Configure Tomcat server, 
+**If you want to edit, research or reuse the code, you can open project by IntelliJ IDEA version 2016.3 or later.
 
 Now you can look over the application's APIs through Swagger UI at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
