@@ -434,15 +434,15 @@ public class GiaoVuController {
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> parents = this.chooseParents(quanThe, numberOfParents);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
+//                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> crossOvers = this.crossOverGeneration(parents, numberOfCrossOver);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
+//                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 List<CaThe> mutations = this.mutateGeneration(parents, numberOfMutation, setting);
-                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
+//                quanThe.get(0).setDiemThichNghi(this.getDiemThichNghiCuaCaThe(quanThe.get(0).getDMLopMonHocList(), setting, false, false));
 //                System.out.println(quanThe.get(0).getDiemThichNghi());
 
                 quanTheTemp.addAll(parents);
@@ -481,7 +481,7 @@ public class GiaoVuController {
                     } else {
                         additionalMess = khoa + "-khóa học " + khoaHoc + "-nhóm " + nhom;
                     }
-                    return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess, quanThe.get(0).getDMLopMonHocList());
+                    return new GenerateCalendarForClassResult(true, "Sinh thời khóa biểu tự động thành công cho " + additionalMess, quanTheTemp.get(0).getDMLopMonHocList());
                 } else {
                     quanThe.clear();
                     quanThe.addAll(quanTheTemp);
@@ -530,7 +530,6 @@ public class GiaoVuController {
             int index = random.nextInt(parents.size());
             mutations.add(this.mutate(parents.get(index)));
         }
-
         return mutations;
     }
 
@@ -759,9 +758,9 @@ public class GiaoVuController {
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != DMLopMonHoc.getDmNhanVien()
                 .getId());
 
-        for (DMLopMonHoc dmLopMonHoc1:
-             this.dmLopMonHocsGenerated) {
-            if(dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()){
+        for (DMLopMonHoc dmLopMonHoc1 :
+                this.dmLopMonHocsGenerated) {
+            if (dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()) {
                 dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
             }
         }
@@ -797,9 +796,9 @@ public class GiaoVuController {
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != dmLopMonHoc.getDmNhanVien().getId());
 
-        for (DMLopMonHoc dmLopMonHoc1:
+        for (DMLopMonHoc dmLopMonHoc1 :
                 this.dmLopMonHocsGenerated) {
-            if(dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()){
+            if (dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()) {
                 dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
             }
         }
@@ -836,9 +835,9 @@ public class GiaoVuController {
         List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien = dmLopMonHocs;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != dmLopMonHoc.getDmNhanVien().getId());
 
-        for (DMLopMonHoc dmLopMonHoc1:
+        for (DMLopMonHoc dmLopMonHoc1 :
                 this.dmLopMonHocsGenerated) {
-            if(dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()){
+            if (dmLopMonHoc1.getDmNhanVien().getId() == dmLopMonHoc.getDmNhanVien().getId()) {
                 dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
             }
         }
@@ -907,9 +906,9 @@ public class GiaoVuController {
     public int dk6(DMLopMonHoc DMLopMonHoc, List<DMLopMonHoc> dmLopMonHocsCuaGiaoVien, int dkValue, boolean theHeCuoiCung) {
         int diem = 0;
         dmLopMonHocsCuaGiaoVien.removeIf(DMLopMonHoc1 -> DMLopMonHoc1.getDmNhanVien().getId() != DMLopMonHoc.getDmNhanVien().getId());
-        for (DMLopMonHoc dmLopMonHoc1:
+        for (DMLopMonHoc dmLopMonHoc1 :
                 this.dmLopMonHocsGenerated) {
-            if(dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()){
+            if (dmLopMonHoc1.getDmNhanVien().getId() == DMLopMonHoc.getDmNhanVien().getId()) {
                 dmLopMonHocsCuaGiaoVien.add(dmLopMonHoc1);
             }
         }
@@ -954,6 +953,7 @@ public class GiaoVuController {
                 dmLopMonHoc.getTkb_lichHocTheoTuans()) {
             List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganhTemp = this.cloneTKBTuan(lichHocCuaKhoaKhoaHocNganh);
             lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getId() == tkb_lichHocTheoTuan.getId());
+            lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
             lichHocCuaKhoaKhoaHocNganhTemp.removeIf(tkb_lichHocTheoTuan1 -> (tkb_lichHocTheoTuan1.getTuanKetThuc() < tkb_lichHocTheoTuan.getTuanBatDau()) || (tkb_lichHocTheoTuan1.getTuanBatDau() > tkb_lichHocTheoTuan.getTuanKetThuc()));
             if (this.checkTrungLichKhoaKhoaHocNganh(tkb_lichHocTheoTuan, lichHocCuaKhoaKhoaHocNganhTemp, theHeCuoiCung)) {
                 diem++;
@@ -1134,9 +1134,9 @@ public class GiaoVuController {
     }
 
     public boolean checkTrungLichKhoaKhoaHocNganh(TKB_LichHocTheoTuan tkb_lichHocTheoTuan, List<TKB_LichHocTheoTuan> lichHocCuaKhoaKhoaHocNganh, boolean theHeCuoiCung) {
-        lichHocCuaKhoaKhoaHocNganh.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
+//        lichHocCuaKhoaKhoaHocNganh.removeIf(tkb_lichHocTheoTuan1 -> tkb_lichHocTheoTuan1.getTkb_thu().getId() != tkb_lichHocTheoTuan.getTkb_thu().getId());
         List<TKB_Tiet> tietBanCuaKhoaKhoaHocNganh = this.getTietNotFree(lichHocCuaKhoaKhoaHocNganh);
-        if (theHeCuoiCung) {
+//        if (theHeCuoiCung) {
 //            System.out.println("---Check trùng lịch---");
 //            System.out.println(tkb_lichHocTheoTuan.getDmGiangDuong().getTen() + "-" + tkb_lichHocTheoTuan.getTkb_thu().getTen() + "-" + tkb_lichHocTheoTuan.getTkb_tietDauTien().getThuTu() + "-" + tkb_lichHocTheoTuan.getTkb_tietCuoiCung().getThuTu());
 //            System.out.println("Tiết bận: ");
@@ -1145,7 +1145,7 @@ public class GiaoVuController {
 //                System.out.println(tkb_tiet.getThuTu());
 //            }
 //            System.out.println(this.checkTrungLich(tietBanCuaKhoaKhoaHocNganh, tkb_lichHocTheoTuan));
-        }
+//        }
 
         return this.checkTrungLich(tietBanCuaKhoaKhoaHocNganh, tkb_lichHocTheoTuan);
     }

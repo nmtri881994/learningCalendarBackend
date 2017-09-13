@@ -12,7 +12,7 @@ This repository contains back-end of the learning calendar management applicatio
 In this back-end project, I use Java Spring Boot, Hibernate, Spring Security, Spring Websocket, Spring Schedule to program services serve the processes of application.
  
 The most special function of this application is automatically generating learing calendar for university/college using Genetic Algorithm.
-You can find the fully explanation of the way I apply Genetic Algorithm at [here](https://github.com/nmtri881994/Genetic-Algorithm-apply-on-generating-learning-calendar).
+You can find the fully explanation and result of the way I apply Genetic Algorithm at [here](https://github.com/nmtri881994/Genetic-Algorithm-apply-on-generating-learning-calendar).
 
 ## Deployment
 1. Create a database 'danavtc' in MySQL server.
